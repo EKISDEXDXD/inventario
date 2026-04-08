@@ -1,0 +1,11 @@
+<div class="register-container">
+  <h2>Crear cuenta</h2>
+  <form (ngSubmit)="register()">
+    <input type="text" [(ngModel)]="username" name="username" placeholder="Usuario" required />
+    <input type="password" [(ngModel)]="password" name="password" placeholder="Contraseña" required />
+    <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="Confirmar contraseña" required />
+    <button type="submit">Registrar</button>
+    <div *ngIf="error" class="error">{{ error }}</div>
+  </form>
+  <p class="login-link">¿Ya tienes cuenta? <a routerLink="/login">Iniciar sesión</a></p>
+</div>

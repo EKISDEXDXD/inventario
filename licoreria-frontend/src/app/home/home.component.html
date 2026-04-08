@@ -1,0 +1,26 @@
+<div class="home-container">
+  <header class="header">
+    <h1>Bienvenido a Licorería</h1>
+    <div class="user-info">
+      <span>Usuario: {{ username }}</span>
+      <button class="logout-btn" (click)="logout()">Cerrar Sesión</button>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <section class="welcome-section">
+      <h2>¡Hola, {{ username }}!</h2>
+      <p>Has iniciado sesión correctamente en el sistema de gestión de inventario.</p>
+    </section>
+
+    <section class="features-section">
+      <h3>Funcionalidades disponibles:</h3>
+      <ul>
+        <li>Gestión de productos</li>
+        <li>Control de inventario</li>
+        <li>Gestión de usuarios</li>
+        <li>Reportes y estadísticas</li>
+      </ul>
+    </section>
+  </main>
+</div>
