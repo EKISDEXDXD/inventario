@@ -1,7 +1,77 @@
+:host {
+    display: block; /* Importante en Angular para que reconozca el ancho */
+    width: 100%;
+}
+
+/* Cabecera estilizada */
+.header {
+  background-color: rgba(55, 51, 51, 0.1); /* Fondo sutil y moderno */
+  backdrop-filter: blur(10px); /* Efecto de desenfoque elegante */
+  padding: 1.5rem 2rem;
+  background-color: rgba(42, 42, 42, 0.05); /* Cristal más sutil */
+  backdrop-filter: blur(15px); /* Desenfoque más profundo */
+  padding: 2rem 3rem;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  color: white;
+  animation: fadeInDown 0.8s ease-out; /* Animación de entrada */
+}
+
+.header-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-title {
+  margin: 0;
+  font-size: 2.2rem;
+  font-size: 3.8rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  background: linear-gradient(to right, #ffffff, #dcdde1);
+  letter-spacing: -1.5px;
+  background: linear-gradient(to right, #ffffff, #ccc8f9); /* Degradado profesional */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.header-subtitle {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.7;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* Eliminamos los estilos del botón rojo antiguo */
+.user-info, .logout-btn {
+  display: none;
+}
+
 .home-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    width: 100%; /* Cambia 100vw por 100% para evitar scroll horizontal */
+    min-height: 100vh;
+    margin: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    padding-left: 300px; /* Espacio para el menú lateral fijo */
+    transition: padding-left 0.3s ease;
+}
+
+/* Ajuste cuando el menú está cerrado */
+.home-container.close {
+    padding-left: 88px;
+}
+
+/* Ajuste para móviles: el menú debería ser responsive en el futuro */
+@media (max-width: 768px) {
+    .home-container {
+        padding-left: 0;
+    }
 }
 
 .header {
@@ -12,11 +82,16 @@
   align-items: center;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   color: white;
+
+  
 }
 
-.header h1 {
+.header h1 a{
   margin: 0;
   font-size: 2rem;
+  text-decoration: none;
+  color: white;
+  
 }
 
 .user-info {
@@ -45,14 +120,23 @@
 }
 
 .main-content {
+
   padding: 3rem 2rem;
-  max-width: 1000px;
+  max-width: 1200px; /* Aumentado para dar más espacio lateral */
   margin: 0 auto;
+}
+
+/* Sistema de Grid para el Dashboard */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1.3fr 0.7fr; /* Panel de info más ancho que las acciones */
+    gap: 3rem; /* Espacio generoso entre columnas */
+    align-items: start;
 }
 
 .welcome-section {
   background-color: white;
-  padding: 2rem;
+  padding: 3rem; /* Aumentado para que el texto tenga mejor aire */
   border-radius: 8px;
   margin-bottom: 2rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -60,37 +144,127 @@
 
 .welcome-section h2 {
   color: #667eea;
-  margin-top: 0;
+  font-size: 2.8rem;
+  margin-bottom: 1rem;
+}
+
+.welcome-section .highlight {
+    color: #764ba2;
 }
 
 .welcome-section p {
   color: #666;
+  font-size: 1.3rem;
   line-height: 1.6;
+}
+
+.welcome-section .sub-text {
+    font-size: 1.1rem;
+    margin-top: 1rem;
+    opacity: 0.8;
 }
 
 .features-section {
   background-color: white;
-  padding: 2rem;
+  padding: 3rem;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
 }
 
 .features-section h3 {
   color: #667eea;
-  margin-top: 0;
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
 }
 
-.features-section ul {
-  list-style-position: inside;
-  color: #555;
+.features-list {
+  list-style: none; /* Quitamos los puntos por defecto */
+  padding: 0;
 }
 
-.features-section li {
-  margin: 0.5rem 0;
-  padding-left: 1rem;
+.features-list li {
+  margin: 1.2rem 0;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: #444;
 }
 
-@media (max-width: 768px) {
+.features-list li i {
+    color: #667eea;
+    font-size: 1.8rem;
+}
+
+/* Actions Panel & Cards */
+.actions-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem; /* Más espacio entre las tarjetas de acción */
+}
+
+.action-card {
+    display: flex;
+    align-items: center;
+    padding: 2.5rem;
+    border-radius: 20px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.action-card .icon-box {
+    background-color: rgba(255, 255, 255, 0.2);
+    width: 80px;
+    height: 80px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 2rem;
+}
+
+.action-card i {
+    font-size: 3.5rem;
+}
+
+.action-card h4 {
+    font-size: 2rem;
+    margin: 0;
+}
+
+.action-card p {
+    margin: 5px 0 0 0;
+    opacity: 0.8;
+    font-size: 1.1rem;
+}
+
+.action-card.create {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+}
+
+.action-card.manage {
+    background: linear-gradient(45deg, #4facfe, #00f2fe);
+}
+
+.action-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+}
+
+/* Responsividad para móviles */
+@media (max-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    .actions-panel {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 800px) {
   .header {
     flex-direction: column;
     gap: 1rem;
@@ -98,13 +272,12 @@
   }
 
   .header h1 {
-    font-size: 1.5rem;
+    font-size: 3rem; 
+  
+    text-decoration: none;
   }
 
-  .user-info {
-    flex-direction: column;
-    gap: 1rem;
-  }
+  
 
   .main-content {
     padding: 1.5rem 1rem;
@@ -112,6 +285,307 @@
 
   .welcome-section,
   .features-section {
-    padding: 1.5rem;
+    padding: 4rem;
+  }
+}
+/* Contenedor principal de la barra lateral */
+.menu-main {
+  height: 100vh;
+  background-color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 300px;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.05); 
+  z-index: 1000; /* Asegura que esté por encima del fondo */
+  transition: width 0.3s ease, background-color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  overflow: visible; /* Cambiado a visible para que la flecha no se corte */
+}
+
+/* Modo Oscuro: Sidebar */
+.home-container.dark .menu-main {
+    background-color: #18191a;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+}
+
+/* Ancho contraído */
+.menu-main.close {
+    width: 88px;
+}
+
+/* Contenedor principal del encabezado */
+.menu-main .text-header-menu {
+  position: relative; /* Importante para que el icono absoluto se posicione respecto a esto */
+  display: flex;
+  align-items: center;
+  padding: 20px 0 20px 19px; /* Alineación base */
+}
+
+/* Agrupa el logo y los textos en una fila */
+.menu-main .logo-details {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Estilos para el logo cuadrado "CL" */
+.menu-main .logo-box {
+  background-color: #667eea;
+  color: white;
+  height: 50px;
+  width: 50px;
+  border-radius: 8px; /* Bordes redondeados del cuadrado */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/* Apila los textos verticalmente */
+.menu-main .text-titles {
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-main .name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  transition: color 0.3s ease;
+}
+
+.menu-main .profession {
+  font-size: 1.1rem;
+  color: #707070;
+}
+
+.home-container.dark .menu-main .name { color: #f6f5ff; }
+.home-container.dark .menu-main .profession { color: #ccc; }
+
+/* Estilos para el ícono circular del borde */
+.menu-main .toggle-btn {
+  position: absolute;
+  top: 50%;
+  right: -15px; /* Ajustado para que no se corte */
+  transform: translateY(-50%);
+  height: 30px;
+  width: 30px;
+  background-color: #667eea;
+  color: white;
+  border-radius: 50%; /* Lo hace un círculo perfecto */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   ESTILOS DE LA LISTA DE NAVEGACIÓN (MENU-SITE)
+   ========================================================================== */
+
+.menu-main .menu-link {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+/* Contenedor individual de cada item del menú */
+.menu-main .nav-link {
+    height: 60px; /* Un poco más alto para iconos grandes */
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
+    padding-left: 19px; /* Alineación base para todos los iconos */
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+}
+/* Efecto visual al pasar el mouse por encima de una opción */
+.menu-main .nav-link:hover {
+    background-color: #667eea;
+}
+/* Ajuste del enlace para que ocupe todo el ancho del item */
+.menu-main .nav-link a {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 15px;
+}
+
+/* Estilos para los iconos (Boxicons) */
+.menu-main .nav-link i {
+    font-size: 32px; 
+    color: #707070;
+    min-width: 50px; /* Consistencia con el logo-box */
+    display: flex;
+    justify-content: center;
+    transition: color 0.3s ease;
+}
+
+/* Cambia el color de icono y texto a blanco cuando se hace hover */
+.menu-main .nav-link:hover i,
+.menu-main .nav-link:hover .nav-text {
+    color: white;
+}
+
+/* Estilos para las etiquetas de texto del menú */
+.menu-main .nav-text {
+    font-size: 20px; /* Texto aumentado */
+    font-weight: 500;
+    color: #707070;
+    transition: color 0.3s ease, opacity 0.2s ease;
+    white-space: nowrap;
+}
+.home-container.dark .menu-main .nav-link i,
+.home-container.dark .menu-main .nav-text { color: #ccc; }
+
+/* Ocultar elementos visuales cuando el menú está cerrado */
+.menu-main.close .nav-text,
+.menu-main.close .text-titles,
+.menu-main.close .mode-text,
+.menu-main.close .sun-moon {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* ==========================================================================
+   ESTILOS DEL PIE DEL MENÚ (BOTTOM-CONTENT)
+   ========================================================================== */
+
+.menu-main .bottom-content {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+}
+
+/* Contenedor del modo oscuro */
+.menu-main .mode {
+    background-color: #f0f2ff; /* Color claro por defecto */
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 50px;
+    margin: 10px 0; 
+    border-radius: 6px;
+    padding-left: 19px; /* Alineado perfectamente con los iconos de arriba */
+    transition: background-color 0.3s ease, padding-left 0.3s ease;
+}
+
+/* Modo Oscuro: Fondo del interruptor */
+.home-container.dark .mode { background-color: #3a3b3c; }
+
+/* Iconos de Sol y Luna */
+.menu-main .sun-moon {
+    height: 50px;
+    width: 50px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.menu-main .sun-moon i {
+    position: absolute;
+    font-size: 28px;
+    color: #707070;
+    transition: all 0.3s ease;
+}
+
+.menu-main .sun-moon i.sun {
+    opacity: 0; /* Oculto por defecto, se activa en modo oscuro */
+}
+
+/* Texto del modo */
+.menu-main .mode-text {
+    font-size: 18px;
+    font-weight: 500;
+    color: #707070;
+    white-space: nowrap;
+    transition: color 0.3s ease;
+}
+.home-container.dark .mode-text { color: #ccc; }
+
+/* El interruptor (Switch) */
+.menu-main .toggle-switch {
+    position: absolute;
+    right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 60px;
+    cursor: pointer;
+}
+
+/* Centrar el switch cuando el menú está cerrado */
+.menu-main.close .toggle-switch {
+    right: 14px; /* (88px total - 60px)/2 = 14px para centrar */
+}
+
+.toggle-switch .switch {
+    position: absolute;
+    height: 22px;
+    width: 40px;
+    border-radius: 25px;
+    background-color: #ddd;
+    transition: background-color 0.3s ease;
+}
+
+.switch::before {
+    content: '';
+    position: absolute;
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    top: 50%;
+    left: 5px;
+    transform: translateY(-50%);
+    background-color: white;
+    transition: left 0.3s ease;
+}
+
+/* ==========================================================================
+   ESTADOS DE MODO OSCURO (UI INTERFACE)
+   ========================================================================== */
+
+/* Secciones de contenido en modo oscuro */
+.home-container.dark .welcome-section,
+.home-container.dark .features-section {
+    background-color: #242526;
+    color: #f6f5ff;
+}
+
+.home-container.dark .welcome-section p,
+.home-container.dark .features-section ul { color: #ccc; }
+
+.home-container.dark .switch::before {
+    left: 20px;
+}
+
+.home-container.dark .switch {
+    background-color: #667eea;
+}
+
+/* Alternancia de iconos Sol/Luna */
+.home-container.dark .sun-moon i.sun { opacity: 1; }
+.home-container.dark .sun-moon i.moon { opacity: 0; }
+
+/* Ajuste modo oscuro para el header */
+.home-container.dark .header {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Definición de la animación profesional */
+@keyframes fadeInDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

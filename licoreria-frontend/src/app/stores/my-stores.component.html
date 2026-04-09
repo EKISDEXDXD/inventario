@@ -1,0 +1,19 @@
+<div class="stores-container">
+  <header class="stores-header">
+    <h1>Mis Tiendas</h1>
+    <button class="back-btn" (click)="goBack()">← Volver</button>
+  </header>
+
+  <div class="stores-list">
+    <div *ngIf="stores.length === 0" class="no-stores">
+      <p>No tienes tiendas registradas aún.</p>
+    </div>
+
+    <div *ngFor="let store of stores" class="store-card">
+      <h3>{{ store.name }}</h3>
+      <p>{{ store.description }}</p>
+      <span class="manager-badge">Encargado: {{ store.manager }}</span>
+      <button class="delete-btn" (click)="deleteStore(store.id)">Eliminar</button>
+    </div>
+  </div>
+</div>

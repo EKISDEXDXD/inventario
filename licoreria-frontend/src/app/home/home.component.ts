@@ -13,6 +13,9 @@ import { HasUnsavedChanges } from '../common/without-unsaved-changes-guard.spec'
 })
 export class HomeComponent implements HasUnsavedChanges{
   username = '';
+  isMenuOpen = true; // El menú inicia abierto por defecto
+  isDarkMode = false; // Estado del modo oscuro
+
   hasUnsavedChanges(): boolean {
     return false;
   }
@@ -37,6 +40,29 @@ export class HomeComponent implements HasUnsavedChanges{
         this.username = 'Usuario';
       }
     }
+  }
+
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  toggleDarkMode() {
+    this.isDarkMode = !this.isDarkMode;
+  }
+
+  goToHome() {
+    this.isMenuOpen = false;
+    this.router.navigate(['/home']);
+  }
+
+  goToMyStores() {
+    this.isMenuOpen = false;
+    this.router.navigate(['/my-stores']);
+  }
+
+  goToCreateStore() {
+    this.isMenuOpen = false;
+    this.router.navigate(['/create-store']);
   }
 
   logout() {

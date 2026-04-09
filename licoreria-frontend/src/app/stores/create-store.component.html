@@ -1,0 +1,59 @@
+<div class="create-store-container">
+  <header class="create-header">
+    <h1>Crear Nueva Tienda</h1>
+    <button class="back-btn" (click)="goBack()">← Volver</button>
+  </header>
+
+  <div class="form-wrapper">
+    <form (ngSubmit)="createStore()">
+      <div class="form-group">
+        <label for="name">Nombre de la Tienda:</label>
+        <input 
+          type="text" 
+          id="name" 
+          [(ngModel)]="formData.name" 
+          name="name"
+          placeholder="Ej: Tienda Centro"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="description">Descripción:</label>
+        <textarea 
+          id="description" 
+          [(ngModel)]="formData.description" 
+          name="description"
+          placeholder="Describe tu tienda..."
+          rows="4"
+          required
+        ></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="manager">Encargado de la Tienda:</label>
+        <select 
+          id="manager" 
+          [(ngModel)]="formData.manager" 
+          name="manager"
+          required
+        >
+          <option value="">Selecciona un encargado</option>
+          <option *ngFor="let user of users" [value]="user.username">
+            {{ user.username }}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="submit-btn" [disabled]="isLoading">
+          {{ isLoading ? 'Creando...' : 'Crear Tienda' }}
+        </button>
+      </div>
+
+      <div *ngIf="successMessage" class="success-message">
+        ✓ {{ successMessage }}
+      </div>
+    </form>
+  </div>
+</div>
