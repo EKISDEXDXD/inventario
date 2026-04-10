@@ -1,7 +1,6 @@
 package com.inventario.licoreria.modules.store.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 public class StoreCreateDTO {
 
