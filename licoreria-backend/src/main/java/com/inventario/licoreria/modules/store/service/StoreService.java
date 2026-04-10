@@ -53,6 +53,14 @@ public class StoreService {
         return convertToResponseDTO(saved);
     }
 
+    public void delete(Long id, String username) {
+        Store store = findStoreById(id);
+        if (!store.getManager().getUsername().equals(username)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No puedes eliminar una tienda que no es tuya");
+        }
+        storeRepository.delete(store);
+    }
+
     private Store findStoreById(Long id) {
         return storeRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tienda no encontrada"));

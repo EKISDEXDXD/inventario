@@ -1,0 +1,131 @@
+<div class="movimientos-container">
+  <header class="movimientos-header">
+    <button class="back-btn" (click)="goBack()">← Volver al Dashboard</button>
+    <h1 *ngIf="store">📈 Movimientos - {{ store.name }}</h1>
+  </header>
+
+  <!-- Formulario de Movimiento -->
+  <div class="form-section">
+    <h3>Registrar Movimiento</h3>
+    <form (ngSubmit)="registerMovement()" class="movement-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Tipo:</label>
+          <select [(ngModel)]="movement.type" name="type" required>
+            <option value="ENTRADA">Entrada</option>
+            <option value="SALIDA">Salida</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Producto:</label>
+          <select [(ngModel)]="movement.productId" name="productId" required>
+            <option value="0">Seleccionar producto</option>
+            <option *ngFor="let product of products" [value]="product.id">{{ product.name }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Cantidad:</label>
+          <input type="number" [(ngModel)]="movement.quantity" name="quantity" min="1" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Motivo:</label>
+          <select [(ngModel)]="movement.reason" name="reason">
+            <option value="VENTA">Venta</option>
+            <option value="COMPRA">Compra</option>
+            <option value="DEVOLUCION">Devolución</option>
+            <option value="AJUSTE">Ajuste</option>
+            <option value="PERDIDA">Pérdida</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <button type="submit" class="submit-btn">Registrar Movimiento</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Registro de Movimientos -->
+  <div class="transactions-section">
+    <div class="section-header">
+      <h3>Historial de Movimientos</h3>
+      <button class="refresh-btn" (click)="loadTransactions()" title="Actualizar lista">🔄</button>
+    </div>
+
+    <div *ngIf="loading" class="loading">
+      Cargando movimientos...
+    </div>
+
+    <div *ngIf="!loading">
+      <div *ngIf="transactions.length === 0" class="no-transactions">
+        <p>No hay movimientos registrados aún</p>
+      </div>
+
+      <table *ngIf="transactions.length > 0" class="transactions-table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Tipo</th>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Motivo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let transaction of transactions">
+            <td>{{ transaction.dateTime | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>
+              <span class="type-badge" [ngClass]="{'entrada': transaction.type === 'ENTRADA', 'salida': transaction.type === 'SALIDA'}">
+                {{ transaction.type }}
+              </span>
+            </td>
+            <td>{{ getProductName(transaction.productId) }}</td>
+            <td>{{ transaction.quantity }}</td>
+            <td>{{ transaction.type === 'ENTRADA' ? 'Compra' : 'Venta' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  
+
+   <!-- Lista de Productos -->
+  <div class="products-section">
+    <div class="search-bar">
+      <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Buscar productos..." class="search-input">
+      <button class="refresh-btn" (click)="loadStoreProducts()" title="Actualizar lista">🔄</button>
+    </div>
+
+    <div *ngIf="filteredProducts.length === 0" class="no-products">
+      <p>{{ searchTerm ? 'No se encontraron productos' : 'No hay productos en esta tienda' }}</p>
+    </div>
+
+    <table *ngIf="filteredProducts.length > 0" class="products-table">
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Descripción</th>
+          <th>Stock</th>
+          <th>Costo</th>
+          <th>Precio</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of filteredProducts">
+          <td>{{ product.name }}</td>
+          <td>{{ product.description }}</td>
+          <td>
+            <span class="stock-badge" [ngClass]="{'low': product.stock < 10, 'out': product.stock === 0, 'normal': product.stock >= 10}">
+              {{ product.stock }}
+            </span>
+          </td>
+          <td>${{ product.cost }}</td>
+          <td>${{ product.price }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

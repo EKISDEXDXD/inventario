@@ -14,7 +14,10 @@
       <p>{{ store.description }}</p>
       <p class="address">📍 {{ store.address }}</p>
       <span class="manager-badge">Encargado: {{ store.managerUsername }}</span>
-      <button class="manage-btn" (click)="$event.stopPropagation()">Gestionar Inventario →</button>
+      <div class="store-actions">
+        <button class="manage-btn" (click)="$event.stopPropagation()">Gestionar Inventario →</button>
+        <button class="delete-btn" (click)="$event.stopPropagation(); deleteStore(store.id)">🗑️ Eliminar Tienda</button>
+      </div>
     </div>
   </div>
 </div>

@@ -1,0 +1,109 @@
+<div class="inventario-container">
+  <header class="inventario-header">
+    <button class="back-btn" (click)="goBack()">← Volver al Dashboard</button>
+    <h1 *ngIf="store">📦 Inventario - {{ store.name }}</h1>
+  </header>
+
+  <!-- Alertas de Stock -->
+  <div class="alerts-section">
+    <div class="alert-card warning" *ngIf="getLowStockProducts().length > 0">
+      <h3>⚠️ Productos con Stock Bajo</h3>
+      <ul>
+        <li *ngFor="let product of getLowStockProducts()">{{ product.name }} ({{ product.stock }} unidades)</li>
+      </ul>
+    </div>
+    <div class="alert-card danger" *ngIf="getOutOfStockProducts().length > 0">
+      <h3>🚨 Productos Sin Stock</h3>
+      <ul>
+        <li *ngFor="let product of getOutOfStockProducts()">{{ product.name }}</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Crear Producto -->
+  <div class="create-section">
+    <button class="toggle-btn" (click)="toggleCreateForm()">
+      {{ showCreateForm ? '❌ Ocultar' : '➕ Crear Producto' }}
+    </button>
+
+    <div *ngIf="showCreateForm" class="create-form">
+      <h3>Crear Nuevo Producto</h3>
+      <form (ngSubmit)="createProduct()">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nombre:</label>
+            <input type="text" [(ngModel)]="newProduct.name" name="name" required>
+          </div>
+          <div class="form-group">
+            <label>Descripción:</label>
+            <input type="text" [(ngModel)]="newProduct.description" name="description" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Costo:</label>
+            <input type="number" [(ngModel)]="newProduct.cost" name="cost" step="0.01" min="0" required>
+          </div>
+          <div class="form-group">
+            <label>Precio:</label>
+            <input type="number" [(ngModel)]="newProduct.price" name="price" step="0.01" min="0" required>
+          </div>
+          <div class="form-group">
+            <label>Stock Inicial:</label>
+            <input type="number" [(ngModel)]="newProduct.stock" name="stock" min="0" required>
+          </div>
+        </div>
+        <button type="submit" class="submit-btn">Crear Producto</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Lista de Productos -->
+  <div class="products-section">
+    <div class="search-bar">
+      <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Buscar productos..." class="search-input">
+      <button class="refresh-btn" (click)="loadStoreProducts()" title="Actualizar lista">🔄</button>
+    </div>
+
+    <div *ngIf="loading" class="loading">
+      Cargando productos...
+    </div>
+
+    <div *ngIf="!loading">
+      <div *ngIf="filteredProducts.length === 0" class="no-products">
+        <p>{{ searchTerm ? 'No se encontraron productos' : 'No hay productos en esta tienda' }}</p>
+      </div>
+
+      <table *ngIf="filteredProducts.length > 0" class="products-table">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Descripción</th>
+            <th>Stock</th>
+            <th>Costo</th>
+            <th>Precio</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let product of filteredProducts">
+            <td>{{ product.name }}</td>
+            <td>{{ product.description }}</td>
+            <td>
+              <span class="stock-badge" [ngClass]="{'low': product.stock < 10, 'out': product.stock === 0, 'normal': product.stock >= 10}">
+                {{ product.stock }}
+              </span>
+            </td>
+            <td>${{ product.cost }}</td>
+            <td>${{ product.price }}</td>
+            <td>
+              <button class="btn-stock" (click)="adjustStock(product.id, 5)">+5</button>
+              <button class="btn-stock" (click)="adjustStock(product.id, -5)">-5</button>
+              <button class="btn-delete" (click)="deleteProduct(product.id)">🗑️</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

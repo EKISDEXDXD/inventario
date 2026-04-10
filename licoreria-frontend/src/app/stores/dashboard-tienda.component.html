@@ -10,50 +10,30 @@
     </div>
   </header>
 
-  <div class="content-container">
-    <div *ngIf="loading" class="loading">
-      Cargando inventario...
+  <!-- Info Box -->
+  <div class="info-box">
+    <div class="info-content">
+      <h3>🛒 Gestión de Inventario</h3>
+      <p>Administra el inventario de tu tienda con facilidad. Visualiza estadísticas, gestiona productos y registra movimientos de stock.</p>
     </div>
+  </div>
 
-    <div *ngIf="!loading" class="products-section">
-      <h2>Inventario de {{ store?.name }}</h2>
-      
-      <div *ngIf="products.length === 0" class="no-products">
-        <p>No hay productos en esta tienda aún</p>
-      </div>
-
-      <table *ngIf="products.length > 0" class="products-table">
-        <thead>
-          <tr>
-            <th>Producto</th>
-            <th>Descripción</th>
-            <th>Stock Actual</th>
-            <th>Costo</th>
-            <th>Precio</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let product of products" class="product-row">
-            <td class="product-name">{{ product.name }}</td>
-            <td class="product-description">{{ product.description }}</td>
-            <td class="product-stock">
-              <span class="stock-badge" [ngClass]="{'low': product.stock < 10, 'medium': product.stock >= 10 && product.stock <= 50, 'high': product.stock > 50}">
-                {{ product.stock }}
-              </span>
-            </td>
-            <td class="product-cost">${{ product.cost }}</td>
-            <td class="product-price">${{ product.price }}</td>
-            <td class="product-actions">
-              <div class="action-buttons">
-                <button class="btn-add-stock" (click)="adjustStock(product.id, 5)" title="Agregar 5 unidades">+5</button>
-                <button class="btn-remove-stock" (click)="adjustStock(product.id, -5)" title="Restar 5 unidades">-5</button>
-                <button class="btn-delete" (click)="deleteProduct(product.id)" title="Eliminar producto">🗑️</button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+  <!-- Function Cards -->
+  <div class="function-cards">
+    <div class="card" (click)="navigateTo('inventario')">
+      <div class="card-icon">📊</div>
+      <h4>Dashboard Info</h4>
+      <p>Estadísticas y métricas generales</p>
+    </div>
+    <div class="card" (click)="navigateTo('inventario')">
+      <div class="card-icon">📦</div>
+      <h4>Inventario</h4>
+      <p>Gestión de productos y stock</p>
+    </div>
+    <div class="card" (click)="navigateTo('movimientos')">
+      <div class="card-icon">📈</div>
+      <h4>Movimientos</h4>
+      <p>Historial de entradas y salidas</p>
     </div>
   </div>
 </div>

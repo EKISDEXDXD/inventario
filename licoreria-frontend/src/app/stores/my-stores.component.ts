@@ -63,23 +63,38 @@ export class MyStoresComponent implements OnInit {
     this.router.navigate(['/tienda', storeId]);
   }
 
-  // Restauramos la función para eliminar
+  // Función para eliminar tienda con doble confirmación
   deleteStore(id: number) {
-    if (confirm('¿Estás seguro de que quieres eliminar esta tienda?')) {
-      const token = localStorage.getItem('token');
-      const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+    const store = this.stores.find(s => s.id === id);
+    if (!store) return;
 
-      this.http.delete(`${this.apiUrl}/${id}`, { headers }).subscribe({
-        next: () => {
-          this.stores = this.stores.filter(s => s.id !== id);
-          this.cdr.detectChanges(); // Actualizamos la vista al eliminar
-          console.log('Tienda eliminada');
-        },
-        error: (error) => {
-          console.error('Error al eliminar:', error);
-          alert('No se pudo eliminar la tienda.');
-        }
-      });
+    // Primera confirmación
+    const firstConfirm = confirm(`¿Estás seguro de que quieres eliminar la tienda "${store.name}"?`);
+    if (!firstConfirm) return;
+
+    // Segunda confirmación
+    const secondConfirm = confirm(`⚠️ ¡ATENCIÓN! Esta acción no se puede deshacer.\n\n¿Realmente quieres eliminar permanentemente la tienda "${store.name}" y todos sus datos asociados?`);
+    if (!secondConfirm) return;
+
+    // Proceder con la eliminación
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('Sesión expirada. Inicia sesión nuevamente.');
+      return;
     }
+
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+
+    this.http.delete(`${this.apiUrl}/${id}`, { headers }).subscribe({
+      next: () => {
+        this.stores = this.stores.filter(s => s.id !== id);
+        this.cdr.detectChanges();
+        alert(`La tienda "${store.name}" ha sido eliminada exitosamente.`);
+      },
+      error: (error) => {
+        console.error('Error al eliminar:', error);
+        alert('No se pudo eliminar la tienda. Inténtalo de nuevo.');
+      }
+    });
   }
 }

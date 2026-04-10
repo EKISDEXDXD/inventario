@@ -35,4 +35,10 @@ public class StoreController {
     public ResponseEntity<StoreResponseDTO> create(@Valid @RequestBody StoreCreateDTO dto, Authentication authentication) {
         return ResponseEntity.status(201).body(storeService.create(dto, authentication.getName()));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id, Authentication authentication) {
+        storeService.delete(id, authentication.getName());
+        return ResponseEntity.noContent().build();
+    }
 }

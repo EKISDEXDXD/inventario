@@ -55,6 +55,15 @@ public class ProductService {
         return productRepository.save(product);
     }
 
+    public void delete(@NonNull final Long id, String username) {
+        final Product product = findById(id);
+        // Verificar que el usuario autenticado es el manager de la tienda
+        if (!product.getStore().getManager().getUsername().equals(username)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No puedes eliminar un producto que no es de tu tienda");
+        }
+        productRepository.delete(product);
+    }
+
     public void delete(@NonNull final Long id) {
         final Product product = findById(id);
         productRepository.delete(product);

@@ -7,7 +7,7 @@ import com.inventario.licoreria.modules.products.service.ProductService;
 import com.inventario.licoreria.modules.inventory.service.TransactionService;
 import com.inventario.licoreria.modules.inventory.dto.TransactionDTO;
 import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity;import org.springframework.security.core.Authentication;import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -62,8 +62,8 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable @NonNull Long id) {
-        productService.delete(id);
+    public ResponseEntity<Void> delete(@PathVariable @NonNull Long id, Authentication authentication) {
+        productService.delete(id, authentication.getName());
         return ResponseEntity.noContent().build();
     }
 

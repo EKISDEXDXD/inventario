@@ -16,6 +16,7 @@ export class DashboardTiendaComponent implements OnInit {
   store: any = null;
   products: any[] = [];
   loading: boolean = true;
+  activeTab: string = 'inventory'; // Default tab
   
   private apiStoresUrl = 'http://localhost:8081/api/stores';
   private apiProductsUrl = 'http://localhost:8081/api/products';
@@ -89,6 +90,10 @@ export class DashboardTiendaComponent implements OnInit {
 
   goBack() {
     this.router.navigate(['/my-stores']);
+  }
+
+  navigateTo(section: string) {
+    this.router.navigate([section], { relativeTo: this.route });
   }
 
   adjustStock(productId: number, delta: number) {
