@@ -7,6 +7,7 @@ import { withoutUnsavedChangesGuard } from './common/without-unsaved-changes-gua
 import { LogoutGuard } from './common/logout.guard.spec';
 import { MyStoresComponent } from './stores/my-stores.component';
 import { CreateStoreComponent } from './stores/create-store.component';
+import { DashboardTiendaComponent } from './stores/dashboard-tienda.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -15,5 +16,6 @@ export const routes: Routes = [
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard], canDeactivate: [LogoutGuard] },
   { path: 'my-stores', component: MyStoresComponent, canActivate: [AuthGuard] },
   { path: 'create-store', component: CreateStoreComponent, canActivate: [AuthGuard] },
+  { path: 'tienda/:id', component: DashboardTiendaComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: '/login' }
 ];

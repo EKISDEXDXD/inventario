@@ -9,11 +9,12 @@
       <p>No tienes tiendas registradas aún.</p>
     </div>
 
-    <div *ngFor="let store of stores" class="store-card">
+    <div *ngFor="let store of stores" class="store-card" (click)="manageStore(store.id)">
       <h3>{{ store.name }}</h3>
       <p>{{ store.description }}</p>
-      <span class="manager-badge">Encargado: {{ store.manager }}</span>
-      <button class="delete-btn" (click)="deleteStore(store.id)">Eliminar</button>
+      <p class="address">📍 {{ store.address }}</p>
+      <span class="manager-badge">Encargado: {{ store.managerUsername }}</span>
+      <button class="manage-btn" (click)="$event.stopPropagation()">Gestionar Inventario →</button>
     </div>
   </div>
 </div>

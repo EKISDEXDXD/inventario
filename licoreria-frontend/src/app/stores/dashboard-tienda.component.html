@@ -1,0 +1,59 @@
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <div class="header-content">
+      <button class="back-btn" (click)="goBack()">← Volver</button>
+      <div *ngIf="store" class="store-info">
+        <h1>{{ store.name }}</h1>
+        <p class="store-description">{{ store.description }}</p>
+        <p class="store-address">📍 {{ store.address }}</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="content-container">
+    <div *ngIf="loading" class="loading">
+      Cargando inventario...
+    </div>
+
+    <div *ngIf="!loading" class="products-section">
+      <h2>Inventario de {{ store?.name }}</h2>
+      
+      <div *ngIf="products.length === 0" class="no-products">
+        <p>No hay productos en esta tienda aún</p>
+      </div>
+
+      <table *ngIf="products.length > 0" class="products-table">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Descripción</th>
+            <th>Stock Actual</th>
+            <th>Costo</th>
+            <th>Precio</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let product of products" class="product-row">
+            <td class="product-name">{{ product.name }}</td>
+            <td class="product-description">{{ product.description }}</td>
+            <td class="product-stock">
+              <span class="stock-badge" [ngClass]="{'low': product.stock < 10, 'medium': product.stock >= 10 && product.stock <= 50, 'high': product.stock > 50}">
+                {{ product.stock }}
+              </span>
+            </td>
+            <td class="product-cost">${{ product.cost }}</td>
+            <td class="product-price">${{ product.price }}</td>
+            <td class="product-actions">
+              <div class="action-buttons">
+                <button class="btn-add-stock" (click)="adjustStock(product.id, 5)" title="Agregar 5 unidades">+5</button>
+                <button class="btn-remove-stock" (click)="adjustStock(product.id, -5)" title="Restar 5 unidades">-5</button>
+                <button class="btn-delete" (click)="deleteProduct(product.id)" title="Eliminar producto">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

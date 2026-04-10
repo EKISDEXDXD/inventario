@@ -58,6 +58,10 @@ public class StoreService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tienda no encontrada"));
     }
 
+    public Store findStoreEntity(Long id) {
+        return findStoreById(id);
+    }
+
     private StoreResponseDTO convertToResponseDTO(Store store) {
         return new StoreResponseDTO(
                 store.getId(),

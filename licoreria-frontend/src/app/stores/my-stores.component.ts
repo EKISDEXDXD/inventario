@@ -59,6 +59,10 @@ export class MyStoresComponent implements OnInit {
     this.router.navigate(['/home']); // Asegúrate de que esta sea tu ruta correcta
   }
 
+  manageStore(storeId: number) {
+    this.router.navigate(['/tienda', storeId]);
+  }
+
   // Restauramos la función para eliminar
   deleteStore(id: number) {
     if (confirm('¿Estás seguro de que quieres eliminar esta tienda?')) {

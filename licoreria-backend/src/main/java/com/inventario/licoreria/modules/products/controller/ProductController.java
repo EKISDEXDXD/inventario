@@ -46,6 +46,11 @@ public class ProductController {
         return productService.getSuggestions(query);
     }
 
+    @GetMapping("/store/{storeId}")
+    public List<Product> getByStore(@PathVariable @NonNull Long storeId) {
+        return productService.findByStoreId(storeId);
+    }
+
     @PostMapping
     public Product create(@Valid @RequestBody ProductDTO dto) {
         return productService.create(dto);

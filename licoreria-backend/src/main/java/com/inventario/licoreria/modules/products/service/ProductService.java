@@ -3,6 +3,7 @@ package com.inventario.licoreria.modules.products.service;
 import com.inventario.licoreria.modules.products.dto.ProductDTO;
 import com.inventario.licoreria.modules.products.model.Product;
 import com.inventario.licoreria.modules.products.repository.ProductRepository;
+import com.inventario.licoreria.modules.store.service.StoreService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -14,9 +15,11 @@ import org.springframework.lang.NonNull;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final StoreService storeService;
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, StoreService storeService) {
         this.productRepository = productRepository;
+        this.storeService = storeService;
     }
 
     public List<Product> findAll() {
@@ -31,6 +34,7 @@ public class ProductService {
         product.setPrice(dto.getPrice());
         product.setStock(dto.getStock());
         product.setInitialStock(dto.getStock());
+        product.setStore(storeService.findStoreEntity(dto.getStoreId()));
         return productRepository.save(product);
     }
 
@@ -78,6 +82,10 @@ public class ProductService {
             return List.of();
         }
         return productRepository.searchSuggestions(query.trim());
+    }
+
+    public List<Product> findByStoreId(@NonNull Long storeId) {
+        return productRepository.findByStoreId(storeId);
     }
 
 }

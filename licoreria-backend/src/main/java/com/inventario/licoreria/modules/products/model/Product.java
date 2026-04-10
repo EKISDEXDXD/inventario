@@ -1,9 +1,12 @@
 package com.inventario.licoreria.modules.products.model;
 
+import com.inventario.licoreria.modules.store.model.Store;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import java.math.BigDecimal;
 import org.springframework.lang.NonNull;
 
@@ -19,6 +22,10 @@ public class Product {
     private BigDecimal price;
     private Integer stock;
     private Integer initialStock;
+
+    @ManyToOne
+    @JoinColumn(name = "store_id", nullable = false)
+    private Store store;
 
     public Product() {
     }
@@ -79,5 +86,13 @@ public class Product {
 
     public void setInitialStock(Integer initialStock) {
         this.initialStock = initialStock;
+    }
+
+    public Store getStore() {
+        return store;
+    }
+
+    public void setStore(Store store) {
+        this.store = store;
     }
 }

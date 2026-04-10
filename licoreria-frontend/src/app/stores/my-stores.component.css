@@ -54,6 +54,7 @@
   padding: 1.5rem;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .store-card:hover {
@@ -72,6 +73,12 @@
   font-size: 0.95rem;
 }
 
+.address {
+  font-size: 0.9rem;
+  color: #888;
+  margin: 0.5rem 0;
+}
+
 .manager-badge {
   display: block;
   margin: 1rem 0;
@@ -80,6 +87,24 @@
   padding: 0.5rem 1rem;
   border-radius: 20px;
   font-size: 0.85rem;
+}
+
+.manage-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+}
+
+.manage-btn:hover {
+  transform: scale(1.02);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
 }
 
 .delete-btn {

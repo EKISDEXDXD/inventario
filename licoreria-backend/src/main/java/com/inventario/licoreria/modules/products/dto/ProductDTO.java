@@ -21,6 +21,8 @@ public class ProductDTO {
     @NotNull(message = "El stock es obligatorio")
     @PositiveOrZero(message = "El stock debe ser mayor o igual a cero")
     private Integer stock;
+    @NotNull(message = "El ID de la tienda es obligatorio")
+    private Long storeId;
 
     public ProductDTO() {
     }
@@ -65,5 +67,11 @@ public class ProductDTO {
         this.stock = stock;
     }
 
-    
+    public Long getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(Long storeId) {
+        this.storeId = storeId;
+    }
 }
