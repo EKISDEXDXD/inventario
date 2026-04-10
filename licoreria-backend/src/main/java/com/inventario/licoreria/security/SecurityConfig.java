@@ -13,7 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-// --- 1. NUEVOS IMPORTS NECESARIOS PARA CORS ---
+// IMPORTANTE: Nuevos imports para CORS
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -31,8 +31,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // --- 2. ACTIVAR CORS EN LA CADENA DE SEGURIDAD ---
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource())) 
+        // AQUÍ SE ACTIVA EL CORS A NIVEL DE SEGURIDAD
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
@@ -50,22 +50,17 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // --- 3. CREAR EL BEAN CON LAS REGLAS DE CORS ---
+    // AQUÍ SE CONFIGURAN LAS REGLAS DE CORS
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // Permitir explícitamente el origen de tu aplicación Angular
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200")); 
-        // Permitir los métodos HTTP (OPTIONS es el que fallaba en tu preflight)
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        // Permitir que Angular envíe encabezados como Authorization (para tu JWT)
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
-        // Permitir el envío de credenciales si es necesario
         configuration.setAllowCredentials(true);
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        // Aplicar estas reglas a todas las rutas de la API (/**)
-        source.registerCorsConfiguration("/**", configuration); 
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 

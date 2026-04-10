@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core'; // Añadimos ChangeDetectorRef
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-my-stores',
@@ -11,30 +12,70 @@ import { Router } from '@angular/router';
 })
 export class MyStoresComponent implements OnInit {
   stores: any[] = [];
+  private apiUrl = 'http://localhost:8081/api/stores';
 
-  constructor(private router: Router) {}
+  // Inyectamos el ChangeDetectorRef
+  constructor(
+    private router: Router, 
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef 
+  ) {}
 
   ngOnInit() {
     this.loadStores();
   }
 
   loadStores() {
-    // TODO: Obtener tiendas del backend con HttpClient
-    // Por ahora datos de ejemplo
-    this.stores = [
-      { id: 1, name: 'Tienda Centro', description: 'Ubicada en el centro de la ciudad', manager: 'Admin' },
-      { id: 2, name: 'Tienda Sur', description: 'Zona sur de la ciudad', manager: 'Manager1' }
-    ];
+    const token = localStorage.getItem('token'); 
+    
+    if (!token) {
+      console.error("No se encontró token en localStorage");
+      return;
+    }
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    this.http.get<any[]>(this.apiUrl, { headers }).subscribe({
+      next: (data) => {
+        console.log('Tiendas cargadas exitosamente:', data);
+        this.stores = data; 
+        
+        // ¡ESTA ES LA MAGIA! Obligamos a Angular a actualizar la vista inmediatamente
+        this.cdr.detectChanges(); 
+      },
+      error: (err) => {
+        console.error('Error cargando tiendas:', err);
+        if(err.status === 403 || err.status === 401) {
+          alert("No tienes permiso o tu sesión expiró. Inicia sesión nuevamente.");
+        }
+      }
+    });
   }
 
+  // Restauramos la función para volver
   goBack() {
-    this.router.navigate(['/home']);
+    this.router.navigate(['/home']); // Asegúrate de que esta sea tu ruta correcta
   }
 
+  // Restauramos la función para eliminar
   deleteStore(id: number) {
-    // TODO: Implementar eliminación en backend
     if (confirm('¿Estás seguro de que quieres eliminar esta tienda?')) {
-      this.stores = this.stores.filter(s => s.id !== id);
+      const token = localStorage.getItem('token');
+      const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+
+      this.http.delete(`${this.apiUrl}/${id}`, { headers }).subscribe({
+        next: () => {
+          this.stores = this.stores.filter(s => s.id !== id);
+          this.cdr.detectChanges(); // Actualizamos la vista al eliminar
+          console.log('Tienda eliminada');
+        },
+        error: (error) => {
+          console.error('Error al eliminar:', error);
+          alert('No se pudo eliminar la tienda.');
+        }
+      });
     }
   }
 }
