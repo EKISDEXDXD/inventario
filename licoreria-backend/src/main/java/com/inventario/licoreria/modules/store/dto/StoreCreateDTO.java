@@ -11,8 +11,8 @@ public class StoreCreateDTO {
     @NotBlank(message = "La descripción de la tienda es obligatoria")
     private String description;
 
-    @NotNull(message = "El encargado debe ser un usuario registrado")
-    private Long managerId;
+    @NotBlank(message = "La dirección de la tienda es obligatoria")
+    private String address;
 
     public String getName() {
         return name;
@@ -30,11 +30,11 @@ public class StoreCreateDTO {
         this.description = description;
     }
 
-    public Long getManagerId() {
-        return managerId;
+    public String getAddress() {
+        return address;
     }
 
-    public void setManagerId(Long managerId) {
-        this.managerId = managerId;
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

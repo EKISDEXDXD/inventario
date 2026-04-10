@@ -1,11 +1,21 @@
 <div class="login-container">
-  <h2>Iniciar Sesión</h2>
-  <form (ngSubmit)="login()">
-    <input type="text" [(ngModel)]="username" name="username" placeholder="Usuario" required />
-    <input type="password" [(ngModel)]="password" name="password" placeholder="Contraseña" required />
-    <button type="submit">Entrar</button>
-    <div *ngIf="error" class="error">{{ error }}</div>
-  </form>
-  <button class="register-btn" (click)="goToRegister()">Crear cuenta</button>
-  <p class="register-link">¿No tienes cuenta? <a routerLink="/register">Crear una ahora</a></p>
+  <div class="login-card">
+    <div class="login-header">
+      <h2>Iniciar Sesión</h2>
+      <p>Accede a tu cuenta</p>
+    </div>
+    <form (ngSubmit)="login()">
+      <div class="form-group">
+        <label for="username">Usuario</label>
+        <input type="text" id="username" [(ngModel)]="username" name="username" placeholder="Ingresa tu usuario" required />
+      </div>
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" [(ngModel)]="password" name="password" placeholder="Ingresa tu contraseña" required />
+      </div>
+      <button type="submit" class="login-btn">Entrar</button>
+      <div *ngIf="error" class="error">{{ error }}</div>
+    </form>
+    <button class="register-btn" (click)="goToRegister()">Crear cuenta</button>
+  </div>
 </div>

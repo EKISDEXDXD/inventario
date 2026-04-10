@@ -1,123 +1,283 @@
+:host {
+    display: block;
+    width: 100%;
+}
+
 .create-store-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 2rem;
+    width: 100%;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 4rem;
+    box-sizing: border-box;
+    /* Si usas el sidebar en esta vista, descomenta la siguiente línea: */
+    /* padding-left: 300px; */
+}
+
+/* Ajuste cuando el menú está cerrado */
+:host-context(.close) .create-store-container {
+    padding-left: calc(88px + 2rem);
 }
 
 .create-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: white;
-  margin-bottom: 2rem;
+    width: 100%;
+    padding: 1.5rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    margin-bottom: 3rem;
+    color: white;
+    animation: fadeInDown 0.6s ease-out;
 }
 
 .create-header h1 {
-  margin: 0;
-  font-size: 2rem;
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
 }
 
 .back-btn {
-  padding: 0.75rem 1.5rem;
-  background-color: rgba(255, 255, 255, 0.2);
-  border: 2px solid white;
-  color: white;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
 }
 
 .back-btn:hover {
-  background-color: rgba(255, 255, 255, 0.3);
-  transform: scale(1.05);
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateX(-5px);
 }
 
 .form-wrapper {
-  background-color: white;
-  border-radius: 12px;
-  padding: 2rem;
-  max-width: 500px;
-  margin: 0 auto;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    background: rgba(255, 255, 255, 0.98);
+    padding: 3rem;
+    border-radius: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 600px;
+    animation: slideUp 0.6s ease-out;
+}
+
+.card-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.icon-box {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    height: 70px; /* Slightly larger icon box */
+    width: 70px;
+    border-radius: 18px; /* Consistent border-radius */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem; /* Larger icon */
+    font-weight: 800;
+    color: #667eea;
+    margin-bottom: 1rem;
+    margin: 0 auto 1.2rem;
+    box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+}
+
+.card-header h2 {
+    color: #1a1a1a;
+    font-size: 2.2rem; /* Larger heading */
+    font-weight: 800;
+    margin: 0;
+}
+
+.sub-text {
+    color: #6b7280;
+    margin-top: 0.5rem;
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
 }
 
 .form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #333;
-  font-weight: 600;
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #4a5568;
+    font-weight: 600;
+    font-size: 0.95rem; /* Slightly larger label font */
 }
 
-.form-group input,
-.form-group textarea,
-.form-group select {
-  width: 100%;
-  padding: 0.75rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-family: inherit;
-  transition: border-color 0.3s ease;
-  box-sizing: border-box;
+.input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
-  outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 8px rgba(102, 126, 234, 0.2);
+.input-container i {
+  position: absolute;
+  left: 16px;
+  color: #667eea;
+  font-size: 1.3rem;
 }
 
-.form-actions {
-  margin-top: 2rem;
+.input-container input,
+.input-container textarea {
+    width: 100%;
+    padding: 14px 16px 14px 52px; /* Adjust padding for icon */
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #f8fafc;
+    box-sizing: border-box;
+    box-sizing: border-box; /* Ensure padding doesn't increase width */
 }
 
-.submit-btn {
-  width: 100%;
-  padding: 1rem;
-  background-color: #667eea;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-weight: bold;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.input-container textarea {
+  padding-left: 16px; /* Textarea doesn't need icon padding */
+  padding-top: 14px;
+  resize: vertical; /* Allow vertical resizing */
+}
+
+.input-container input:focus,
+.input-container textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+.error-bubble, .success-bubble {
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.error-bubble {
+  background-color: #fef2f2;
+  color: #dc2626;
+  border-left: 4px solid #dc2626;
+}
+
+.success-bubble {
+  background-color: #f0fff4;
+  color: #2f855a;
+  border-left: 4px solid #2f855a;
+}
+
+.btn-create-store {
+    width: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 1rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .submit-btn:hover:not(:disabled) {
-  background-color: #764ba2;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(102, 126, 234, 0.4);
 }
 
 .submit-btn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .success-message {
-  margin-top: 1rem;
-  padding: 1rem;
-  background-color: #d4edda;
-  color: #155724;
-  border-radius: 6px;
-  text-align: center;
-  font-weight: bold;
-  animation: slideDown 0.3s ease;
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border-radius: 12px;
+    background: #f0fff4;
+    color: #2f855a;
+    border: 1px solid #c6f6d5;
+    text-align: center;
+    font-weight: 600;
 }
 
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
+.error-message {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border-radius: 12px;
+    background: #fff5f5;
+    color: #c53030;
+    border: 1px solid #fed7d7;
+    text-align: center;
+    font-weight: 600;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsividad móvil */
+@media (max-width: 768px) { /* Adjusted breakpoint */
+    .create-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    .create-header h1 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .back-btn {
+      width: 100%;
+      justify-content: center;
+    }
+    .store-card-form {
+        padding: 2rem;
+        width: 95%;
+    }
+    .card-header h2 { font-size: 1.8rem; }
+}
+
+@media (max-width: 480px) {
+  .store-card-form {
+    padding: 1.5rem;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  .card-header h2 { font-size: 1.5rem; }
+  .icon-box { height: 50px; width: 50px; font-size: 1.5rem; }
+  .input-container input,
+  .input-container textarea { padding: 12px 16px 12px 45px; }
+  .input-container i { left: 12px; font-size: 1.1rem; }
+  .input-container textarea { padding-left: 12px; }
 }

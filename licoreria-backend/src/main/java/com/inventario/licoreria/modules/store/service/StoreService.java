@@ -33,12 +33,12 @@ public class StoreService {
         return convertToResponseDTO(findStoreById(id));
     }
 
-    public StoreResponseDTO create(StoreCreateDTO dto) {
+    public StoreResponseDTO create(StoreCreateDTO dto, String username) {
         if (storeRepository.findAll().stream().anyMatch(store -> store.getName().equalsIgnoreCase(dto.getName()))) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El nombre de tienda ya existe");
         }
 
-        User manager = userService.findById(dto.getManagerId());
+        User manager = userService.findByUsername(username);
         if (manager == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El encargado no existe");
         }
@@ -46,6 +46,7 @@ public class StoreService {
         Store store = new Store();
         store.setName(dto.getName());
         store.setDescription(dto.getDescription());
+        store.setAddress(dto.getAddress());
         store.setManager(manager);
 
         Store saved = storeRepository.save(store);
@@ -62,6 +63,7 @@ public class StoreService {
                 store.getId(),
                 store.getName(),
                 store.getDescription(),
+                store.getAddress(),
                 store.getManager().getId(),
                 store.getManager().getUsername()
         );

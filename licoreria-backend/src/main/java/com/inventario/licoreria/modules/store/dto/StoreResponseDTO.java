@@ -5,13 +5,15 @@ public class StoreResponseDTO {
     private Long id;
     private String name;
     private String description;
+    private String address;
     private Long managerId;
     private String managerUsername;
 
-    public StoreResponseDTO(Long id, String name, String description, Long managerId, String managerUsername) {
+    public StoreResponseDTO(Long id, String name, String description, String address, Long managerId, String managerUsername) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.address = address;
         this.managerId = managerId;
         this.managerUsername = managerUsername;
     }
@@ -38,6 +40,14 @@ public class StoreResponseDTO {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public Long getManagerId() {

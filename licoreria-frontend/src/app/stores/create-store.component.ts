@@ -1,62 +1,62 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-create-store',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './create-store.component.html',
   styleUrls: ['./create-store.component.css']
 })
-export class CreateStoreComponent implements OnInit {
+export class CreateStoreComponent {
   formData = {
     name: '',
     description: '',
-    manager: ''
+    address: ''
   };
 
-  users: any[] = [];
   isLoading = false;
   successMessage = '';
+  errorMessage = '';
 
-  constructor(private router: Router) {}
-
-  ngOnInit() {
-    this.loadUsers();
-  }
-
-  loadUsers() {
-    // TODO: Obtener usuarios del backend con HttpClient
-    // Por ahora datos de ejemplo
-    this.users = [
-      { id: 1, username: 'admin' },
-      { id: 2, username: 'manager1' },
-      { id: 3, username: 'manager2' }
-    ];
-  }
+  constructor(private router: Router, private http: HttpClient) {}
 
   createStore() {
-    if (!this.formData.name || !this.formData.description || !this.formData.manager) {
-      alert('Por favor completa todos los campos');
+    if (!this.formData.name || !this.formData.description || !this.formData.address) {
+      this.errorMessage = 'Por favor completa todos los campos del formulario.';
       return;
     }
 
     this.isLoading = true;
-    // TODO: Enviar al backend con HttpClient
-    console.log('Creando tienda:', this.formData);
+    this.errorMessage = '';
+    this.successMessage = '';
 
-    // Simulación de éxito
-    setTimeout(() => {
-      this.successMessage = '¡Tienda creada exitosamente!';
-      this.formData = { name: '', description: '', manager: '' };
-      this.isLoading = false;
-      
-      setTimeout(() => {
-        this.router.navigate(['/my-stores']);
-      }, 2000);
-    }, 1000);
+    const token = localStorage.getItem('token');
+    const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined;
+    const payload = {
+      name: this.formData.name.trim(),
+      description: this.formData.description.trim(),
+      address: this.formData.address.trim()
+    };
+
+    this.http.post('http://localhost:8081/api/stores', payload, { headers }).subscribe({
+      next: () => {
+        this.successMessage = '¡Tienda creada exitosamente!';
+        this.formData = { name: '', description: '', address: '' };
+        this.isLoading = false;
+        setTimeout(() => {
+          this.router.navigate(['/my-stores']);
+        }, 1000);
+      },
+      error: (error) => {
+        console.error('CreateStoreComponent - Error al crear tienda:', error);
+        this.errorMessage = error?.error?.message || 'No fue posible crear la tienda. Revisa los datos e intenta de nuevo.';
+        this.isLoading = false;
+      }
+    });
   }
 
   goBack() {

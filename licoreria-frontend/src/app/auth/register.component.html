@@ -1,11 +1,66 @@
-<div class="register-container">
-  <h2>Crear cuenta</h2>
-  <form (ngSubmit)="register()">
-    <input type="text" [(ngModel)]="username" name="username" placeholder="Usuario" required />
-    <input type="password" [(ngModel)]="password" name="password" placeholder="Contraseña" required />
-    <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="Confirmar contraseña" required />
-    <button type="submit">Registrar</button>
-    <div *ngIf="error" class="error">{{ error }}</div>
-  </form>
-  <p class="login-link">¿Ya tienes cuenta? <a routerLink="/login">Iniciar sesión</a></p>
+<div class="register-wrapper">
+  <div class="register-card">
+    <div class="card-header">
+      <div class="logo-box">CL</div>
+      <h2>Crear Cuenta</h2>
+      <p class="sub-text">Únete a la plataforma de gestión</p>
+    </div>
+
+    <form (ngSubmit)="register()" #registerForm="ngForm">
+      <div class="form-group">
+        <label for="username">Usuario</label>
+        <div class="input-container">
+          <i class="bx bxs-user"></i>
+          <input 
+            type="text" 
+            id="username" 
+            name="username" 
+            [(ngModel)]="username" 
+            placeholder="Elige un nombre de usuario"
+            required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <div class="input-container">
+          <i class="bx bxs-lock-alt"></i>
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            [(ngModel)]="password" 
+            placeholder="Mínimo 8 caracteres"
+            required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirmar Contraseña</label>
+        <div class="input-container">
+          <i class="bx bxs-check-shield"></i>
+          <input 
+            type="password" 
+            id="confirmPassword" 
+            name="confirmPassword" 
+            [(ngModel)]="confirmPassword" 
+            placeholder="Repite tu contraseña"
+            required>
+        </div>
+      </div>
+
+      <div *ngIf="error" class="error-bubble">
+        <i class="bx bx-error-circle"></i>
+        {{ error }}
+      </div>
+
+      <button type="submit" class="btn-register">
+        Registrarse
+      </button>
+
+      <div class="card-footer">
+        ¿Ya tienes una cuenta? <a routerLink="/login">Inicia sesión aquí</a>
+      </div>
+    </form>
+  </div>
 </div>

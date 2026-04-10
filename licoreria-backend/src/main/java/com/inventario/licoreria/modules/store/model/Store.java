@@ -18,6 +18,7 @@ public class Store {
     private Long id;
     private String name;
     private String description;
+    private String address;
 
     @ManyToOne
     @JoinColumn(name = "manager_id", nullable = false)
@@ -48,6 +49,14 @@ public class Store {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public User getManager() {

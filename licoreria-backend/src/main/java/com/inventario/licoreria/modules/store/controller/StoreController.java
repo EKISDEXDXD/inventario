@@ -5,12 +5,14 @@ import com.inventario.licoreria.modules.store.dto.StoreResponseDTO;
 import com.inventario.licoreria.modules.store.service.StoreService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/stores")
+@CrossOrigin(origins = "http://localhost:4200")
 public class StoreController {
 
     private final StoreService storeService;
@@ -30,7 +32,7 @@ public class StoreController {
     }
 
     @PostMapping
-    public ResponseEntity<StoreResponseDTO> create(@Valid @RequestBody StoreCreateDTO dto) {
-        return ResponseEntity.status(201).body(storeService.create(dto));
+    public ResponseEntity<StoreResponseDTO> create(@Valid @RequestBody StoreCreateDTO dto, Authentication authentication) {
+        return ResponseEntity.status(201).body(storeService.create(dto, authentication.getName()));
     }
 }
