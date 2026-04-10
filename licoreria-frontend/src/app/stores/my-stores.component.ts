@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core'; // Añadimos ChangeDetectorRef
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -12,9 +12,9 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 export class MyStoresComponent implements OnInit {
   stores: any[] = [];
+  openMenuId: number | null = null;
   private apiUrl = 'http://localhost:8081/api/stores';
 
-  // Inyectamos el ChangeDetectorRef
   constructor(
     private router: Router, 
     private http: HttpClient,
@@ -54,9 +54,16 @@ export class MyStoresComponent implements OnInit {
     });
   }
 
-  // Restauramos la función para volver
   goBack() {
-    this.router.navigate(['/home']); // Asegúrate de que esta sea tu ruta correcta
+    this.router.navigate(['/home']);
+  }
+
+  toggleMenu(storeId: number) {
+    this.openMenuId = this.openMenuId === storeId ? null : storeId;
+  }
+
+  closeMenu() {
+    this.openMenuId = null;
   }
 
   manageStore(storeId: number) {

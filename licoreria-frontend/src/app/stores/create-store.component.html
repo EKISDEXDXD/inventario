@@ -1,58 +1,98 @@
 <div class="create-store-container">
+  <!-- Header -->
   <header class="create-header">
-    <h1>Crear Nueva Tienda</h1>
-    <button class="back-btn" (click)="goBack()">← Volver</button>
+    <div class="header-content">
+      <button class="back-btn" (click)="goBack()">
+        <span class="back-icon">←</span>
+      </button>
+      <div class="header-title">
+        <h1>Crear Nueva Tienda</h1>
+        <p class="header-subtitle">Agrega una nueva tienda a tu negocio</p>
+      </div>
+    </div>
   </header>
- // Formulario de creación de tienda
-  <div class="form-wrapper">
-    <form (ngSubmit)="createStore()">
-      // Nombre de la tienda
-      <div class="form-group">
-        <label for="name">Nombre de la Tienda:</label>
-        <input 
-          type="text" 
-          id="name" 
-          name="name"
-          [(ngModel)]="formData.name" 
-          placeholder="Ej: Tienda Centro"
-          required/>
-      </div>
-      // Descripción de la tienda
-      <div class="form-group">
-        <label for="description">Descripción:</label>
-        <textarea 
-          id="description"
-          name="description" 
-          [(ngModel)]="formData.description" 
-          placeholder="Describe tu tienda..."
-          rows="4"
-          required>
-        </textarea>
-      </div>
-      // Dirección de la tienda
-      <div class="form-group">
-        <label for="address">Dirección:</label>
-        <input
-          type="text"
-          id="address"
-          [(ngModel)]="formData.address"
-          name="address"
-          placeholder="Ej: Obrajes"
-          required/>
-      </div>
-      // Categoría de la tienda
-      <div class="form-actions">
-        <button type="submit" class="submit-btn">
-          Crear Tienda
-        </button>
-      </div>
 
-      <div *ngIf="errorMessage" class="error-message">
-        {{ errorMessage }}
-      </div>
-      <div *ngIf="successMessage" class="success-message">
-        ✓ {{ successMessage }}
-      </div>
-    </form>
+  <!-- Main Content -->
+  <div class="form-container">
+    <!-- Form Card -->
+    <div class="form-card">
+      <form (ngSubmit)="createStore()">
+        <!-- Nombre de la tienda -->
+        <div class="form-group">
+          <label for="name" class="form-label">
+            <span class="label-text">Nombre de la Tienda</span>
+            <span class="required">*</span>
+          </label>
+          <div class="input-wrapper">
+            <span class="input-icon">🏪</span>
+            <input 
+              type="text" 
+              id="name" 
+              name="name"
+              [(ngModel)]="formData.name" 
+              placeholder="Ej: Tienda Centro"
+              class="form-input"
+              required/>
+          </div>
+        </div>
+
+        <!-- Descripción de la tienda -->
+        <div class="form-group">
+          <label for="description" class="form-label">
+            <span class="label-text">Descripción</span>
+            <span class="required">*</span>
+          </label>
+          <div class="input-wrapper">
+            <span class="input-icon">📝</span>
+            <textarea 
+              id="description"
+              name="description" 
+              [(ngModel)]="formData.description" 
+              placeholder="Describe tu tienda, productos, ubicación, horario..."
+              class="form-textarea"
+              rows="4"
+              required>
+            </textarea>
+          </div>
+        </div>
+
+        <!-- Dirección de la tienda -->
+        <div class="form-group">
+          <label for="address" class="form-label">
+            <span class="label-text">Dirección</span>
+            <span class="required">*</span>
+          </label>
+          <div class="input-wrapper">
+            <span class="input-icon">📍</span>
+            <input
+              type="text"
+              id="address"
+              [(ngModel)]="formData.address"
+              name="address"
+              placeholder="Ej: Obrajes, La Paz"
+              class="form-input"
+              required/>
+          </div>
+        </div>
+
+        <!-- Messages -->
+        <div *ngIf="errorMessage" class="message error-message">
+          <span class="message-icon">⚠️</span>
+          <span>{{ errorMessage }}</span>
+        </div>
+        <div *ngIf="successMessage" class="message success-message">
+          <span class="message-icon">✓</span>
+          <span>{{ successMessage }}</span>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="form-actions">
+          <button type="submit" class="submit-btn" [disabled]="isLoading">
+            <span *ngIf="!isLoading">Crear Tienda</span>
+            <span *ngIf="isLoading" class="loading">Creando...</span>
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>

@@ -42,11 +42,24 @@
 }
 
 .action-card.create {
-    background: linear-gradient(45deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #fbbf24, #fb923c);
+    border-left: 5px solid #f97316;
 }
 
 .action-card.manage {
     background: linear-gradient(45deg, #4facfe, #00f2fe);
+}
+
+.action-card.create .icon-box i {
+    color: #ffffff;
+}
+
+.action-card.create .card-text h4 {
+    color: #ffffff;
+}
+
+.action-card.create .card-text p {
+    color: rgba(255, 255, 255, 0.95);
 }
 
 .action-card:hover {
@@ -201,6 +214,19 @@
     padding-left: 19px; /* Alineación base para todos los iconos */
     border-radius: 6px;
     transition: background-color 0.3s ease;
+}
+.menu-main .menu-section-title {
+    margin: 1.5rem 0 0.5rem 19px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    transition: opacity 0.3s ease;
+}
+.menu-main.close .menu-section-title {
+    opacity: 0;
+    pointer-events: none;
 }
 /* Efecto visual al pasar el mouse por encima de una opción */
 .menu-main .nav-link:hover {

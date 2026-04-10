@@ -1,22 +1,71 @@
 <div class="stores-container">
+  <!-- Header -->
   <header class="stores-header">
-    <h1>Mis Tiendas</h1>
-    <button class="back-btn" (click)="goBack()">← Volver</button>
+    <div class="header-content">
+      <button class="back-btn" (click)="goBack()">
+        <span>←</span>
+      </button>
+      <div class="header-title">
+        <h1>Mis Tiendas</h1>
+        <p class="header-subtitle">Gestiona todas tus tiendas en un solo lugar</p>
+      </div>
+    </div>
   </header>
 
-  <div class="stores-list">
-    <div *ngIf="stores.length === 0" class="no-stores">
-      <p>No tienes tiendas registradas aún.</p>
+  <!-- Main Content -->
+  <div class="stores-content">
+    <!-- Empty State -->
+    <div *ngIf="stores.length === 0" class="empty-state">
+      <div class="empty-state-icon">🏬</div>
+      <h2>No tienes tiendas registradas</h2>
+      <p>Crea tu primera tienda para comenzar a gestionar tu inventario</p>
     </div>
 
-    <div *ngFor="let store of stores" class="store-card" (click)="manageStore(store.id)">
-      <h3>{{ store.name }}</h3>
-      <p>{{ store.description }}</p>
-      <p class="address">📍 {{ store.address }}</p>
-      <span class="manager-badge">Encargado: {{ store.managerUsername }}</span>
-      <div class="store-actions">
-        <button class="manage-btn" (click)="$event.stopPropagation()">Gestionar Inventario →</button>
-        <button class="delete-btn" (click)="$event.stopPropagation(); deleteStore(store.id)">🗑️ Eliminar Tienda</button>
+    <!-- Stores Grid -->
+    <div *ngIf="stores.length > 0" class="stores-grid">
+      <div *ngFor="let store of stores" class="store-card">
+        <!-- Card Header -->
+        <div class="card-header">
+          <div class="store-info">
+            <h3>{{ store.name }}</h3>
+            <p class="store-description">{{ store.description }}</p>
+          </div>
+          <div class="card-menu">
+            <button class="menu-btn" (click)="toggleMenu(store.id)">
+              <span class="menu-dots">⋮</span>
+            </button>
+            <!-- Dropdown Menu -->
+            <div class="dropdown-menu" *ngIf="openMenuId === store.id">
+              <button class="dropdown-item" (click)="manageStore(store.id); closeMenu()">
+                <span class="dropdown-icon">→</span>
+                <span>Gestionar Inventario</span>
+              </button>
+              <button class="dropdown-item delete" (click)="deleteStore(store.id); closeMenu()">
+                <span class="dropdown-icon">✕</span>
+                <span>Eliminar Tienda</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body">
+          <div class="store-detail">
+            <span class="detail-label">Ubicación</span>
+            <span class="detail-value">{{ store.address }}</span>
+          </div>
+          <div class="store-detail">
+            <span class="detail-label">Encargado</span>
+            <span class="detail-value">{{ store.managerUsername }}</span>
+          </div>
+        </div>
+
+        <!-- Card Footer -->
+        <div class="card-footer">
+          <button class="primary-btn" (click)="manageStore(store.id)">
+            Gestionar Inventario
+          </button>
+        </div>
       </div>
     </div>
   </div>
