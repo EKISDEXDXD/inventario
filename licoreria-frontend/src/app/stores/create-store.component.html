@@ -3,33 +3,33 @@
     <h1>Crear Nueva Tienda</h1>
     <button class="back-btn" (click)="goBack()">← Volver</button>
   </header>
-
+ // Formulario de creación de tienda
   <div class="form-wrapper">
     <form (ngSubmit)="createStore()">
+      // Nombre de la tienda
       <div class="form-group">
         <label for="name">Nombre de la Tienda:</label>
         <input 
           type="text" 
           id="name" 
-          [(ngModel)]="formData.name" 
           name="name"
+          [(ngModel)]="formData.name" 
           placeholder="Ej: Tienda Centro"
-          required
-        />
+          required/>
       </div>
-
+      // Descripción de la tienda
       <div class="form-group">
         <label for="description">Descripción:</label>
         <textarea 
-          id="description" 
+          id="description"
+          name="description" 
           [(ngModel)]="formData.description" 
-          name="description"
           placeholder="Describe tu tienda..."
           rows="4"
-          required
-        ></textarea>
+          required>
+        </textarea>
       </div>
-
+      // Dirección de la tienda
       <div class="form-group">
         <label for="address">Dirección:</label>
         <input
@@ -38,13 +38,12 @@
           [(ngModel)]="formData.address"
           name="address"
           placeholder="Ej: Obrajes"
-          required
-        />
+          required/>
       </div>
-
+      // Categoría de la tienda
       <div class="form-actions">
-        <button type="submit" class="submit-btn" [disabled]="isLoading">
-          {{ isLoading ? 'Creando...' : 'Crear Tienda' }}
+        <button type="submit" class="submit-btn">
+          Crear Tienda
         </button>
       </div>
 
