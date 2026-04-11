@@ -10,21 +10,29 @@ import { CreateStoreComponent } from './stores/create-store.component';
 import { DashboardTiendaComponent } from './stores/dashboard-tienda.component';
 import { InventarioComponent } from './stores/inventario/inventario';
 import { MovimientosComponent } from './stores/movimientos/movimientos';
+import { MainLayoutComponent } from './main-layout.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent, canDeactivate: [withoutUnsavedChangesGuard] },
-  { path: '', component: HomeComponent, canActivate: [AuthGuard], canDeactivate: [LogoutGuard] },
-  { path: 'home', component: HomeComponent, canActivate: [AuthGuard], canDeactivate: [LogoutGuard] },
-  { path: 'my-stores', component: MyStoresComponent, canActivate: [AuthGuard] },
-  { path: 'create-store', component: CreateStoreComponent, canActivate: [AuthGuard] },
-  { 
-    path: 'tienda/:id', 
+  {
+    path: '',
+    component: MainLayoutComponent,
     canActivate: [AuthGuard],
+    canDeactivate: [LogoutGuard],
     children: [
-      { path: '', component: DashboardTiendaComponent },
-      { path: 'inventario', component: InventarioComponent },
-      { path: 'movimientos', component: MovimientosComponent }
+      { path: '', component: HomeComponent },
+      { path: 'home', component: HomeComponent },
+      { path: 'my-stores', component: MyStoresComponent },
+      { path: 'create-store', component: CreateStoreComponent },
+      {
+        path: 'tienda/:id',
+        children: [
+          { path: '', component: DashboardTiendaComponent },
+          { path: 'inventario', component: InventarioComponent },
+          { path: 'movimientos', component: MovimientosComponent }
+        ]
+      }
     ]
   },
   { path: '**', redirectTo: '/login' }

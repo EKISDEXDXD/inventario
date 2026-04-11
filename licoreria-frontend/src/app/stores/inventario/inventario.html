@@ -1,109 +1,119 @@
 <div class="inventario-container">
-  <header class="inventario-header">
-    <button class="back-btn" (click)="goBack()">← Volver al Dashboard</button>
+  <header class="card inventario-header">
+    <button class="btn btn-primary" (click)="goBack()">← Volver</button>
     <h1 *ngIf="store">📦 Inventario - {{ store.name }}</h1>
   </header>
 
-  <!-- Alertas de Stock -->
-  <div class="alerts-section">
-    <div class="alert-card warning" *ngIf="getLowStockProducts().length > 0">
-      <h3>⚠️ Productos con Stock Bajo</h3>
+  <div class="alerts-grid" *ngIf="getLowStockProducts().length > 0 || getOutOfStockProducts().length > 0">
+    <div class="alert-box warning" *ngIf="getLowStockProducts().length > 0">
+      <h3>⚠️ Stock Bajo</h3>
       <ul>
-        <li *ngFor="let product of getLowStockProducts()">{{ product.name }} ({{ product.stock }} unidades)</li>
+        <li *ngFor="let product of getLowStockProducts()">{{ product.name }} ({{ product.stock }} un.)</li>
       </ul>
     </div>
-    <div class="alert-card danger" *ngIf="getOutOfStockProducts().length > 0">
-      <h3>🚨 Productos Sin Stock</h3>
+    <div class="alert-box danger" *ngIf="getOutOfStockProducts().length > 0">
+      <h3>🚨 Sin Stock</h3>
       <ul>
         <li *ngFor="let product of getOutOfStockProducts()">{{ product.name }}</li>
       </ul>
     </div>
   </div>
 
-  <!-- Crear Producto -->
-  <div class="create-section">
-    <button class="toggle-btn" (click)="toggleCreateForm()">
-      {{ showCreateForm ? '❌ Ocultar' : '➕ Crear Producto' }}
-    </button>
+  <div class="card">
+    <div class="flex-between">
+      <h2 style="margin: 0; font-size: 1.25rem;">Gestión de Productos</h2>
+      <button class="btn btn-success" (click)="toggleCreateForm()">
+        {{ showCreateForm ? '✕ Cancelar' : '✚ Nuevo Producto' }}
+      </button>
+    </div>
 
-    <div *ngIf="showCreateForm" class="create-form">
-      <h3>Crear Nuevo Producto</h3>
+    <div *ngIf="showCreateForm" class="create-form-wrapper">
       <form (ngSubmit)="createProduct()">
         <div class="form-row">
           <div class="form-group">
-            <label>Nombre:</label>
-            <input type="text" [(ngModel)]="newProduct.name" name="name" required>
+            <label>Nombre</label>
+            <input type="text" [(ngModel)]="newProduct.name" name="name" class="form-control" placeholder="Ej: Vodka Absolut" required>
           </div>
           <div class="form-group">
-            <label>Descripción:</label>
-            <input type="text" [(ngModel)]="newProduct.description" name="description" required>
+            <label>Descripción</label>
+            <input type="text" [(ngModel)]="newProduct.description" name="description" class="form-control" placeholder="Ej: Botella 1L" required>
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label>Costo:</label>
-            <input type="number" [(ngModel)]="newProduct.cost" name="cost" step="0.01" min="0" required>
+            <label>Costo</label>
+            <input type="number" [(ngModel)]="newProduct.cost" name="cost" step="0.01" min="0" class="form-control" placeholder="0.00" required>
           </div>
           <div class="form-group">
-            <label>Precio:</label>
-            <input type="number" [(ngModel)]="newProduct.price" name="price" step="0.01" min="0" required>
+            <label>Precio de Venta</label>
+            <input type="number" [(ngModel)]="newProduct.price" name="price" step="0.01" min="0" class="form-control" placeholder="0.00" required>
           </div>
           <div class="form-group">
-            <label>Stock Inicial:</label>
-            <input type="number" [(ngModel)]="newProduct.stock" name="stock" min="0" required>
+            <label>Stock Inicial</label>
+            <input type="number" [(ngModel)]="newProduct.stock" name="stock" min="0" class="form-control" placeholder="0" required>
           </div>
         </div>
-        <button type="submit" class="submit-btn">Crear Producto</button>
+        <div style="text-align: right;">
+          <button type="submit" class="btn btn-primary">Guardar Producto</button>
+        </div>
       </form>
     </div>
   </div>
 
-  <!-- Lista de Productos -->
-  <div class="products-section">
-    <div class="search-bar">
-      <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Buscar productos..." class="search-input">
-      <button class="refresh-btn" (click)="loadStoreProducts()" title="Actualizar lista">🔄</button>
+  <div class="card">
+    <div class="flex-between" style="margin-bottom: 1.5rem;">
+      <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="🔍 Buscar por nombre o descripción..." class="form-control search-input">
+      <button class="btn btn-primary" (click)="loadStoreProducts()" title="Actualizar">🔄 Actualizar Lista</button>
     </div>
 
-    <div *ngIf="loading" class="loading">
-      Cargando productos...
+    <div *ngIf="loading" class="state-message">
+      ⏳ Cargando productos...
     </div>
 
     <div *ngIf="!loading">
-      <div *ngIf="filteredProducts.length === 0" class="no-products">
-        <p>{{ searchTerm ? 'No se encontraron productos' : 'No hay productos en esta tienda' }}</p>
+      <div *ngIf="filteredProducts.length === 0" class="state-message">
+        <p>{{ searchTerm ? '❌ No se encontraron productos' : '📭 No hay productos en esta tienda' }}</p>
       </div>
 
-      <table *ngIf="filteredProducts.length > 0" class="products-table">
-        <thead>
-          <tr>
-            <th>Producto</th>
-            <th>Descripción</th>
-            <th>Stock</th>
-            <th>Costo</th>
-            <th>Precio</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let product of filteredProducts">
-            <td>{{ product.name }}</td>
-            <td>{{ product.description }}</td>
-            <td>
-              <span class="stock-badge" [ngClass]="{'low': product.stock < 10, 'out': product.stock === 0, 'normal': product.stock >= 10}">
-                {{ product.stock }}
-              </span>
-            </td>
-            <td>${{ product.cost }}</td>
-            <td>${{ product.price }}</td>
-            <td>
-              <button class="btn-stock" (click)="adjustStock(product.id, 5)">+5</button>
-              <button class="btn-stock" (click)="adjustStock(product.id, -5)">-5</button>
-              <button class="btn-delete" (click)="deleteProduct(product.id)">🗑️</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div *ngIf="filteredProducts.length > 0" class="table-responsive">
+        <table class="products-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Descripción</th>
+              <th>Stock</th>
+              <th>Costo</th>
+              <th>Precio</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let product of filteredProducts">
+              <td><strong>{{ product.name }}</strong></td>
+              <td>{{ product.description }}</td>
+              <td>
+                <span class="stock-badge" 
+                      [ngClass]="{
+                        'stock-low': product.stock > 0 && product.stock < 10, 
+                        'stock-out': product.stock === 0, 
+                        'stock-normal': product.stock >= 10
+                      }">
+                  {{ product.stock }}
+                </span>
+              </td>
+              <td>${{ product.cost | number: '1.2-2' }}</td>
+              <td>${{ product.price | number: '1.2-2' }}</td>
+              <td>
+                <div class="action-buttons">
+                  <button class="btn btn-success btn-icon" (click)="adjustStock(product.id, 5)" title="Agregar 5">+5</button>
+                  <button class="btn btn-warning btn-icon" (click)="adjustStock(product.id, -5)" title="Restar 5">-5</button>
+                  <button class="btn btn-danger btn-icon" (click)="deleteProduct(product.id)" title="Eliminar">🗑️</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>

@@ -1,17 +1,43 @@
-/* You can add global styles to this file, and also import other style files */
-html, body {
-    margin: 0 !important;
-    padding: 0 !important;
-    width: 100%;
-    height: 100%;
+:host {
+  display: block;
+  width: 100%;
 }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* Contenedor principal */
+.home-container {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  background: #f8f9fa;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  flex-direction: column;
+  padding-left: 300px;
+  transition: padding-left .3s ease;
+  color: #333;
 }
-/* Estilos globales para el menú principal */
+
+.home-container.close {
+  padding-left: 88px;
+}
+
+/* Modo Oscuro */
+.home-container.dark {
+  background: #0f0f1a;
+}
+
+/* Main content */
+.main-content {
+  padding: 4rem 3rem;
+  max-width: 1500px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ========================================================================
+   SIDEBAR MENU STYLES
+   ======================================================================== */
+
 .menu-main {
   height: 100vh;
   background-color: white;
@@ -19,7 +45,7 @@ html, body {
   top: 0;
   left: 0;
   width: 300px;
-  box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
   z-index: 1000;
   transition: width 0.3s ease, background-color 0.3s ease;
   display: flex;
@@ -29,13 +55,14 @@ html, body {
 
 .home-container.dark .menu-main {
   background-color: #18191a;
-  box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
 }
 
 .menu-main.close {
   width: 88px;
 }
 
+/* Menu Header */
 .menu-main .text-header-menu {
   position: relative;
   display: flex;
@@ -79,8 +106,13 @@ html, body {
   color: #707070;
 }
 
-.home-container.dark .menu-main .name { color: #f6f5ff; }
-.home-container.dark .menu-main .profession { color: #ccc; }
+.home-container.dark .menu-main .name {
+  color: #f6f5ff;
+}
+
+.home-container.dark .menu-main .profession {
+  color: #ccc;
+}
 
 .menu-main .toggle-btn {
   position: absolute;
@@ -99,6 +131,18 @@ html, body {
   cursor: pointer;
 }
 
+/* Menu Links Container */
+.menu-main .menu-site {
+  flex: 1;
+  overflow-y: auto;
+  padding-top: 10px;
+}
+
+.menu-main .menu {
+  display: flex;
+  flex-direction: column;
+}
+
 .menu-main .menu-link {
   list-style: none;
   padding: 0;
@@ -113,6 +157,21 @@ html, body {
   padding-left: 19px;
   border-radius: 6px;
   transition: background-color 0.3s ease;
+}
+
+.menu-main .menu-section-title {
+  margin: 1.5rem 0 0.5rem 19px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  transition: opacity 0.3s ease;
+}
+
+.menu-main.close .menu-section-title {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .menu-main .nav-link:hover {
@@ -150,7 +209,9 @@ html, body {
 }
 
 .home-container.dark .menu-main .nav-link i,
-.home-container.dark .menu-main .nav-text { color: #ccc; }
+.home-container.dark .menu-main .nav-text {
+  color: #ccc;
+}
 
 .menu-main.close .nav-text,
 .menu-main.close .text-titles,
@@ -160,6 +221,7 @@ html, body {
   pointer-events: none;
 }
 
+/* Bottom Content */
 .menu-main .bottom-content {
   position: absolute;
   bottom: 10px;
@@ -178,7 +240,9 @@ html, body {
   transition: background-color 0.3s ease, padding-left 0.3s ease;
 }
 
-.home-container.dark .mode { background-color: #3a3b3c; }
+.home-container.dark .mode {
+  background-color: #3a3b3c;
+}
 
 .menu-main .sun-moon {
   height: 50px;
@@ -195,7 +259,9 @@ html, body {
   transition: all 0.3s ease;
 }
 
-.menu-main .sun-moon i.sun { opacity: 0; }
+.menu-main .sun-moon i.sun {
+  opacity: 0;
+}
 
 .menu-main .mode-text {
   font-size: 18px;
@@ -205,7 +271,9 @@ html, body {
   transition: color 0.3s ease;
 }
 
-.home-container.dark .mode-text { color: #ccc; }
+.home-container.dark .mode-text {
+  color: #ccc;
+}
 
 .menu-main .toggle-switch {
   position: absolute;
@@ -218,7 +286,9 @@ html, body {
   cursor: pointer;
 }
 
-.menu-main.close .toggle-switch { right: 14px; }
+.menu-main.close .toggle-switch {
+  right: 14px;
+}
 
 .toggle-switch .switch {
   position: absolute;
@@ -242,17 +312,59 @@ html, body {
   transition: left 0.3s ease;
 }
 
-.home-container.dark .welcome-section,
-.home-container.dark .features-section { background-color: #242526; color: #f6f5ff; }
+/* Dark Mode Styles */
+.home-container.dark {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+}
 
-.home-container.dark .welcome-section p,
-.home-container.dark .features-section ul { color: #ccc; }
+.home-container.dark .header {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
 
-.home-container.dark .switch::before { left: 20px; }
+.home-container.dark .switch::before {
+  left: 20px;
+}
 
-.home-container.dark .switch { background-color: #667eea; }
+.home-container.dark .switch {
+  background-color: #667eea;
+}
 
-.home-container.dark .sun-moon i.sun { opacity: 1; }
-.home-container.dark .sun-moon i.moon { opacity: 0; }
+.home-container.dark .sun-moon i.sun {
+  opacity: 1;
+}
 
-.home-container.dark .header { background-color: rgba(0,0,0,.2); border-bottom: 1px solid rgba(255,255,255,.05); }
+.home-container.dark .sun-moon i.moon {
+  opacity: 0;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .home-container {
+    padding-left: 0;
+  }
+
+  .home-container.close {
+    padding-left: 88px;
+  }
+}
+
+@media (max-width: 800px) {
+  .header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .header h1 {
+    font-size: 2.5rem;
+  }
+
+  .main-content {
+    padding: 1.5rem 1rem;
+  }
+
+  .logo-title {
+    font-size: 2.5rem;
+  }
+}

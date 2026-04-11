@@ -1,6 +1,7 @@
 :host {
     display: block;
     width: 100%;
+    
 }
 
 .create-store-container {
@@ -12,6 +13,11 @@
     flex-direction: column;
     padding-bottom: 2rem;
     box-sizing: border-box;
+    border-radius: 20px;
+}
+
+:host-context(.dark) .create-store-container {
+    background: #0f0f1a;
 }
 
 /* ============ HEADER ============ */
@@ -23,6 +29,14 @@
     background: #ffffff;
     border-bottom: 1px solid #f0f3f7;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border-radius: 20px;
+}
+
+:host-context(.dark) .create-header {
+    background: #1a1a2e;
+    border-bottom-color: #2d2d44;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
 }
 
 .header-content {
@@ -30,6 +44,7 @@
     align-items: center;
     gap: 1.5rem;
     width: 100%;
+    
 }
 
 .back-btn {
@@ -38,7 +53,7 @@
     color: #6366f1;
     width: 44px;
     height: 44px;
-    border-radius: 12px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -52,6 +67,16 @@
     background: #e0e7ff;
     color: #4f46e5;
     transform: translateX(-3px);
+}
+
+:host-context(.dark) .back-btn {
+    background: #2d2d44;
+    color: #a78bfa;
+}
+
+:host-context(.dark) .back-btn:hover {
+    background: #3d3d54;
+    color: #c4b5fd;
 }
 
 .back-btn:active {
@@ -70,6 +95,11 @@
     font-weight: 700;
     color: #0f172a;
     letter-spacing: -0.5px;
+    border-radius: 20px;
+}
+
+:host-context(.dark) .header-title h1 {
+    color: #f1f5f9;
 }
 
 .header-subtitle {
@@ -77,6 +107,10 @@
     font-size: 0.95rem;
     color: #64748b;
     font-weight: 400;
+}
+
+:host-context(.dark) .header-subtitle {
+    color: #cbd5e1;
 }
 
 /* ============ FORM CONTAINER ============ */
@@ -92,12 +126,18 @@
 .form-card {
     background: #ffffff;
     border: 1px solid #e2e8f0;
-    border-radius: 16px;
+    border-radius: 14px;
     padding: 2.5rem;
     width: 100%;
     max-width: 500px;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
     animation: slideUp 0.5s ease-out;
+}
+
+:host-context(.dark) .form-card {
+    background: #1a1a2e;
+    border-color: #2d2d44;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
 }
 
 @keyframes slideUp {
@@ -129,6 +169,10 @@
     font-weight: 600;
     font-size: 0.95rem;
     letter-spacing: -0.25px;
+}
+
+:host-context(.dark) .form-label {
+    color: #f1f5f9;
 }
 
 .label-text {
@@ -164,13 +208,20 @@
     width: 100%;
     padding: 0.875rem 1rem 0.875rem 3.2rem;
     border: 1.5px solid #e2e8f0;
-    border-radius: 12px;
+    border-radius: 10px;
     font-size: 0.95rem;
     font-family: inherit;
     background-color: #f9fafb;
     color: #1e293b;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     box-sizing: border-box;
+}
+
+:host-context(.dark) .form-input,
+:host-context(.dark) .form-textarea {
+    background-color: #2d2d44;
+    border-color: #3d3d54;
+    color: #f1f5f9;
 }
 
 .form-textarea {
@@ -182,6 +233,11 @@
 .form-input::placeholder,
 .form-textarea::placeholder {
     color: #94a3b8;
+}
+
+:host-context(.dark) .form-input::placeholder,
+:host-context(.dark) .form-textarea::placeholder {
+    color: #64748b;
 }
 
 .form-input:hover,
@@ -196,6 +252,19 @@
     border-color: #6366f1;
     background-color: #ffffff;
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+:host-context(.dark) .form-input:hover,
+:host-context(.dark) .form-textarea:hover {
+    border-color: #4d4d64;
+    background-color: #3d3d54;
+}
+
+:host-context(.dark) .form-input:focus,
+:host-context(.dark) .form-textarea:focus {
+    border-color: #8b5cf6;
+    background-color: #2d2d44;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
 }
 
 /* ============ MESSAGES ============ */
@@ -251,7 +320,7 @@
     color: white;
     border: none;
     padding: 0.95rem 1.5rem;
-    border-radius: 12px;
+    border-radius: 10px;
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
@@ -369,10 +438,12 @@
         align-items: flex-start;
         padding: 1rem 1.5rem;
         margin-bottom: 1.5rem;
+        border-radius: 20px;
     }
     .create-header h1 {
       font-size: 1.5rem;
       margin-bottom: 1rem;
+      border-radius: 20px;
     }
     .back-btn {
       width: 100%;
