@@ -3,7 +3,7 @@
   <header class="stores-header">
     <div class="header-content">
       <button class="back-btn" (click)="goBack()">
-        <span>←</span>
+        <span><i class="bx bx-chevron-left"></i></span>
       </button>
       <div class="header-title">
         <h1>Mis Tiendas</h1>
@@ -16,7 +16,7 @@
   <div class="stores-content">
     <!-- Empty State -->
     <div *ngIf="stores.length === 0" class="empty-state">
-      <div class="empty-state-icon">🏬</div>
+      <div class="empty-state-icon"><i class="bx bx-building"></i></div>
       <h2>No tienes tiendas registradas</h2>
       <p>Crea tu primera tienda para comenzar a gestionar tu inventario</p>
     </div>
@@ -32,16 +32,16 @@
           </div>
           <div class="card-menu">
             <button class="menu-btn" (click)="toggleMenu(store.id)">
-              <span class="menu-dots">⋮</span>
+              <span class="menu-dots"><i class="bx bx-dots-vertical"></i></span>
             </button>
             <!-- Dropdown Menu -->
             <div class="dropdown-menu" *ngIf="openMenuId === store.id">
               <button class="dropdown-item" (click)="manageStore(store.id); closeMenu()">
-                <span class="dropdown-icon">→</span>
+                <span class="dropdown-icon"><i class="bx bx-chevron-right"></i></span>
                 <span>Gestionar Inventario</span>
               </button>
               <button class="dropdown-item delete" (click)="deleteStore(store.id); closeMenu()">
-                <span class="dropdown-icon">✕</span>
+                <span class="dropdown-icon"><i class="bx bx-x"></i></span>
                 <span>Eliminar Tienda</span>
               </button>
             </div>

@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { ExportModalComponent } from './export-modal.component';
 
 @Component({
   selector: 'app-dashboard-tienda',
@@ -25,7 +27,8 @@ export class DashboardTiendaComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private http: HttpClient,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -147,5 +150,14 @@ export class DashboardTiendaComponent implements OnInit {
           }
         });
     }
+  }
+
+  exportarReporte() {
+    this.dialog.open(ExportModalComponent, {
+      width: '900px',
+      maxHeight: '90vh',
+      data: { storeId: this.storeId },
+      disableClose: false
+    });
   }
 }

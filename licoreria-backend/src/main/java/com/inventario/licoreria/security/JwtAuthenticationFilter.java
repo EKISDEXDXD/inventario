@@ -32,18 +32,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         
         final String authHeader = request.getHeader(AUTH_HEADER);
-        System.out.println("[JWT FILTER] authHeader=" + authHeader);
+        System.out.println("[JWT FILTER] Path: " + request.getRequestURI() + " | authHeader: " + (authHeader != null ? "SET" : "NULL"));
         
         if (authHeader != null && authHeader.startsWith(BEARER_PREFIX)) {
             String jwt = authHeader.substring(BEARER_PREFIX.length());
             String username = jwtUtil.extractUsername(jwt);
-            System.out.println("[JWT FILTER] jwt valid? " + jwtUtil.isTokenValid(jwt) + " username=" + username);
+            boolean isValid = jwtUtil.isTokenValid(jwt);
+            System.out.println("[JWT FILTER] JWT parsed | username=" + username + " | valid=" + isValid);
 
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                if (jwtUtil.isTokenValid(jwt)) {
-                    // Extraemos el rol y lo convertimos en una autoridad de Spring Security
+                if (isValid) {
                     String role = jwtUtil.extractRole(jwt);
-                    System.out.println("[JWT FILTER] role=" + role);
+                    System.out.println("[JWT FILTER] Setting auth | user=" + username + " | role=" + role);
                     List<SimpleGrantedAuthority> authorities = Collections.singletonList(
                             new SimpleGrantedAuthority(role));
 
@@ -51,8 +51,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             username, null, authorities);
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                    System.out.println("[JWT FILTER] Auth SET successfully");
+                } else {
+                    System.out.println("[JWT FILTER] Token INVALID");
                 }
+            } else {
+                System.out.println("[JWT FILTER] username=" + username + " | existing auth=" + (SecurityContextHolder.getContext().getAuthentication() != null));
             }
+        } else {
+            System.out.println("[JWT FILTER] No Bearer token found");
         }
         filterChain.doFilter(request, response);
     }

@@ -1,11 +1,11 @@
 <div class="dashboard-container">
   <header class="dashboard-header">
     <div class="header-content">
-      <button class="back-btn" (click)="goBack()">← Volver</button>
+      <button class="back-btn" (click)="goBack()"><i class="bx bx-chevron-left"></i> Volver</button>
       <div *ngIf="store" class="store-info">
         <h1>{{ store.name }}</h1>
         <p class="store-description">{{ store.description }}</p>
-        <p class="store-address">📍 {{ store.address }}</p>
+        <p class="store-address"><i class="bx bx-map-pin"></i> {{ store.address }}</p>
       </div>
     </div>
   </header>
@@ -13,7 +13,7 @@
   <!-- Info Box -->
   <div class="info-box">
     <div class="info-content">
-      <h3>🛒 Gestión de Inventario</h3>
+      <h3><i class="bx bx-shopping-bag"></i> Gestión de Inventario</h3>
       <p>Administra el inventario de tu tienda con facilidad. Visualiza estadísticas, gestiona productos y registra movimientos de stock.</p>
     </div>
   </div>
@@ -21,19 +21,24 @@
   <!-- Function Cards -->
   <div class="function-cards">
     <div class="card" (click)="navigateTo('inventario')">
-      <div class="card-icon">📊</div>
+      <div class="card-icon"><i class="bx bx-bar-chart"></i></div>
       <h4>Dashboard Info</h4>
       <p>Estadísticas y métricas generales</p>
     </div>
     <div class="card" (click)="navigateTo('inventario')">
-      <div class="card-icon">📦</div>
+      <div class="card-icon"><i class="bx bx-package"></i></div>
       <h4>Inventario</h4>
       <p>Gestión de productos y stock</p>
     </div>
     <div class="card" (click)="navigateTo('movimientos')">
-      <div class="card-icon">📈</div>
+      <div class="card-icon"><i class="bx bx-trending-up"></i></div>
       <h4>Movimientos</h4>
       <p>Historial de entradas y salidas</p>
+    </div>
+    <div class="card" (click)="exportarReporte()">
+      <div class="card-icon"><i class="bx bx-download"></i></div>
+      <h4>Exportaciones</h4>
+      <p>Reporte de ventas y movimientos en Excel</p>
     </div>
   </div>
 </div>

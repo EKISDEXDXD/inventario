@@ -14,13 +14,15 @@ import javax.crypto.SecretKey;
 @Component
 public class JwtUtil {
 
-    @Value("${app.jwt.secret:mi-clave-secreta-para-desarrollo-de-licoreria-2026}")
+    // Usar una clave mucho más larga - mínimo 64 caracteres para HS512
+    @Value("${app.jwt.secret:esta-es-una-clave-secreta-mucho-mas-larga-y-segura-para-jwt-hs512-algoritmo-con-mas-de-64-bytes-para-licoreria-inventario-system-2026}")
     private String jwtSecret;
 
     @Value("${app.jwt.expiration:86400000}")
     private long jwtExpiration;
 
     private SecretKey getSigningKey() {
+        // Usar la clave como está en properties, longitud debe ser >= 32 bytes para HS256
         return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -76,7 +78,6 @@ public class JwtUtil {
             getAllClaimsFromToken(token);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
             return false;
         }
     }

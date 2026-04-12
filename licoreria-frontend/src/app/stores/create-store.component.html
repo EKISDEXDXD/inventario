@@ -3,7 +3,7 @@
   <header class="create-header">
     <div class="header-content">
       <button class="back-btn" (click)="goBack()">
-        <span class="back-icon">←</span>
+        <span class="back-icon"><i class="bx bx-chevron-left"></i></span>
       </button>
       <div class="header-title">
         <h1>Crear Nueva Tienda</h1>
@@ -24,7 +24,7 @@
             <span class="required">*</span>
           </label>
           <div class="input-wrapper">
-            <span class="input-icon">🏪</span>
+            <span class="input-icon"><i class="bx bx-store"></i></span>
             <input 
               type="text" 
               id="name" 
@@ -43,7 +43,7 @@
             <span class="required">*</span>
           </label>
           <div class="input-wrapper">
-            <span class="input-icon">📝</span>
+            <span class="input-icon"><i class="bx bx-edit"></i></span>
             <textarea 
               id="description"
               name="description" 
@@ -63,7 +63,7 @@
             <span class="required">*</span>
           </label>
           <div class="input-wrapper">
-            <span class="input-icon">📍</span>
+            <span class="input-icon"><i class="bx bx-map-pin"></i></span>
             <input
               type="text"
               id="address"
@@ -77,11 +77,11 @@
 
         <!-- Messages -->
         <div *ngIf="errorMessage" class="message error-message">
-          <span class="message-icon">⚠️</span>
+          <span class="message-icon"><i class="bx bx-error"></i></span>
           <span>{{ errorMessage }}</span>
         </div>
         <div *ngIf="successMessage" class="message success-message">
-          <span class="message-icon">✓</span>
+          <span class="message-icon"><i class="bx bx-check"></i></span>
           <span>{{ successMessage }}</span>
         </div>
 

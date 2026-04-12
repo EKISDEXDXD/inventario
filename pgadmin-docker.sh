@@ -30,3 +30,19 @@ echo ""
 echo "Para detener pgAdmin: docker stop licoreria-pgadmin"
 echo "Para iniciar pgAdmin: docker start licoreria-pgadmin"
 echo "Para eliminar: docker rm licoreria-pgadmin"
+
+# Ver estado
+docker ps | grep pgadmin
+
+# Detener
+docker stop licoreria-pgadmin
+
+# Iniciar
+docker start licoreria-pgadmin
+
+# Ver logs
+docker logs licoreria-pgadmin
+
+
+
+Host: host.docker.internal

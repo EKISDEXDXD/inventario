@@ -1,18 +1,18 @@
 <div class="inventario-container">
   <header class="card inventario-header">
-    <button class="btn btn-primary" (click)="goBack()">← Volver</button>
-    <h1 *ngIf="store">📦 Inventario - {{ store.name }}</h1>
+    <button class="btn btn-primary" (click)="goBack()"><i class="bx bx-chevron-left"></i> Volver</button>
+    <h1 *ngIf="store"><i class="bx bx-package"></i> Inventario - {{ store.name }}</h1>
   </header>
 
   <div class="alerts-grid" *ngIf="getLowStockProducts().length > 0 || getOutOfStockProducts().length > 0">
     <div class="alert-box warning" *ngIf="getLowStockProducts().length > 0">
-      <h3>⚠️ Stock Bajo</h3>
+      <h3><i class="bx bx-error"></i> Stock Bajo</h3>
       <ul>
         <li *ngFor="let product of getLowStockProducts()">{{ product.name }} ({{ product.stock }} un.)</li>
       </ul>
     </div>
     <div class="alert-box danger" *ngIf="getOutOfStockProducts().length > 0">
-      <h3>🚨 Sin Stock</h3>
+      <h3><i class="bx bx-error-circle"></i> Sin Stock</h3>
       <ul>
         <li *ngFor="let product of getOutOfStockProducts()">{{ product.name }}</li>
       </ul>
@@ -23,7 +23,8 @@
     <div class="flex-between">
       <h2 style="margin: 0; font-size: 1.25rem;">Gestión de Productos</h2>
       <button class="btn btn-success" (click)="toggleCreateForm()">
-        {{ showCreateForm ? '✕ Cancelar' : '✚ Nuevo Producto' }}
+        <span *ngIf="!showCreateForm"><i class="bx bx-plus"></i> Nuevo Producto</span>
+        <span *ngIf="showCreateForm"><i class="bx bx-x"></i> Cancelar</span>
       </button>
     </div>
 
@@ -62,17 +63,18 @@
 
   <div class="card">
     <div class="flex-between" style="margin-bottom: 1.5rem;">
-      <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="🔍 Buscar por nombre o descripción..." class="form-control search-input">
-      <button class="btn btn-primary" (click)="loadStoreProducts()" title="Actualizar">🔄 Actualizar Lista</button>
+      <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Buscar por nombre o descripción..." class="form-control search-input">
+      <button class="btn btn-primary" (click)="loadStoreProducts()" title="Actualizar"><i class="bx bx-refresh"></i> Actualizar Lista</button>
     </div>
 
     <div *ngIf="loading" class="state-message">
-      ⏳ Cargando productos...
+      <i class="bx bx-loader bx-spin"></i> Cargando productos...
     </div>
 
     <div *ngIf="!loading">
       <div *ngIf="filteredProducts.length === 0" class="state-message">
-        <p>{{ searchTerm ? '❌ No se encontraron productos' : '📭 No hay productos en esta tienda' }}</p>
+        <p *ngIf="searchTerm"><i class="bx bx-error-circle"></i> No se encontraron productos</p>
+        <p *ngIf="!searchTerm"><i class="bx bx-inbox"></i> No hay productos en esta tienda</p>
       </div>
 
       <div *ngIf="filteredProducts.length > 0" class="table-responsive">
@@ -107,7 +109,7 @@
                 <div class="action-buttons">
                   <button class="btn btn-success btn-icon" (click)="adjustStock(product.id, 5)" title="Agregar 5">+5</button>
                   <button class="btn btn-warning btn-icon" (click)="adjustStock(product.id, -5)" title="Restar 5">-5</button>
-                  <button class="btn btn-danger btn-icon" (click)="deleteProduct(product.id)" title="Eliminar">🗑️</button>
+                  <button class="btn btn-danger btn-icon" (click)="deleteProduct(product.id)" title="Eliminar"><i class="bx bx-trash"></i></button>
                 </div>
               </td>
             </tr>

@@ -39,6 +39,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/**").permitAll() 
                 .requestMatchers("/", "/index.html", "/login.html", "/register.html", "/landing.html", "/home.html", "/css/**", "/js/**", "/images/**").permitAll() 
                 .requestMatchers("/h2-console/**").permitAll() 
+                .requestMatchers(HttpMethod.POST, "/api/export/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/export/**").authenticated()
                 .requestMatchers(HttpMethod.DELETE, "/api/products/**").authenticated()
                 .requestMatchers(HttpMethod.DELETE, "/api/stores/**").authenticated()
                 .requestMatchers(HttpMethod.POST, "/api/transactions/**").hasAnyAuthority("USER", "ADMIN") 

@@ -1,7 +1,7 @@
 <div class="movimientos-container">
   <header class="movimientos-header">
-    <button class="back-btn" (click)="goBack()">← Volver al Dashboard</button>
-    <h1 *ngIf="store">📈 Movimientos - {{ store.name }}</h1>
+    <button class="back-btn" (click)="goBack()"><i class="bx bx-chevron-left"></i> Volver al Dashboard</button>
+    <h1 *ngIf="store"><i class="bx bx-trending-up"></i> Movimientos - {{ store.name }}</h1>
   </header>
 
   <!-- Formulario de Movimiento -->
@@ -50,7 +50,8 @@
   <div class="transactions-section">
     <div class="section-header">
       <h3>Historial de Movimientos</h3>
-      <button class="refresh-btn" (click)="loadTransactions()" title="Actualizar lista">🔄</button>
+      <button class="refresh-btn" (click)="loadTransactions()" title="Actualizar lista"><i
+          class="bx bx-refresh"></i></button>
     </div>
 
     <div *ngIf="loading" class="loading">
@@ -76,7 +77,8 @@
           <tr *ngFor="let transaction of transactions">
             <td>{{ transaction.dateTime | date:'dd/MM/yyyy HH:mm' }}</td>
             <td>
-              <span class="type-badge" [ngClass]="{'entrada': transaction.type === 'ENTRADA', 'salida': transaction.type === 'SALIDA'}">
+              <span class="type-badge"
+                [ngClass]="{'entrada': transaction.type === 'ENTRADA', 'salida': transaction.type === 'SALIDA'}">
                 {{ transaction.type }}
               </span>
             </td>
@@ -90,13 +92,15 @@
   </div>
 
 
-  
 
-   <!-- Lista de Productos -->
+
+  <!-- Lista de Productos -->
   <div class="products-section">
     <div class="search-bar">
-      <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Buscar productos..." class="search-input">
-      <button class="refresh-btn" (click)="loadStoreProducts()" title="Actualizar lista">🔄</button>
+      <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Buscar productos..."
+        class="search-input">
+      <button class="refresh-btn" (click)="loadStoreProducts()" title="Actualizar lista"><i
+          class="bx bx-refresh"></i></button>
     </div>
 
     <div *ngIf="filteredProducts.length === 0" class="no-products">
@@ -118,7 +122,8 @@
           <td>{{ product.name }}</td>
           <td>{{ product.description }}</td>
           <td>
-            <span class="stock-badge" [ngClass]="{'low': product.stock < 10, 'out': product.stock === 0, 'normal': product.stock >= 10}">
+            <span class="stock-badge"
+              [ngClass]="{'low': product.stock < 10, 'out': product.stock === 0, 'normal': product.stock >= 10}">
               {{ product.stock }}
             </span>
           </td>

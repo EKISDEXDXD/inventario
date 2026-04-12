@@ -80,7 +80,7 @@ export class MyStoresComponent implements OnInit {
     if (!firstConfirm) return;
 
     // Segunda confirmación
-    const secondConfirm = confirm(`⚠️ ¡ATENCIÓN! Esta acción no se puede deshacer.\n\n¿Realmente quieres eliminar permanentemente la tienda "${store.name}" y todos sus datos asociados?`);
+    const secondConfirm = confirm(`⚠ ATENCIÓN ⚠\n\nEsta acción no se puede deshacer.\n\n¿Realmente quieres eliminar permanentemente la tienda "${store.name}" y todos sus datos asociados?`);
     if (!secondConfirm) return;
 
     // Proceder con la eliminación
