@@ -2,6 +2,7 @@ import { Component, Inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { formatDate } from '@angular/common';
 
@@ -24,452 +25,883 @@ interface ExportHistory {
 @Component({
   selector: 'app-export-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatIconModule],
   template: `
-    <div class="export-modal">
-      <div class="modal-header">
-        <h2>📊 Exportar Reportes de Ventas</h2>
-        <button class="close-btn" (click)="onCancel()">✕</button>
-      </div>
-
-      <!-- SECCIÓN 1: INFORMACIÓN -->
-      <div class="info-section">
-        <h3>ℹ️ Información de Reportes</h3>
-        <p>
-          <strong>Reporte Experto Completo:</strong> Incluye 4 hojas (Resumen, Movimientos Detallados, Análisis por Producto y Flujo de Caja). Ideal para análisis profundo.
-        </p>
-        <p>
-          <strong>Reporte Resumido:</strong> Incluye 2 hojas (Resumen Ejecutivo y Movimientos Detallados). Perfecto para verificación rápida.
-        </p>
-      </div>
-
-      <div class="divider"></div>
-
-      <!-- SECCIÓN 2: OPCIONES DE EXPORTACIÓN -->
-      <div class="options-section">
-        <h3>📋 Opciones de Exportación</h3>
-
-        <!-- OPCIÓN 1: REPORTE COMPLETO -->
-        <div class="export-option-card">
-          <div class="option-header">
-            <h4>📋 Reporte Experto Completo</h4>
-            <p class="option-desc">4 hojas completas con análisis detallado</p>
-          </div>
-
-          <div class="period-selector">
-            <label>
-              <input type="radio" name="complete-period" value="30days" [(ngModel)]="completeReportPeriod" (change)="onPeriodChange('complete')">
-              Últimos 30 días
-            </label>
-            <label>
-              <input type="radio" name="complete-period" value="custom" [(ngModel)]="completeReportPeriod" (change)="onPeriodChange('complete')">
-              Personalizar período
-            </label>
-          </div>
-
-          <div *ngIf="completeReportPeriod === 'custom'" class="date-picker-group">
-            <div class="date-input">
-              <label>Desde:</label>
-              <input type="date" [(ngModel)]="completeFromDate">
+    <div class="export-modal-overlay">
+      <div class="export-modal">
+        <!-- Header -->
+        <div class="modal-header">
+          <div class="header-content">
+            <div class="header-icon">
+              <i class="bx bx-bar-chart"></i>
             </div>
-            <div class="date-input">
-              <label>Hasta:</label>
-              <input type="date" [(ngModel)]="completeToDate">
+            <div class="header-text">
+              <h2>Reportes de Ventas</h2>
+              <p>Exporta análisis detallados de tu inventario</p>
             </div>
           </div>
-
-          <button 
-            class="download-btn primary"
-            (click)="downloadReport('COMPLETE')"
-            [disabled]="isLoading">
-            <span *ngIf="!isLoading">💾 Descargar Completo</span>
-            <span *ngIf="isLoading">⏳ Generando...</span>
+          <button class="close-btn" (click)="onCancel()">
+            <i class="bx bx-x"></i>
           </button>
         </div>
 
-        <!-- OPCIÓN 2: REPORTE RESUMIDO -->
-        <div class="export-option-card">
-          <div class="option-header">
-            <h4>📈 Reporte Resumido</h4>
-            <p class="option-desc">2 hojas: Resumen y Movimientos</p>
-          </div>
+        <!-- Content -->
+        <div class="modal-content">
 
-          <div class="period-selector">
-            <label>
-              <input type="radio" name="simple-period" value="30days" [(ngModel)]="simpleReportPeriod" (change)="onPeriodChange('simple')">
-              Últimos 30 días
-            </label>
-            <label>
-              <input type="radio" name="simple-period" value="custom" [(ngModel)]="simpleReportPeriod" (change)="onPeriodChange('simple')">
-              Personalizar período
-            </label>
-          </div>
-
-          <div *ngIf="simpleReportPeriod === 'custom'" class="date-picker-group">
-            <div class="date-input">
-              <label>Desde:</label>
-              <input type="date" [(ngModel)]="simpleFromDate">
-            </div>
-            <div class="date-input">
-              <label>Hasta:</label>
-              <input type="date" [(ngModel)]="simpleToDate">
+          <!-- Info Section -->
+          <div class="info-section">
+            <div class="info-card">
+              <div class="info-icon">
+                <i class="bx bx-info-circle"></i>
+              </div>
+              <div class="info-content">
+                <h4>Información de Reportes</h4>
+                <div class="info-items">
+                  <div class="info-item">
+                    <span class="info-label">Completo:</span>
+                    <span class="info-text">4 hojas con análisis detallado</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Resumido:</span>
+                    <span class="info-text">2 hojas rápidas</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <button 
-            class="download-btn primary"
-            (click)="downloadReport('SIMPLE')"
-            [disabled]="isLoading">
-            <span *ngIf="!isLoading">💾 Descargar Resumido</span>
-            <span *ngIf="isLoading">⏳ Generando...</span>
-          </button>
+          <!-- Export Options -->
+          <div class="export-section">
+            <h3 class="section-title">
+              <i class="bx bx-file"></i>
+              Generar Reporte
+            </h3>
+
+            <div class="export-cards">
+
+              <!-- Complete Report -->
+              <div class="export-card">
+                <div class="card-header">
+                  <div class="card-icon complete">
+                    <i class="bx bx-spreadsheet"></i>
+                  </div>
+                  <div class="card-info">
+                    <h4>Reporte Completo</h4>
+                    <p>4 hojas con análisis detallado</p>
+                  </div>
+                </div>
+
+                <div class="card-content">
+                  <div class="period-selector">
+                    <label class="radio-option">
+                      <input type="radio" name="complete-period" value="30days" [(ngModel)]="completeReportPeriod" (change)="onPeriodChange('complete')">
+                      <span class="radio-label">Últimos 30 días</span>
+                    </label>
+                    <label class="radio-option">
+                      <input type="radio" name="complete-period" value="custom" [(ngModel)]="completeReportPeriod" (change)="onPeriodChange('complete')">
+                      <span class="radio-label">Personalizar período</span>
+                    </label>
+                  </div>
+
+                  <div *ngIf="completeReportPeriod === 'custom'" class="date-picker">
+                    <div class="date-input-group">
+                      <div class="date-input">
+                        <label>Desde</label>
+                        <input type="date" [(ngModel)]="completeFromDate">
+                      </div>
+                      <div class="date-input">
+                        <label>Hasta</label>
+                        <input type="date" [(ngModel)]="completeToDate">
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    class="export-btn primary"
+                    (click)="downloadReport('COMPLETE')"
+                    [disabled]="isLoading">
+                    <i class="bx bx-download" *ngIf="!isLoading"></i>
+                    <i class="bx bx-loader-alt bx-spin" *ngIf="isLoading"></i>
+                    <span>{{ isLoading ? 'Generando...' : 'Descargar Completo' }}</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Simple Report -->
+              <div class="export-card">
+                <div class="card-header">
+                  <div class="card-icon simple">
+                    <i class="bx bx-file"></i>
+                  </div>
+                  <div class="card-info">
+                    <h4>Reporte Resumido</h4>
+                    <p>2 hojas rápidas</p>
+                  </div>
+                </div>
+
+                <div class="card-content">
+                  <div class="period-selector">
+                    <label class="radio-option">
+                      <input type="radio" name="simple-period" value="30days" [(ngModel)]="simpleReportPeriod" (change)="onPeriodChange('simple')">
+                      <span class="radio-label">Últimos 30 días</span>
+                    </label>
+                    <label class="radio-option">
+                      <input type="radio" name="simple-period" value="custom" [(ngModel)]="simpleReportPeriod" (change)="onPeriodChange('simple')">
+                      <span class="radio-label">Personalizar período</span>
+                    </label>
+                  </div>
+
+                  <div *ngIf="simpleReportPeriod === 'custom'" class="date-picker">
+                    <div class="date-input-group">
+                      <div class="date-input">
+                        <label>Desde</label>
+                        <input type="date" [(ngModel)]="simpleFromDate">
+                      </div>
+                      <div class="date-input">
+                        <label>Hasta</label>
+                        <input type="date" [(ngModel)]="simpleToDate">
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    class="export-btn primary"
+                    (click)="downloadReport('SIMPLE')"
+                    [disabled]="isLoading">
+                    <i class="bx bx-download" *ngIf="!isLoading"></i>
+                    <i class="bx bx-loader-alt bx-spin" *ngIf="isLoading"></i>
+                    <span>{{ isLoading ? 'Generando...' : 'Descargar Resumido' }}</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- History -->
+              <div class="export-card">
+                <div class="card-header">
+                  <div class="card-icon history">
+                    <i class="bx bx-history"></i>
+                  </div>
+                  <div class="card-info">
+                    <h4>Historial</h4>
+                    <p>Reportes anteriores</p>
+                  </div>
+                </div>
+
+                <div class="card-content">
+                  <div *ngIf="exportHistory.length === 0" class="empty-state">
+                    <i class="bx bx-folder-open"></i>
+                    <p>No hay reportes generados aún</p>
+                  </div>
+
+                  <div *ngIf="exportHistory.length > 0" class="history-list">
+                    <div class="history-item" *ngFor="let item of exportHistory">
+                      <div class="history-info">
+                        <div class="history-period">{{ item.period }}</div>
+                        <div class="history-date">{{ item.dateGenerated | date: 'dd/MM/yyyy HH:mm' }}</div>
+                      </div>
+                      <div class="history-type">
+                        <span class="type-badge" [class]="item.reportType === 'COMPLETE' ? 'complete' : 'simple'">
+                          {{ item.reportType === 'COMPLETE' ? 'Completo' : 'Resumido' }}
+                        </span>
+                      </div>
+                      <div class="history-actions">
+                        <button class="action-btn download" (click)="redownloadReport(item)" title="Descargar">
+                          <i class="bx bx-download"></i>
+                        </button>
+                        <button class="action-btn delete" (click)="deleteReport(item)" title="Eliminar">
+                          <i class="bx bx-trash"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
         </div>
 
-        <!-- OPCIÓN 3: HISTORIAL -->
-        <div class="export-option-card">
-          <div class="option-header">
-            <h4>📂 Historial de Exportaciones</h4>
-            <p class="option-desc">Accede a reportes de meses anteriores</p>
-          </div>
+        <!-- Footer -->
+        <div class="modal-footer">
+          <button class="btn-secondary" (click)="onCancel()">Cerrar</button>
+        </div>
 
-          <div *ngIf="exportHistory.length === 0" class="no-history">
-            <p>No hay reportes generados aún</p>
-          </div>
+        <!-- Messages -->
+        <div *ngIf="errorMessage" class="message error">
+          <i class="bx bx-error-circle"></i>
+          <span>{{ errorMessage }}</span>
+        </div>
 
-          <div *ngIf="exportHistory.length > 0" class="history-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>Período</th>
-                  <th>Fecha Generación</th>
-                  <th>Tipo</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let item of exportHistory">
-                  <td>{{ item.period }}</td>
-                  <td>{{ item.dateGenerated | date: 'dd/MM/yyyy HH:mm' }}</td>
-                  <td>
-                    <span class="badge" [ngClass]="item.reportType === 'COMPLETE' ? 'complete' : 'simple'">
-                      {{ item.reportType === 'COMPLETE' ? '📋 Completo' : '📈 Resumido' }}
-                    </span>
-                  </td>
-                  <td class="actions">
-                    <button class="action-btn download" (click)="redownloadReport(item)" title="Descargar">↓</button>
-                    <button class="action-btn delete" (click)="deleteReport(item)" title="Eliminar">✕</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+        <div *ngIf="successMessage" class="message success">
+          <i class="bx bx-check-circle"></i>
+          <span>{{ successMessage }}</span>
         </div>
       </div>
-
-      <!-- Footer -->
-      <div class="modal-footer">
-        <button class="btn-secondary" (click)="onCancel()">Cerrar</button>
-      </div>
-
-      <!-- Error Message -->
-      <div *ngIf="errorMessage" class="error-message">
-        <p>❌ {{ errorMessage }}</p>
-      </div>
-
-      <!-- Success Message -->
-      <div *ngIf="successMessage" class="success-message">
-        <p>✅ {{ successMessage }}</p>
-      </div>
-    </div>
-  `,
+    </div>`,
   styles: [`
+    /* Overlay */
+    .export-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 1rem;
+    }
+
+    /* Modal Container */
     .export-modal {
       width: 100%;
       max-width: 900px;
       background: white;
-      border-radius: 12px;
-      overflow-y: auto;
+      border-radius: 14px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
       max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
+    /* Dark Mode Support */
+    :host-context(.dark) .export-modal {
+      background: #1a1a2e;
+      color: #ffffff;
+    }
+
+    :host-context(.dark) .export-modal-overlay {
+      background: rgba(0, 0, 0, 0.7);
+    }
+
+    /* Header */
     .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1.5rem;
-      border-bottom: 2px solid #e0e0e0;
       background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
       color: white;
+      padding: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
     }
 
-    .modal-header h2 {
-      margin: 0;
+    .header-content {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .header-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .header-text h2 {
+      margin: 0 0 0.25rem 0;
       font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .header-text p {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 0.95rem;
     }
 
     .close-btn {
       background: none;
       border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
       color: white;
-      padding: 0;
-      transition: transform 0.2s;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 8px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
     }
 
     .close-btn:hover {
-      transform: scale(1.2);
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.05);
     }
 
+    /* Content */
+    .modal-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0;
+    }
+
+    /* Info Section */
     .info-section {
       padding: 1.5rem;
-      background-color: #f5f5f5;
-      border-bottom: 1px solid #e0e0e0;
+      background: #f8f9fa;
+      border-bottom: 1px solid #e9ecef;
     }
 
-    .info-section h3 {
-      margin-top: 0;
-      color: #333;
+    :host-context(.dark) .info-section {
+      background: #0f0f1a;
+      border-bottom-color: #2a2a3e;
     }
 
-    .info-section p {
-      margin: 0.5rem 0;
-      color: #666;
-      font-size: 0.95rem;
-      line-height: 1.5;
+    .info-card {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
     }
 
-    .divider {
-      height: 2px;
-      background: linear-gradient(90deg, transparent, #ddd, transparent);
+    .info-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 20px;
+      flex-shrink: 0;
     }
 
-    .options-section {
-      padding: 1.5rem;
-    }
-
-    .options-section h3 {
-      margin-top: 0;
-      color: #333;
-    }
-
-    .export-option-card {
-      background: white;
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-      transition: all 0.3s;
-    }
-
-    .export-option-card:hover {
-      border-color: #6366f1;
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
-    }
-
-    .option-header h4 {
-      margin: 0 0 0.5rem 0;
+    .info-content h4 {
+      margin: 0 0 0.75rem 0;
       color: #333;
       font-size: 1.1rem;
+      font-weight: 600;
     }
 
-    .option-desc {
-      margin: 0;
-      color: #999;
-      font-size: 0.9rem;
+    :host-context(.dark) .info-content h4 {
+      color: #ffffff;
     }
 
-    .period-selector {
-      margin: 1rem 0;
+    .info-items {
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
     }
 
-    .period-selector label {
+    .info-item {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .info-label {
+      font-weight: 600;
+      color: #6366f1;
+      min-width: 80px;
+      font-size: 0.9rem;
+    }
+
+    .info-text {
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    :host-context(.dark) .info-text {
+      color: #cccccc;
+    }
+
+    /* Export Section */
+    .export-section {
+      padding: 1.5rem;
+    }
+
+    .section-title {
+      margin: 0 0 1.5rem 0;
+      color: #333;
+      font-size: 1.2rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    :host-context(.dark) .section-title {
+      color: #ffffff;
+    }
+
+    .section-title i {
+      color: #6366f1;
+      font-size: 20px;
+    }
+
+    /* Export Cards */
+    .export-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .export-card {
+      background: white;
+      border: 1px solid #e9ecef;
+      border-radius: 14px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    :host-context(.dark) .export-card {
+      background: #1e1e2e;
+      border-color: #2a2a3e;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .export-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    :host-context(.dark) .export-card:hover {
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-header {
+      display: flex;
+      gap: 1rem;
+      padding: 1.5rem;
+      align-items: center;
+    }
+
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .card-icon.complete {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      color: white;
+    }
+
+    .card-icon.simple {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+    }
+
+    .card-icon.history {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: white;
+    }
+
+    .card-info h4 {
+      margin: 0 0 0.25rem 0;
+      color: #333;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    :host-context(.dark) .card-info h4 {
+      color: #ffffff;
+    }
+
+    .card-info p {
+      margin: 0;
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    :host-context(.dark) .card-info p {
+      color: #cccccc;
+    }
+
+    .card-content {
+      padding: 0 1.5rem 1.5rem 1.5rem;
+    }
+
+    /* Period Selector */
+    .period-selector {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .radio-option {
       display: flex;
       align-items: center;
       gap: 0.5rem;
       cursor: pointer;
-      color: #666;
+      padding: 0.5rem;
+      border-radius: 8px;
+      transition: background 0.2s;
     }
 
-    .period-selector input[type="radio"] {
+    .radio-option:hover {
+      background: #f8f9fa;
+    }
+
+    :host-context(.dark) .radio-option:hover {
+      background: #2a2a3e;
+    }
+
+    .radio-option input[type="radio"] {
       cursor: pointer;
+      accent-color: #6366f1;
     }
 
-    .date-picker-group {
+    .radio-label {
+      color: #555;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    :host-context(.dark) .radio-label {
+      color: #cccccc;
+    }
+
+    /* Date Picker */
+    .date-picker {
+      margin: 1rem 0;
+    }
+
+    .date-input-group {
       display: flex;
       gap: 1rem;
-      margin: 1rem 0;
-      padding: 1rem;
-      background: #f9f9f9;
-      border-radius: 6px;
     }
 
     .date-input {
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 0.3rem;
+      gap: 0.5rem;
     }
 
     .date-input label {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: #666;
       font-weight: 500;
     }
 
-    .date-input input {
-      padding: 0.5rem;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 0.9rem;
+    :host-context(.dark) .date-input label {
+      color: #cccccc;
     }
 
-    .download-btn {
-      padding: 0.75rem 1.5rem;
+    .date-input input {
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      transition: border-color 0.2s;
+    }
+
+    :host-context(.dark) .date-input input {
+      background: #2a2a3e;
+      border-color: #3a3a4e;
+      color: #ffffff;
+    }
+
+    .date-input input:focus {
+      outline: none;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    /* Export Button */
+    .export-btn {
+      width: 100%;
+      padding: 0.875rem 1.5rem;
       border: none;
-      border-radius: 6px;
+      border-radius: 10px;
       cursor: pointer;
       font-weight: 600;
+      font-size: 0.95rem;
       transition: all 0.3s;
-      width: 100%;
-    }
-
-    .download-btn.primary {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
       background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
       color: white;
     }
 
-    .download-btn.primary:hover:not(:disabled) {
+    .export-btn:hover:not(:disabled) {
       transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(99, 102, 241, 0.3);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.25);
     }
 
-    .download-btn:disabled {
+    .export-btn:disabled {
       opacity: 0.6;
       cursor: not-allowed;
+      transform: none;
     }
 
-    .no-history {
+    /* History */
+    .empty-state {
       text-align: center;
       padding: 2rem;
       color: #999;
     }
 
-    .history-table {
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    thead {
-      background: #f5f5f5;
-    }
-
-    th {
-      padding: 0.75rem;
-      text-align: left;
-      font-weight: 600;
-      color: #333;
-      border-bottom: 2px solid #e0e0e0;
-    }
-
-    td {
-      padding: 0.75rem;
-      border-bottom: 1px solid #e0e0e0;
+    :host-context(.dark) .empty-state {
       color: #666;
     }
 
-    tr:hover {
-      background: #f9f9f9;
+    .empty-state i {
+      font-size: 48px;
+      margin-bottom: 1rem;
+      opacity: 0.5;
     }
 
-    .badge {
-      display: inline-block;
-      padding: 0.25rem 0.75rem;
-      border-radius: 12px;
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .history-item {
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      background: #f8f9fa;
+      border-radius: 10px;
+      gap: 1rem;
+    }
+
+    :host-context(.dark) .history-item {
+      background: #2a2a3e;
+    }
+
+    .history-info {
+      flex: 1;
+    }
+
+    .history-period {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 0.25rem;
+    }
+
+    :host-context(.dark) .history-period {
+      color: #ffffff;
+    }
+
+    .history-date {
       font-size: 0.85rem;
+      color: #666;
+    }
+
+    :host-context(.dark) .history-date {
+      color: #cccccc;
+    }
+
+    .history-type {
+      flex-shrink: 0;
+    }
+
+    .type-badge {
+      display: inline-block;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
       font-weight: 500;
     }
 
-    .badge.complete {
+    .type-badge.complete {
       background: #dbeafe;
       color: #0369a1;
     }
 
-    .badge.simple {
+    .type-badge.simple {
       background: #dcfce7;
       color: #15803d;
     }
 
-    .actions {
+    .history-actions {
       display: flex;
       gap: 0.5rem;
+      flex-shrink: 0;
     }
 
     .action-btn {
-      padding: 0.4rem 0.6rem;
+      padding: 0.5rem;
       border: 1px solid #ddd;
       background: white;
-      border-radius: 4px;
+      border-radius: 6px;
       cursor: pointer;
       transition: all 0.2s;
-      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: #666;
+    }
+
+    :host-context(.dark) .action-btn {
+      background: #3a3a4e;
+      border-color: #4a4a5e;
+      color: #cccccc;
     }
 
     .action-btn.download:hover {
       background: #e8f4f8;
       border-color: #0369a1;
+      color: #0369a1;
+    }
+
+    :host-context(.dark) .action-btn.download:hover {
+      background: #1a3a4a;
+      border-color: #0369a1;
+      color: #0369a1;
     }
 
     .action-btn.delete:hover {
       background: #fee2e2;
-      border-color: #991b1b;
+      border-color: #dc2626;
+      color: #dc2626;
     }
 
+    :host-context(.dark) .action-btn.delete:hover {
+      background: #4a1a1a;
+      border-color: #dc2626;
+      color: #dc2626;
+    }
+
+    /* Footer */
     .modal-footer {
       padding: 1.5rem;
-      border-top: 1px solid #e0e0e0;
+      border-top: 1px solid #e9ecef;
       display: flex;
-      gap: 1rem;
       justify-content: flex-end;
+      gap: 1rem;
+      background: #f8f9fa;
+    }
+
+    :host-context(.dark) .modal-footer {
+      background: #0f0f1a;
+      border-top-color: #2a2a3e;
     }
 
     .btn-secondary {
       padding: 0.75rem 1.5rem;
       background: #f0f0f0;
       border: 1px solid #ddd;
-      border-radius: 6px;
+      border-radius: 10px;
       cursor: pointer;
       font-weight: 600;
       transition: all 0.3s;
+      color: #333;
+    }
+
+    :host-context(.dark) .btn-secondary {
+      background: #2a2a3e;
+      border-color: #3a3a4e;
+      color: #ffffff;
     }
 
     .btn-secondary:hover {
       background: #e0e0e0;
+      transform: translateY(-1px);
     }
 
-    .error-message {
-      margin: 1rem;
+    :host-context(.dark) .btn-secondary:hover {
+      background: #3a3a4e;
+    }
+
+    /* Messages */
+    .message {
+      margin: 0 1.5rem 1.5rem 1.5rem;
       padding: 1rem;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 500;
+    }
+
+    .message.error {
       background: #fee2e2;
       border-left: 4px solid #dc2626;
-      border-radius: 4px;
       color: #991b1b;
     }
 
-    .success-message {
-      margin: 1rem;
-      padding: 1rem;
+    .message.success {
       background: #dcfce7;
       border-left: 4px solid #16a34a;
-      border-radius: 4px;
       color: #15803d;
+    }
+
+    .message i {
+      flex-shrink: 0;
+      font-size: 20px;
+    }
+
+    /* Animations */
+    .bx-spin {
+      animation: bx-spin 1s linear infinite;
+    }
+
+    @keyframes bx-spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .export-modal-overlay {
+        padding: 0.5rem;
+      }
+
+      .export-modal {
+        max-height: 95vh;
+      }
+
+      .modal-header {
+        padding: 1rem;
+      }
+
+      .header-content {
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: flex-start;
+      }
+
+      .header-text h2 {
+        font-size: 1.3rem;
+      }
+
+      .card-header {
+        padding: 1rem;
+      }
+
+      .card-content {
+        padding: 0 1rem 1rem 1rem;
+      }
+
+      .date-input-group {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .history-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+
+      .history-actions {
+        width: 100%;
+        justify-content: flex-end;
+      }
     }
   `]
 })

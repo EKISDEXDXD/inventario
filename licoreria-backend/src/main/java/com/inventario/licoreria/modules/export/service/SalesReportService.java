@@ -77,6 +77,7 @@ public class SalesReportService {
         CellStyle headerStyle = createHeaderStyle(workbook);
         CellStyle totalStyle = createTotalStyle(workbook);
         CellStyle currencyStyle = createCurrencyStyle(workbook);
+        CellStyle currencyWithSymbolStyle = createCurrencyWithSymbolStyle(workbook);
         CellStyle labelStyle = createLabelStyle(workbook);
         CellStyle altRowStyle = createAlternateRowStyle(workbook);
 
@@ -106,7 +107,7 @@ public class SalesReportService {
                 .max(LocalDate::compareTo).orElse(LocalDate.now());
             Cell periodValueCell = periodRow.createCell(1);
             periodValueCell.setCellValue(minDate + " a " + maxDate);
-            periodValueCell.setCellStyle(altRowStyle);
+            addBorders(periodValueCell);
         }
 
         rowNum[0]++; // Espacio
@@ -153,7 +154,7 @@ public class SalesReportService {
         labelCell.setCellStyle(labelStyle);
         Cell cell = row.createCell(1);
         cell.setCellValue(totalEntradas.doubleValue());
-        cell.setCellStyle(currencyStyle);
+        cell.setCellStyle(currencyWithSymbolStyle);
 
         row = sheet.createRow(rowNum[0]++);
         labelCell = row.createCell(0);
@@ -161,7 +162,7 @@ public class SalesReportService {
         labelCell.setCellStyle(labelStyle);
         cell = row.createCell(1);
         cell.setCellValue(totalSalidas.doubleValue());
-        cell.setCellStyle(currencyStyle);
+        cell.setCellStyle(currencyWithSymbolStyle);
 
         row = sheet.createRow(rowNum[0]++);
         labelCell = row.createCell(0);
@@ -169,15 +170,15 @@ public class SalesReportService {
         labelCell.setCellStyle(labelStyle);
         cell = row.createCell(1);
         cell.setCellValue(totalCostSold.doubleValue());
-        cell.setCellStyle(currencyStyle);
+        cell.setCellStyle(currencyWithSymbolStyle);
 
         row = sheet.createRow(rowNum[0]++);
         labelCell = row.createCell(0);
         labelCell.setCellValue("💵 Ganancia Bruta:");
-        labelCell.setCellStyle(totalStyle);
+        labelCell.setCellStyle(labelStyle);
         cell = row.createCell(1);
         cell.setCellValue(gananciaTotal.doubleValue());
-        cell.setCellStyle(totalStyle);
+        cell.setCellStyle(currencyWithSymbolStyle);
 
         row = sheet.createRow(rowNum[0]++);
         labelCell = row.createCell(0);
@@ -235,23 +236,19 @@ public class SalesReportService {
             .collect(Collectors.toList())) {
             Row dataRow = sheet.createRow(rowNum[0]++);
             dataRow.setHeightInPoints(14);
-            CellStyle rowStyle = topIndex % 2 == 0 ? altRowStyle : workbook.createCellStyle();
             
             Cell nameCell = dataRow.createCell(0);
             nameCell.setCellValue(entry.getKey());
-            nameCell.setCellStyle(rowStyle);
+            addBorders(nameCell);
             
             Cell qtyCell = dataRow.createCell(1);
             qtyCell.setCellValue(entry.getValue());
-            qtyCell.setCellStyle(rowStyle);
+            addBorders(qtyCell);
             
             Cell revCell = dataRow.createCell(2);
             revCell.setCellValue(productRevenue.getOrDefault(entry.getKey(), BigDecimal.ZERO).doubleValue());
-            CellStyle revStyle = workbook.createCellStyle();
-            revStyle.cloneStyleFrom(currencyStyle);
-            if (topIndex % 2 == 0) revStyle.setFillForegroundColor(IndexedColors.LIGHT_CORNFLOWER_BLUE.getIndex());
-            revStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-            revCell.setCellStyle(revStyle);
+            revCell.setCellStyle(currencyStyle);
+            addBorders(revCell);
             topIndex++;
         }
 
@@ -266,9 +263,6 @@ public class SalesReportService {
         
         CellStyle headerStyle = createHeaderStyle(workbook);
         CellStyle currencyStyle = createCurrencyStyle(workbook);
-        CellStyle altRowStyle = createAlternateRowStyle(workbook);
-        CellStyle entradaStyle = createTransactionStyle(workbook, "ENTRADA");
-        CellStyle salidaStyle = createTransactionStyle(workbook, "SALIDA");
 
         int[] rowNum = {0};
 
@@ -291,7 +285,6 @@ public class SalesReportService {
                 Collectors.toList()
             ));
 
-        boolean altRow = false;
         for (YearMonth month : transactionsByMonth.keySet().stream().sorted().collect(Collectors.toList())) {
             List<Transaction> monthTransactions = transactionsByMonth.get(month);
             
@@ -323,24 +316,17 @@ public class SalesReportService {
 
                 Row row = sheet.createRow(rowNum[0]++);
                 row.setHeightInPoints(14);
-                
-                CellStyle baseStyle = altRow ? altRowStyle : workbook.createCellStyle();
-                CellStyle typeStyle = "ENTRADA".equalsIgnoreCase(t.getType()) ? entradaStyle : salidaStyle;
 
                 row.createCell(0).setCellValue(t.getDateTime().toLocalDate().toString());
-                row.getCell(0).setCellStyle(baseStyle);
                 addBorders(row.getCell(0));
 
                 row.createCell(1).setCellValue(t.getType());
-                row.getCell(1).setCellStyle(typeStyle);
                 addBorders(row.getCell(1));
 
                 row.createCell(2).setCellValue(product.getName());
-                row.getCell(2).setCellStyle(baseStyle);
                 addBorders(row.getCell(2));
 
                 row.createCell(3).setCellValue(t.getQuantity());
-                row.getCell(3).setCellStyle(baseStyle);
                 addBorders(row.getCell(3));
 
                 // Handle null prices/costs
@@ -353,40 +339,32 @@ public class SalesReportService {
                     ? gainUnit.multiply(new BigDecimal(t.getQuantity())) 
                     : BigDecimal.ZERO;
 
-                CellStyle currStyle = workbook.createCellStyle();
-                currStyle.cloneStyleFrom(currencyStyle);
-                if (altRow) currStyle.setFillForegroundColor(IndexedColors.LIGHT_CORNFLOWER_BLUE.getIndex());
-                currStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
                 row.createCell(4).setCellValue(costUnit.doubleValue());
-                row.getCell(4).setCellStyle(currStyle);
+                row.getCell(4).setCellStyle(currencyStyle);
                 addBorders(row.getCell(4));
                 
                 row.createCell(5).setCellValue(costTotal.doubleValue());
-                row.getCell(5).setCellStyle(currStyle);
+                row.getCell(5).setCellStyle(currencyStyle);
                 addBorders(row.getCell(5));
                 
                 row.createCell(6).setCellValue(priceUnit.doubleValue());
-                row.getCell(6).setCellStyle(currStyle);
+                row.getCell(6).setCellStyle(currencyStyle);
                 addBorders(row.getCell(6));
                 
                 row.createCell(7).setCellValue(priceTotal.doubleValue());
-                row.getCell(7).setCellStyle(currStyle);
+                row.getCell(7).setCellStyle(currencyStyle);
                 addBorders(row.getCell(7));
                 
                 row.createCell(8).setCellValue(gainUnit.doubleValue());
-                row.getCell(8).setCellStyle(currStyle);
+                row.getCell(8).setCellStyle(currencyStyle);
                 addBorders(row.getCell(8));
                 
                 row.createCell(9).setCellValue(gainTotal.doubleValue());
-                row.getCell(9).setCellStyle(currStyle);
+                row.getCell(9).setCellStyle(currencyStyle);
                 addBorders(row.getCell(9));
 
                 row.createCell(10).setCellValue(user != null ? user.getUsername() : "N/A");
-                row.getCell(10).setCellStyle(baseStyle);
                 addBorders(row.getCell(10));
-
-                altRow = !altRow;
             }
 
             rowNum[0]++; // Espacio entre meses
@@ -479,49 +457,37 @@ public class SalesReportService {
 
             Row row = sheet.createRow(rowNum[0]++);
             row.setHeightInPoints(14);
-            CellStyle baseRowStyle = altRow ? createAlternateRowStyle(workbook) : workbook.createCellStyle();
 
             row.createCell(0).setCellValue(product.getName());
-            row.getCell(0).setCellStyle(baseRowStyle);
             addBorders(row.getCell(0));
 
             row.createCell(1).setCellValue(cantEntrada);
-            row.getCell(1).setCellStyle(baseRowStyle);
             addBorders(row.getCell(1));
 
             row.createCell(2).setCellValue(cantSalida);
-            row.getCell(2).setCellStyle(baseRowStyle);
             addBorders(row.getCell(2));
 
             row.createCell(3).setCellValue(product.getStock());
-            row.getCell(3).setCellStyle(baseRowStyle);
             addBorders(row.getCell(3));
             
-            CellStyle currStyle = workbook.createCellStyle();
-            currStyle.cloneStyleFrom(currencyStyle);
-            if (altRow) currStyle.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
-            currStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-            
             row.createCell(4).setCellValue(costInvested.doubleValue());
-            row.getCell(4).setCellStyle(currStyle);
+            row.getCell(4).setCellStyle(currencyStyle);
             addBorders(row.getCell(4));
 
             row.createCell(5).setCellValue(ingresoTotal.doubleValue());
-            row.getCell(5).setCellStyle(currStyle);
+            row.getCell(5).setCellStyle(currencyStyle);
             addBorders(row.getCell(5));
 
             row.createCell(6).setCellValue(gananciaTotal.doubleValue());
-            row.getCell(6).setCellStyle(currStyle);
+            row.getCell(6).setCellStyle(currencyStyle);
             addBorders(row.getCell(6));
 
             row.createCell(7).setCellValue(gananciaPercent.doubleValue() / 100.0);
             CellStyle pctStyle = workbook.createCellStyle();
-            pctStyle.cloneStyleFrom(currStyle);
+            pctStyle.cloneStyleFrom(currencyStyle);
             pctStyle.setDataFormat(workbook.createDataFormat().getFormat("0.00%"));
             row.getCell(7).setCellStyle(pctStyle);
             addBorders(row.getCell(7));
-
-            altRow = !altRow;
         }
 
         // Auto-ajustar columnas
@@ -535,14 +501,13 @@ public class SalesReportService {
         
         CellStyle headerStyle = createHeaderStyle(workbook);
         CellStyle currencyStyle = createCurrencyStyle(workbook);
-        CellStyle altRowStyle = createAlternateRowStyle(workbook);
 
         int rowNum = 0;
 
         // Encabezados
         Row headerRow = sheet.createRow(rowNum++);
         headerRow.setHeightInPoints(18);
-        String[] headers = {"Día", "Entradas ($)", "Salidas ($)", "Ganancia Neta ($)"};
+        String[] headers = {"Día", "Entradas", "Salidas", "Ganancia Neta"};
         
         for (int i = 0; i < headers.length; i++) {
             Cell cell = headerRow.createCell(i);
@@ -558,7 +523,6 @@ public class SalesReportService {
                 Collectors.toList()
             ));
 
-        boolean altRow = false;
         for (Map.Entry<LocalDate, List<Transaction>> entry : transactionsByDay.entrySet()) {
             LocalDate day = entry.getKey();
             List<Transaction> dayTransactions = entry.getValue();
@@ -586,30 +550,21 @@ public class SalesReportService {
 
             Row row = sheet.createRow(rowNum++);
             row.setHeightInPoints(14);
-            CellStyle baseRowStyle = altRow ? altRowStyle : workbook.createCellStyle();
 
             row.createCell(0).setCellValue(day.toString());
-            row.getCell(0).setCellStyle(baseRowStyle);
             addBorders(row.getCell(0));
             
-            CellStyle currStyle = workbook.createCellStyle();
-            currStyle.cloneStyleFrom(currencyStyle);
-            if (altRow) currStyle.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
-            currStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
             row.createCell(1).setCellValue(entradas.doubleValue());
-            row.getCell(1).setCellStyle(currStyle);
+            row.getCell(1).setCellStyle(currencyStyle);
             addBorders(row.getCell(1));
 
             row.createCell(2).setCellValue(salidas.doubleValue());
-            row.getCell(2).setCellStyle(currStyle);
+            row.getCell(2).setCellStyle(currencyStyle);
             addBorders(row.getCell(2));
 
             row.createCell(3).setCellValue(ganancia.doubleValue());
-            row.getCell(3).setCellStyle(currStyle);
+            row.getCell(3).setCellStyle(currencyStyle);
             addBorders(row.getCell(3));
-
-            altRow = !altRow;
         }
 
         // Auto-ajustar columnas
@@ -618,22 +573,16 @@ public class SalesReportService {
         }
     }
 
-    // Estilos
+    // Estilos - LIMPIOS Y CLAROS SIN COLORES
     private CellStyle createHeaderStyle(Workbook workbook) {
         CellStyle style = workbook.createCellStyle();
         Font font = workbook.createFont();
         font.setBold(true);
-        font.setColor(IndexedColors.WHITE.getIndex());
-        font.setFontHeightInPoints((short) 12);
+        font.setFontHeightInPoints((short) 11);
         style.setFont(font);
-        style.setFillForegroundColor(IndexedColors.DARK_BLUE.getIndex());
-        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         style.setAlignment(HorizontalAlignment.CENTER);
         style.setVerticalAlignment(VerticalAlignment.CENTER);
-        style.setBorderBottom(BorderStyle.MEDIUM);
-        style.setBorderTop(BorderStyle.MEDIUM);
-        style.setBorderLeft(BorderStyle.MEDIUM);
-        style.setBorderRight(BorderStyle.MEDIUM);
+        addBorders(style);
         return style;
     }
 
@@ -643,10 +592,8 @@ public class SalesReportService {
         font.setBold(true);
         font.setFontHeightInPoints((short) 11);
         style.setFont(font);
-        style.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
-        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         style.setAlignment(HorizontalAlignment.RIGHT);
-        style.setDataFormat(workbook.createDataFormat().getFormat("$#,##0.00"));
+        style.setDataFormat(workbook.createDataFormat().getFormat("#,##0.00"));
         addBorders(style);
         return style;
     }
@@ -655,7 +602,7 @@ public class SalesReportService {
         CellStyle style = workbook.createCellStyle();
         Font font = workbook.createFont();
         font.setBold(true);
-        font.setFontHeightInPoints((short) 11);
+        font.setFontHeightInPoints((short) 10);
         style.setFont(font);
         style.setAlignment(HorizontalAlignment.LEFT);
         addBorders(style);
@@ -664,8 +611,6 @@ public class SalesReportService {
 
     private CellStyle createAlternateRowStyle(Workbook workbook) {
         CellStyle style = workbook.createCellStyle();
-        style.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
-        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         style.setAlignment(HorizontalAlignment.LEFT);
         style.setVerticalAlignment(VerticalAlignment.CENTER);
         addBorders(style);
@@ -676,16 +621,9 @@ public class SalesReportService {
         CellStyle style = workbook.createCellStyle();
         Font font = workbook.createFont();
         font.setBold(true);
-        if ("ENTRADA".equalsIgnoreCase(type)) {
-            style.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
-            font.setColor(IndexedColors.DARK_GREEN.getIndex());
-        } else {
-            style.setFillForegroundColor(IndexedColors.LIGHT_YELLOW.getIndex());
-            font.setColor(IndexedColors.ORANGE.getIndex());
-        }
+        font.setFontHeightInPoints((short) 10);
         style.setFont(font);
         style.setAlignment(HorizontalAlignment.CENTER);
-        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         addBorders(style);
         return style;
     }
@@ -694,11 +632,8 @@ public class SalesReportService {
         CellStyle style = workbook.createCellStyle();
         Font font = workbook.createFont();
         font.setBold(true);
-        font.setFontHeightInPoints((short) 11);
-        font.setColor(IndexedColors.WHITE.getIndex());
+        font.setFontHeightInPoints((short) 10);
         style.setFont(font);
-        style.setFillForegroundColor(IndexedColors.LAVENDER.getIndex());
-        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         style.setAlignment(HorizontalAlignment.LEFT);
         style.setVerticalAlignment(VerticalAlignment.CENTER);
         addBorders(style);
@@ -709,18 +644,23 @@ public class SalesReportService {
         CellStyle style = workbook.createCellStyle();
         Font font = workbook.createFont();
         font.setBold(true);
-        font.setColor(IndexedColors.DARK_GREEN.getIndex());
         style.setFont(font);
         style.setDataFormat(workbook.createDataFormat().getFormat("0.00%"));
-        style.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
-        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         addBorders(style);
         return style;
     }
 
     private CellStyle createCurrencyStyle(Workbook workbook) {
         CellStyle style = workbook.createCellStyle();
-        style.setDataFormat(workbook.createDataFormat().getFormat("$#,##0.00"));
+        style.setDataFormat(workbook.createDataFormat().getFormat("#,##0.00"));
+        style.setAlignment(HorizontalAlignment.RIGHT);
+        addBorders(style);
+        return style;
+    }
+
+    private CellStyle createCurrencyWithSymbolStyle(Workbook workbook) {
+        CellStyle style = workbook.createCellStyle();
+        style.setDataFormat(workbook.createDataFormat().getFormat("\"$\"#,##0.00"));
         style.setAlignment(HorizontalAlignment.RIGHT);
         addBorders(style);
         return style;
