@@ -1,27 +1,79 @@
 <div class="inventario-container">
+  <div class="card main-title-card">
+    <h1 class="main-title"><i class="bx bx-package"></i> Inventario</h1>
+    <p class="main-subtitle">Gestión completa de productos y stock de tu tienda</p>
+  </div>
+
   <header class="card inventario-header">
     <button class="btn btn-primary" (click)="goBack()"><i class="bx bx-chevron-left"></i> Volver</button>
     <h1 *ngIf="store"><i class="bx bx-package"></i> Inventario - {{ store.name }}</h1>
   </header>
 
-  <div class="alerts-grid" *ngIf="getLowStockProducts().length > 0 || getOutOfStockProducts().length > 0">
-    <div class="alert-box warning" *ngIf="getLowStockProducts().length > 0">
-      <h3><i class="bx bx-error"></i> Stock Bajo</h3>
-      <ul>
-        <li *ngFor="let product of getLowStockProducts()">{{ product.name }} ({{ product.stock }} un.)</li>
-      </ul>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon"><i class="bx bx-package"></i></div>
+      <div class="stat-content">
+        <h3>{{ totalProducts }}</h3>
+        <p>Total Productos</p>
+      </div>
     </div>
-    <div class="alert-box danger" *ngIf="getOutOfStockProducts().length > 0">
-      <h3><i class="bx bx-error-circle"></i> Sin Stock</h3>
-      <ul>
-        <li *ngFor="let product of getOutOfStockProducts()">{{ product.name }}</li>
-      </ul>
+    <div class="stat-card">
+      <div class="stat-icon warning"><i class="bx bx-error"></i></div>
+      <div class="stat-content">
+        <h3>{{ getLowStockProducts().length }}</h3>
+        <p>Stock Bajo</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon danger"><i class="bx bx-error-circle"></i></div>
+      <div class="stat-content">
+        <h3>{{ getOutOfStockProducts().length }}</h3>
+        <p>Sin Stock</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon success"><i class="bx bx-check-circle"></i></div>
+      <div class="stat-content">
+        <h3>{{ getNormalStockProducts().length }}</h3>
+        <p>Stock Normal</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="threshold-card card">
+    <div class="flex-between">
+      <div>
+        <p class="threshold-title">Umbrales de stock</p>
+        <p class="threshold-subtitle">Bajo: &lt; {{ lowStockThreshold }}, Normal: &gt; {{ normalStockThreshold }}</p>
+      </div>
+      <button class="btn btn-secondary btn-sm" (click)="toggleThresholdConfig()">
+        <span *ngIf="!showThresholdConfig"><i class="bx bx-edit"></i> Ajustar umbrales</span>
+        <span *ngIf="showThresholdConfig"><i class="bx bx-x"></i> Cerrar</span>
+      </button>
+    </div>
+
+    <div *ngIf="showThresholdConfig" class="threshold-form-wrapper">
+      <form (ngSubmit)="saveThresholdConfig()">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Límite Stock Bajo</label>
+            <input type="number" [(ngModel)]="thresholdForm.lowStockThreshold" name="lowStockThreshold" min="1" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label>Límite Stock Normal</label>
+            <input type="number" [(ngModel)]="thresholdForm.normalStockThreshold" name="normalStockThreshold" min="1" class="form-control" />
+          </div>
+        </div>
+        <div style="text-align: right;">
+          <button type="submit" class="btn btn-primary">Guardar umbrales</button>
+        </div>
+      </form>
     </div>
   </div>
 
   <div class="card">
     <div class="flex-between">
-      <h2 style="margin: 0; font-size: 1.25rem;">Gestión de Productos</h2>
+      <h2 style="margin: 0; font-size: 1.25rem;">Añadir Producto</h2>
       <button class="btn btn-success" (click)="toggleCreateForm()">
         <span *ngIf="!showCreateForm"><i class="bx bx-plus"></i> Nuevo Producto</span>
         <span *ngIf="showCreateForm"><i class="bx bx-x"></i> Cancelar</span>
@@ -96,19 +148,17 @@
               <td>
                 <span class="stock-badge" 
                       [ngClass]="{
-                        'stock-low': product.stock > 0 && product.stock < 10, 
-                        'stock-out': product.stock === 0, 
-                        'stock-normal': product.stock >= 10
+                        'stock-low': product.stock > 0 && product.stock < lowStockThreshold,
+                        'stock-out': product.stock === 0,
+                        'stock-normal': product.stock > normalStockThreshold
                       }">
                   {{ product.stock }}
                 </span>
               </td>
-              <td>${{ product.cost | number: '1.2-2' }}</td>
-              <td>${{ product.price | number: '1.2-2' }}</td>
+              <td>${{ product.cost | number: '1.0-2' }}</td>
+              <td>${{ product.price | number: '1.0-2' }}</td>
               <td>
                 <div class="action-buttons">
-                  <button class="btn btn-success btn-icon" (click)="adjustStock(product.id, 5)" title="Agregar 5">+5</button>
-                  <button class="btn btn-warning btn-icon" (click)="adjustStock(product.id, -5)" title="Restar 5">-5</button>
                   <button class="btn btn-danger btn-icon" (click)="deleteProduct(product.id)" title="Eliminar"><i class="bx bx-trash"></i></button>
                 </div>
               </td>

@@ -1,37 +1,75 @@
 <div class="movimientos-container">
-  <header class="movimientos-header">
-    <button class="back-btn" (click)="goBack()"><i class="bx bx-chevron-left"></i> Volver al Dashboard</button>
-    <h1 *ngIf="store"><i class="bx bx-trending-up"></i> Movimientos - {{ store.name }}</h1>
-  </header>
+  <div class="card main-title-card">
+    <h1 class="main-title"><i class="bx bx-trending-up"></i> Movimientos</h1>
+    <p class="main-subtitle">Historial completo de entradas y salidas de productos</p>
+  </div>
+
+  <div class="card header-card">
+    <div class="movimientos-header">
+      <button class="btn btn-primary back-button" (click)="goBack()"><i class="bx bx-chevron-left"></i> Volver al Dashboard</button>
+      <h1 *ngIf="store"><i class="bx bx-trending-up"></i> Movimientos - {{ store.name }}</h1>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon"><i class="bx bx-list-ul"></i></div>
+      <div class="stat-content">
+        <h3>{{ todayCount }}</h3>
+        <p>Total Movimientos</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon success"><i class="bx bx-plus-circle"></i></div>
+      <div class="stat-content">
+        <h3>{{ entradasCount }}</h3>
+        <p>Entradas Hoy</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon danger"><i class="bx bx-minus-circle"></i></div>
+      <div class="stat-content">
+        <h3>{{ salidasCount }}</h3>
+        <p>Salidas Hoy</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon"><i class="bx bx-time"></i></div>
+      <div class="stat-content">
+        <h3>{{ todayLabel }}</h3>
+        <p>Hoy</p>
+      </div>
+    </div>
+  </div>
 
   <!-- Formulario de Movimiento -->
-  <div class="form-section">
-    <h3>Registrar Movimiento</h3>
-    <form (ngSubmit)="registerMovement()" class="movement-form">
+  <div class="card">
+    <h2 style="margin: 0 0 1.5rem 0; font-size: 1.25rem;">Registrar Movimiento</h2>
+    <form (ngSubmit)="registerMovement()">
       <div class="form-row">
         <div class="form-group">
-          <label>Tipo:</label>
-          <select [(ngModel)]="movement.type" name="type" required>
+          <label>Tipo</label>
+          <select [(ngModel)]="movement.type" name="type" class="form-control" required>
             <option value="ENTRADA">Entrada</option>
             <option value="SALIDA">Salida</option>
           </select>
         </div>
         <div class="form-group">
-          <label>Producto:</label>
-          <select [(ngModel)]="movement.productId" name="productId" required>
+          <label>Producto</label>
+          <select [(ngModel)]="movement.productId" name="productId" class="form-control" required>
             <option value="0">Seleccionar producto</option>
             <option *ngFor="let product of products" [value]="product.id">{{ product.name }}</option>
           </select>
         </div>
         <div class="form-group">
-          <label>Cantidad:</label>
-          <input type="number" [(ngModel)]="movement.quantity" name="quantity" min="1" required>
+          <label>Cantidad</label>
+          <input type="number" [(ngModel)]="movement.quantity" name="quantity" class="form-control" min="1" required>
         </div>
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label>Motivo:</label>
-          <select [(ngModel)]="movement.reason" name="reason">
+          <label>Motivo</label>
+          <select [(ngModel)]="movement.reason" name="reason" class="form-control">
             <option value="VENTA">Venta</option>
             <option value="COMPRA">Compra</option>
             <option value="DEVOLUCION">Devolución</option>
@@ -40,27 +78,26 @@
           </select>
         </div>
         <div class="form-group">
-          <button type="submit" class="submit-btn">Registrar Movimiento</button>
+          <button type="submit" class="btn btn-primary">Registrar Movimiento</button>
         </div>
       </div>
     </form>
   </div>
 
   <!-- Registro de Movimientos -->
-  <div class="transactions-section">
-    <div class="section-header">
-      <h3>Historial de Movimientos</h3>
-      <button class="refresh-btn" (click)="loadTransactions()" title="Actualizar lista"><i
-          class="bx bx-refresh"></i></button>
+  <div class="card">
+    <div class="flex-between" style="margin-bottom: 1.5rem;">
+      <h2 style="margin: 0; font-size: 1.25rem;">Historial de Movimientos</h2>
+      <button class="btn btn-primary" (click)="loadTransactions()" title="Actualizar lista"><i class="bx bx-refresh"></i> Actualizar</button>
     </div>
 
-    <div *ngIf="loading" class="loading">
-      Cargando movimientos...
+    <div *ngIf="loading" class="state-message">
+      <i class="bx bx-loader bx-spin"></i> Cargando movimientos...
     </div>
 
     <div *ngIf="!loading">
-      <div *ngIf="transactions.length === 0" class="no-transactions">
-        <p>No hay movimientos registrados aún</p>
+      <div *ngIf="transactions.length === 0" class="state-message">
+        <p><i class="bx bx-inbox"></i> No hay movimientos registrados aún</p>
       </div>
 
       <table *ngIf="transactions.length > 0" class="transactions-table">

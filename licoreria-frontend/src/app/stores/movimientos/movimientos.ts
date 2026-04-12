@@ -43,7 +43,6 @@ export class MovimientosComponent implements OnInit {
       this.storeId = +params['id'];
       this.loadStoreData();
       this.loadStoreProducts();
-      this.loadTransactions();
     });
   }
 
@@ -77,6 +76,7 @@ export class MovimientosComponent implements OnInit {
       next: (data) => {
         this.products = data;
         this.filteredProducts = data;
+        this.loadTransactions();
       },
       error: (err) => {
         console.error('Error cargando productos:', err);
@@ -216,5 +216,39 @@ export class MovimientosComponent implements OnInit {
   getProductName(productId: number): string {
     const product = this.products.find(p => p.id === productId);
     return product ? product.name : 'Producto desconocido';
+  }
+
+  private get startOfToday(): Date {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today;
+  }
+
+  private padDate(value: number): string {
+    return String(value).padStart(2, '0');
+  }
+
+  get todayTransactions(): any[] {
+    return this.transactions.filter(t => {
+      const date = new Date(t.dateTime);
+      return date >= this.startOfToday;
+    });
+  }
+
+  get todayCount(): number {
+    return this.todayTransactions.length;
+  }
+
+  get entradasCount(): number {
+    return this.todayTransactions.filter(t => t.type === 'ENTRADA').length;
+  }
+
+  get salidasCount(): number {
+    return this.todayTransactions.filter(t => t.type === 'SALIDA').length;
+  }
+
+  get todayLabel(): string {
+    const today = new Date();
+    return `${this.padDate(today.getDate())}/${this.padDate(today.getMonth() + 1)}`;
   }
 }

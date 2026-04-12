@@ -652,7 +652,7 @@ public class SalesReportService {
 
     private CellStyle createCurrencyStyle(Workbook workbook) {
         CellStyle style = workbook.createCellStyle();
-        style.setDataFormat(workbook.createDataFormat().getFormat("#,##0.00"));
+        style.setDataFormat(workbook.createDataFormat().getFormat("#,##0.##"));
         style.setAlignment(HorizontalAlignment.RIGHT);
         addBorders(style);
         return style;
@@ -660,7 +660,7 @@ public class SalesReportService {
 
     private CellStyle createCurrencyWithSymbolStyle(Workbook workbook) {
         CellStyle style = workbook.createCellStyle();
-        style.setDataFormat(workbook.createDataFormat().getFormat("\"$\"#,##0.00"));
+        style.setDataFormat(workbook.createDataFormat().getFormat("\"$\"#,##0.##"));
         style.setAlignment(HorizontalAlignment.RIGHT);
         addBorders(style);
         return style;

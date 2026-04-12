@@ -20,6 +20,14 @@ export class InventarioComponent implements OnInit {
   searchTerm: string = '';
   showCreateForm: boolean = false;
 
+  lowStockThreshold = 50;
+  normalStockThreshold = 50;
+  showThresholdConfig = false;
+  thresholdForm = {
+    lowStockThreshold: 50,
+    normalStockThreshold: 50
+  };
+
   // Form fields
   newProduct = {
     name: '',
@@ -207,11 +215,44 @@ export class InventarioComponent implements OnInit {
     this.router.navigate(['../'], { relativeTo: this.route });
   }
 
+  toggleThresholdConfig() {
+    this.showThresholdConfig = !this.showThresholdConfig;
+    if (this.showThresholdConfig) {
+      this.thresholdForm = {
+        lowStockThreshold: this.lowStockThreshold,
+        normalStockThreshold: this.normalStockThreshold
+      };
+    }
+  }
+
+  saveThresholdConfig() {
+    if (this.thresholdForm.lowStockThreshold <= 0 || this.thresholdForm.normalStockThreshold <= 0) {
+      alert('Los umbrales deben ser mayores que cero.');
+      return;
+    }
+    if (this.thresholdForm.lowStockThreshold >= this.thresholdForm.normalStockThreshold) {
+      alert('El nivel de stock bajo debe ser menor al nivel de stock normal.');
+      return;
+    }
+
+    this.lowStockThreshold = this.thresholdForm.lowStockThreshold;
+    this.normalStockThreshold = this.thresholdForm.normalStockThreshold;
+    this.showThresholdConfig = false;
+  }
+
+  get totalProducts() {
+    return this.products.length;
+  }
+
   getLowStockProducts() {
-    return this.products.filter(p => p.stock < 10);
+    return this.products.filter(p => p.stock > 0 && p.stock < this.lowStockThreshold);
   }
 
   getOutOfStockProducts() {
     return this.products.filter(p => p.stock === 0);
+  }
+
+  getNormalStockProducts() {
+    return this.products.filter(p => p.stock > this.normalStockThreshold);
   }
 }
