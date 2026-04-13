@@ -729,7 +729,7 @@
   z-index: 999;
   width: 70px;
   height: 50px;
-  border-radius: 4px;
+  border-radius: 10px;
   background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
   border: none;
   color: white;
@@ -760,5 +760,4 @@
 
 :host-context(.dark) .back-button-floating:hover {
   box-shadow: 0 8px 24px rgba(139, 92, 246, 0.7);
-}
 }

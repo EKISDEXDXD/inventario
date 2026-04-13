@@ -307,10 +307,10 @@
     position: absolute;
     top: 100%;
     right: 0;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
+    background: #667eea;
+    border: 1px solid #667eea;
     border-radius: 10px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
     z-index: 1000;
     min-width: 200px;
     overflow: hidden;
@@ -318,9 +318,9 @@
 }
 
 :host-context(.dark) .dropdown-menu {
-    background: #1a1a2e;
-    border-color: #2d2d44;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    background: #667eea;
+    border-color: #8b5cf6;
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
 }
 
 @keyframes slideDown {
@@ -342,12 +342,12 @@
     padding: 0.75rem 1rem;
     border: none;
     background: none;
-    color: #475569;
+    color: #ffffff;
     font-size: 0.9rem;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
-    border-bottom: 1px solid #f0f3f7;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .dropdown-item:last-child {
@@ -355,36 +355,36 @@
 }
 
 .dropdown-item:hover {
-    background: #f8fafc;
-    color: #0f172a;
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
 }
 
 :host-context(.dark) .dropdown-item {
-    color: #cbd5e1;
-    border-bottom-color: #2d2d44;
+    color: #ffffff;
+    border-bottom-color: rgba(255, 255, 255, 0.2);
 }
 
 :host-context(.dark) .dropdown-item:hover {
-    background: #2d2d44;
-    color: #f1f5f9;
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
 }
 
 .dropdown-item.delete {
-    color: #ef4444;
+    color: #fecaca;
 }
 
 .dropdown-item.delete:hover {
-    background: #fef2f2;
-    color: #dc2626;
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
 }
 
 :host-context(.dark) .dropdown-item.delete {
-    color: #f87171;
+    color: #fecaca;
 }
 
 :host-context(.dark) .dropdown-item.delete:hover {
-    background: rgba(244, 63, 94, 0.15);
-    color: #f87171;
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
 }
 
 .dropdown-icon {
