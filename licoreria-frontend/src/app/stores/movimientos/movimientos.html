@@ -6,7 +6,9 @@
 
   <div class="card header-card">
     <div class="movimientos-header">
-      <button class="btn btn-primary back-button" (click)="goBack()"><i class="bx bx-chevron-left"></i>Volver</button>
+      <button class="back-button-header" (click)="goBack()" title="Volver atrás">
+        <i class="bx bx-chevron-left"></i>
+      </button>
       <h1 *ngIf="store"><i class="bx bx-trending-up"></i> Movimientos - {{ store.name }}</h1>
     </div>
   </div>

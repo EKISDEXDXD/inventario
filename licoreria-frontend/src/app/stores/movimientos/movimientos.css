@@ -237,8 +237,8 @@
 .movimientos-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  justify-content: flex-start;
+  gap: 1.5rem;
   flex-wrap: wrap;
 }
 
@@ -718,4 +718,41 @@
   background-color: #dcfce7;
   color: #166534;
   box-shadow: 0 2px 4px rgba(34, 197, 94, 0.1);
+}
+
+/* Back button in header */
+.back-button-header {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+
+.back-button-header:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+}
+
+.back-button-header:active {
+  transform: scale(0.95);
+}
+
+:host-context(.dark) .back-button-header {
+  background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+}
+
+:host-context(.dark) .back-button-header:hover {
+  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.5);
+}
 }

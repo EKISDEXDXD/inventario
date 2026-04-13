@@ -158,9 +158,9 @@
 .inventario-header {
   position: relative;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1rem;
+  flex-direction: row;
+  align-items: center;
+  gap: 1.5rem;
 }
 
 .inventario-header-top {
@@ -638,4 +638,40 @@
   .flex-between {
     gap: 0.5rem;
   }
+}
+
+/* Back button in header */
+.back-button-header {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+
+.back-button-header:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+}
+
+.back-button-header:active {
+  transform: scale(0.95);
+}
+
+:host-context(.dark) .back-button-header {
+  background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+}
+
+:host-context(.dark) .back-button-header:hover {
+  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.5);
 }

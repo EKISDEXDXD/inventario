@@ -5,8 +5,10 @@
   </div>
 
   <header class="card inventario-header">
+    <button class="back-button-header" (click)="goBack()" title="Volver atrás">
+      <i class="bx bx-chevron-left"></i>
+    </button>
     <div class="inventario-header-top">
-      <button class="btn btn-primary back-button" (click)="goBack()"><i class="bx bx-chevron-left"></i> Volver</button>
       <div class="inventario-title-group">
         <h1 *ngIf="store"><i class="bx bx-package"></i> Inventario - {{ store.name }}</h1>
       </div>
