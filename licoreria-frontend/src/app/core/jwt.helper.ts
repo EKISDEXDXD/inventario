@@ -20,30 +20,12 @@ export class JwtHelper {
   }
 
   /**
-   * Decode the JWT token and extract the payload
-   */
-  decodeToken(token: string): Record<string, unknown> | null {
-    try {
-      const parts = token.split('.');
-      if (parts.length !== 3) {
-        throw new Error('Invalid token');
-      }
-
-      const decoded = this.base64UrlDecode(parts[1]);
-      return JSON.parse(decoded);
-    } catch {
-      console.error('Error decoding token');
-      return null;
-    }
-  }
-
-  /**
    * Get the userId from the JWT token
    */
   getUserId(token: string): number | null {
     const payload = this.decodeToken(token);
-    if (payload && typeof payload.userId !== 'undefined') {
-      const userId = payload.userId as string | number;
+    if (payload && typeof payload['userId'] !== 'undefined') {
+      const userId = payload['userId'] as string | number;
       return typeof userId === 'string' ? parseInt(userId, this.RADIX) : userId;
     }
     return null;
@@ -54,8 +36,8 @@ export class JwtHelper {
    */
   getUsername(token: string): string | null {
     const payload = this.decodeToken(token);
-    if (payload && typeof payload.sub === 'string') {
-      return payload.sub;
+    if (payload && typeof payload['sub'] === 'string') {
+      return payload['sub'];
     }
     return null;
   }
@@ -65,8 +47,8 @@ export class JwtHelper {
    */
   getRole(token: string): string | null {
     const payload = this.decodeToken(token);
-    if (payload && typeof payload.role === 'string') {
-      return payload.role;
+    if (payload && typeof payload['role'] === 'string') {
+      return payload['role'];
     }
     return null;
   }
