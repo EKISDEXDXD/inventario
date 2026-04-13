@@ -641,13 +641,13 @@
   }
 }
 
-/* Back button - New version */
+/* Back button - Text version */
 .back-button-floating {
   position: absolute;
   top: -45px;
   left: 20px;
   z-index: 999;
-  width: 50px;
+  width: 60px;
   height: 50px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
@@ -659,6 +659,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
 }
 
 .back-button-floating:hover {
@@ -668,15 +671,6 @@
 
 .back-button-floating:active {
   transform: scale(0.9);
-}
-
-.back-button-floating i {
-  font-size: 24px;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 :host-context(.dark) .back-button-floating {
