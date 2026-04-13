@@ -6,7 +6,7 @@
 
   <div class="card header-card">
     <div class="movimientos-header">
-      <button class="btn btn-primary back-button" (click)="goBack()"><i class="bx bx-chevron-left"></i> Volver al Dashboard</button>
+      <button class="btn btn-primary back-button" (click)="goBack()"><i class="bx bx-chevron-left"></i>Volver</button>
       <h1 *ngIf="store"><i class="bx bx-trending-up"></i> Movimientos - {{ store.name }}</h1>
     </div>
   </div>
@@ -43,10 +43,16 @@
   </div>
 
   <!-- Formulario de Movimiento -->
-  <div class="card">
-    <h2 style="margin: 0 0 1.5rem 0; font-size: 1.25rem;">Registrar Movimiento</h2>
-    <form (ngSubmit)="registerMovement()">
-      <div class="form-row">
+  <div class="card movement-card">
+    <div class="movement-card-header">
+      <div>
+        <h2 class="movement-title">Registrar movimiento rápido</h2>
+        <p class="movement-subtitle">Registra entradas y salidas en segundos desde un solo panel.</p>
+      </div>
+    </div>
+
+    <form (ngSubmit)="registerMovement()" class="movement-form">
+      <div class="movement-grid">
         <div class="form-group">
           <label>Tipo</label>
           <select [(ngModel)]="movement.type" name="type" class="form-control" required>
@@ -65,8 +71,6 @@
           <label>Cantidad</label>
           <input type="number" [(ngModel)]="movement.quantity" name="quantity" class="form-control" min="1" required>
         </div>
-      </div>
-      <div class="form-row">
         <div class="form-group">
           <label>Motivo</label>
           <select [(ngModel)]="movement.reason" name="reason" class="form-control">
@@ -77,17 +81,18 @@
             <option value="PERDIDA">Pérdida</option>
           </select>
         </div>
-        <div class="form-group">
-          <button type="submit" class="btn btn-primary">Registrar Movimiento</button>
+        <div class="action-block">
+          <button type="submit" class="submit-btn">Registrar movimiento</button>
         </div>
       </div>
     </form>
   </div>
 
-  <!-- Registro de Movimientos -->
-  <div class="card">
-    <div class="flex-between" style="margin-bottom: 1.5rem;">
-      <h2 style="margin: 0; font-size: 1.25rem;">Historial de Movimientos</h2>
+  <!-- Historial y Lista de Productos -->
+  <div class="two-column-layout">
+    <div class="card history-card">
+      <div class="flex-between" style="margin-bottom: 1.5rem;">
+        <h2 style="margin: 0; font-size: 1.25rem;">Historial de Movimientos</h2>
       <button class="btn btn-primary" (click)="loadTransactions()" title="Actualizar lista"><i class="bx bx-refresh"></i> Actualizar</button>
     </div>
 
@@ -129,16 +134,18 @@
   </div>
 
 
-
-
-  <!-- Lista de Productos -->
-  <div class="products-section">
-    <div class="search-bar">
-      <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Buscar productos..."
-        class="search-input">
-      <button class="refresh-btn" (click)="loadStoreProducts()" title="Actualizar lista"><i
-          class="bx bx-refresh"></i></button>
-    </div>
+    <!-- Lista de Productos -->
+    <div class="products-section products-card">
+      <div class="products-section-header">
+        <h2>Productos en tienda</h2>
+        <p>Consulta el stock disponible y los precios actuales.</p>
+      </div>
+      <div class="search-bar">
+        <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Buscar productos..."
+          class="search-input">
+        <button class="refresh-btn" (click)="loadStoreProducts()" title="Actualizar lista"><i
+            class="bx bx-refresh"></i></button>
+      </div>
 
     <div *ngIf="filteredProducts.length === 0" class="no-products">
       <p>{{ searchTerm ? 'No se encontraron productos' : 'No hay productos en esta tienda' }}</p>
@@ -150,7 +157,6 @@
           <th>Producto</th>
           <th>Descripción</th>
           <th>Stock</th>
-          <th>Costo</th>
           <th>Precio</th>
         </tr>
       </thead>
@@ -164,10 +170,10 @@
               {{ product.stock }}
             </span>
           </td>
-          <td>${{ product.cost }}</td>
           <td>${{ product.price }}</td>
         </tr>
       </tbody>
     </table>
   </div>
+</div>
 </div>

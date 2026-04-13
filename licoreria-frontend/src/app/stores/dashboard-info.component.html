@@ -1,0 +1,97 @@
+<div class="dashboard-info-container">
+  <header class="dashboard-info-header">
+    <button class="back-btn" (click)="goBack()"><i class="bx bx-chevron-left"></i> Volver al panel</button>
+    <div class="dashboard-info-title">
+      <p class="eyebrow">Resumen de la tienda</p>
+      <h1>Dashboard Info</h1>
+      <p class="subtitle">Gráficos y métricas clave para controlar inventario, valor de stock y alertas de existencia.</p>
+    </div>
+  </header>
+
+  <div *ngIf="loading" class="loading">Cargando métricas...</div>
+
+  <div *ngIf="!loading" class="dashboard-info-content">
+    <div class="stats-grid">
+      <article class="stat-card">
+        <h3>Total de productos</h3>
+        <p class="stat-number">{{ totalProducts }}</p>
+      </article>
+      <article class="stat-card">
+        <h3>Stock total</h3>
+        <p class="stat-number">{{ totalStock }}</p>
+      </article>
+      <article class="stat-card">
+        <h3>Valor estimado</h3>
+        <p class="stat-number">${{ totalValue | number:'1.0-0' }}</p>
+      </article>
+      <article class="stat-card">
+        <h3>Productos en alerta</h3>
+        <p class="stat-number">{{ lowStock }}</p>
+      </article>
+    </div>
+
+    <div class="chart-grid">
+      <section class="chart-card">
+        <div class="chart-header">
+          <h2>Distribución por nivel de stock</h2>
+          <p>Porcentaje de productos con stock bajo, medio y alto.</p>
+        </div>
+        <div class="bar-chart">
+          <div class="bar-row">
+            <span>Alto</span>
+            <span>{{ highPercent }}%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill high" [style.width.%]="highPercent"></div></div>
+          <div class="bar-row">
+            <span>Medio</span>
+            <span>{{ mediumPercent }}%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill medium" [style.width.%]="mediumPercent"></div></div>
+          <div class="bar-row">
+            <span>Bajo</span>
+            <span>{{ lowPercent }}%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill low" [style.width.%]="lowPercent"></div></div>
+        </div>
+      </section>
+
+      <section class="chart-card">
+        <div class="chart-header">
+          <h2>Top 5 productos con mayor stock</h2>
+          <p>Productos que actualmente tienen más unidades disponibles.</p>
+        </div>
+        <ul class="top-list">
+          <li *ngFor="let product of topProducts">
+            <span class="product-name">{{ product.name }}</span>
+            <span class="product-value">{{ product.stock || 0 }}</span>
+          </li>
+        </ul>
+      </section>
+    </div>
+
+    <section class="detail-card">
+      <div class="detail-header">
+        <h2>Resumen de inventario</h2>
+        <p>Detalles clave calculados desde los productos de la tienda.</p>
+      </div>
+      <div class="detail-grid">
+        <div>
+          <p class="detail-label">Precio promedio</p>
+          <p class="detail-value">${{ averagePrice | number:'1.2-2' }}</p>
+        </div>
+        <div>
+          <p class="detail-label">Productos sin stock</p>
+          <p class="detail-value">{{ products.filter(p => (p.stock || 0) === 0).length }}</p>
+        </div>
+        <div>
+          <p class="detail-label">Productos por debajo de 10</p>
+          <p class="detail-value">{{ lowStock }}</p>
+        </div>
+        <div>
+          <p class="detail-label">Fecha de actualización</p>
+          <p class="detail-value">{{ store?.updatedAt ? (store.updatedAt | date:'dd/MM/yyyy') : 'N/A' }}</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

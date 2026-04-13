@@ -51,7 +51,7 @@
 
 .main-title-card {
   text-align: center;
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
+ background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
   color: white;
   padding: 3rem 2rem;
   margin-bottom: 3rem;
@@ -211,6 +211,29 @@
   box-shadow: var(--shadow-sm);
 }
 
+.two-column-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+  margin-bottom: 2rem;
+}
+
+.history-card,
+.products-card {
+  min-height: 420px;
+}
+
+.products-card {
+  padding: 1.5rem;
+}
+
+@media (max-width: 992px) {
+  .two-column-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
 .movimientos-header {
   display: flex;
   align-items: center;
@@ -229,6 +252,8 @@
 
 .back-button {
   min-width: 200px;
+  white-space: nowrap;
+  
 }
 
 /* ============ BOTONES ============ */
@@ -246,8 +271,11 @@
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.btn-primary { background-color: var(--color-primary); color: white; }
+.btn-primary { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); color: white; }
 .btn-primary:hover { background-color: var(--color-primary-hover); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+.btn-secondary { background-color: #475569; color: white; }
+.btn-secondary:hover { filter: brightness(0.95); transform: translateY(-2px); box-shadow: var(--shadow-md); }
 
 .btn-success { background-color: var(--color-success); color: white; }
 .btn-success:hover { background-color: var(--color-success-hover); transform: translateY(-2px); box-shadow: var(--shadow-md); }
@@ -267,42 +295,76 @@
 }
 
 /* Formulario */
-.form-section {
-  background-color: #ffffff;
+.movement-card {
+  padding: 1.5rem;
+  margin-bottom: 2rem;
   border-radius: 14px;
-  padding: 2rem;
-  margin-bottom: 2.5rem;
+  background-color: #ffffff;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   border: 1px solid #e8ecf1;
 }
 
-:host-context(.dark) .form-section {
+:host-context(.dark) .movement-card {
   background-color: #1a1a2e;
   border-color: #2d2d44;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
-.form-section h3 {
-  margin: 0 0 1.5rem 0;
-  color: #0f172a;
-  font-weight: 600;
-  font-size: 1.1rem;
+.movement-card-header {
+  margin-bottom: 1rem;
 }
 
-:host-context(.dark) .form-section h3 {
-  color: #f1f5f9;
+.movement-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.movement-subtitle {
+  margin: 0.35rem 0 0 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
 }
 
 .movement-form {
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: 1rem;
 }
 
-.form-row {
-  display: flex;
-  gap: 1rem;
+.movement-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 0.9rem;
   align-items: end;
+}
+
+.action-block {
+  display: flex;
+  align-items: flex-end;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 0.8rem;
+  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+  border: none;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(67, 56, 202, 0.25);
+}
+
+@media (max-width: 768px) {
+  .movement-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .form-group {
@@ -387,6 +449,23 @@
   margin-bottom: 2.5rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   border: 1px solid #e8ecf1;
+}
+
+.products-section-header {
+  margin-bottom: 1.25rem;
+}
+
+.products-section-header h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.products-section-header p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
 }
 
 :host-context(.dark) .products-section {

@@ -47,11 +47,44 @@ export class InventarioComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.route.parent?.params.subscribe(params => {
-      this.storeId = +params['id'];
+    this.tryLoadStoreData();
+    this.watchStoreIdChanges();
+  }
+
+  private tryLoadStoreData() {
+    const initialStoreId = this.getStoreIdFromRoute(this.route);
+    if (initialStoreId) {
+      this.storeId = initialStoreId;
       this.loadStoreData();
       this.loadStoreProducts();
-    });
+    }
+  }
+
+  private watchStoreIdChanges() {
+    let current: ActivatedRoute | null = this.route;
+    while (current) {
+      current.params.subscribe(params => {
+        const nextStoreId = +params['id'];
+        if (nextStoreId && nextStoreId !== this.storeId) {
+          this.storeId = nextStoreId;
+          this.loadStoreData();
+          this.loadStoreProducts();
+        }
+      });
+      current = current.parent;
+    }
+  }
+
+  private getStoreIdFromRoute(route: ActivatedRoute): number {
+    let current: ActivatedRoute | null = route;
+    while (current) {
+      const id = current.snapshot.params['id'];
+      if (id) {
+        return +id;
+      }
+      current = current.parent;
+    }
+    return 0;
   }
 
   loadStoreData() {

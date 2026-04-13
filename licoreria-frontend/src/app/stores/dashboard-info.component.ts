@@ -1,0 +1,122 @@
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+
+@Component({
+  selector: 'app-dashboard-info',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './dashboard-info.component.html',
+  styleUrls: ['./dashboard-info.component.css']
+})
+export class DashboardInfoComponent implements OnInit {
+  storeId = 0;
+  store: any = null;
+  products: any[] = [];
+  loading = true;
+
+  totalProducts = 0;
+  totalStock = 0;
+  lowStock = 0;
+  totalValue = 0;
+  averagePrice = 0;
+  lowPercent = 0;
+  mediumPercent = 0;
+  highPercent = 0;
+  topProducts: any[] = [];
+
+  private apiStoresUrl = 'http://localhost:8081/api/stores';
+  private apiProductsUrl = 'http://localhost:8081/api/products';
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  ngOnInit() {
+    this.route.params.subscribe(params => {
+      this.storeId = +params['id'];
+      this.loadStoreData();
+      this.loadStoreProducts();
+    });
+  }
+
+  loadStoreData() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.error('No se encontró token en localStorage');
+      return;
+    }
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+
+    this.http.get<any>(`${this.apiStoresUrl}/${this.storeId}`, { headers }).subscribe({
+      next: data => {
+        this.store = data;
+        this.cdr.detectChanges();
+      },
+      error: err => {
+        console.error('Error al cargar la tienda:', err);
+        alert('No se pudo cargar la tienda');
+        this.router.navigate(['/my-stores']);
+      }
+    });
+  }
+
+  loadStoreProducts() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.error('No se encontró token en localStorage');
+      this.loading = false;
+      return;
+    }
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+
+    this.http.get<any[]>(`${this.apiProductsUrl}/store/${this.storeId}`, { headers }).subscribe({
+      next: data => {
+        this.products = data || [];
+        this.computeMetrics();
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: err => {
+        console.error('Error cargando productos:', err);
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  computeMetrics() {
+    this.totalProducts = this.products.length;
+    this.totalStock = this.products.reduce((sum, item) => sum + (item.stock || 0), 0);
+    this.totalValue = this.products.reduce((sum, item) => sum + ((item.stock || 0) * (item.price || 0)), 0);
+    this.averagePrice = this.products.length > 0
+      ? this.products.reduce((sum, item) => sum + (item.price || 0), 0) / this.products.length
+      : 0;
+
+    this.lowStock = this.products.filter(item => (item.stock || 0) < 10).length;
+    const mediumStock = this.products.filter(item => (item.stock || 0) >= 10 && (item.stock || 0) < 30).length;
+    const highStock = this.products.filter(item => (item.stock || 0) >= 30).length;
+    const total = this.products.length || 1;
+    this.lowPercent = Math.round((this.lowStock / total) * 100);
+    this.mediumPercent = Math.round((mediumStock / total) * 100);
+    this.highPercent = Math.round((highStock / total) * 100);
+
+    this.topProducts = [...this.products]
+      .sort((a, b) => (b.stock || 0) - (a.stock || 0))
+      .slice(0, 5);
+  }
+
+  goBack() {
+    this.router.navigate(['../'], { relativeTo: this.route });
+  }
+}

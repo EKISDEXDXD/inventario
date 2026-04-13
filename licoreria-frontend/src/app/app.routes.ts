@@ -8,6 +8,7 @@ import { LogoutGuard } from './common/logout.guard.spec';
 import { MyStoresComponent } from './stores/my-stores.component';
 import { CreateStoreComponent } from './stores/create-store.component';
 import { DashboardTiendaComponent } from './stores/dashboard-tienda.component';
+import { DashboardInfoComponent } from './stores/dashboard-info.component';
 import { InventarioComponent } from './stores/inventario/inventario';
 import { MovimientosComponent } from './stores/movimientos/movimientos';
 import { MainLayoutComponent } from './main-layout.component';
@@ -29,6 +30,7 @@ export const routes: Routes = [
         path: 'tienda/:id',
         children: [
           { path: '', component: DashboardTiendaComponent },
+          { path: 'dashboard-info', component: DashboardInfoComponent },
           { path: 'inventario', component: InventarioComponent },
           { path: 'movimientos', component: MovimientosComponent }
         ]

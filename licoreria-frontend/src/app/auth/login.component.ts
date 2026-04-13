@@ -1,4 +1,4 @@
-import { Component, Host, HostListener } from '@angular/core';
+import { Component, Host, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from './auth.service';
@@ -12,7 +12,7 @@ import { HasUnsavedChanges } from '../common/without-unsaved-changes-guard.spec'
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   username = '';
   password = '';
   error = '';
@@ -20,6 +20,15 @@ export class LoginComponent {
   @HostListener('window:beforeunload', ['$event'])
   onBeforeUnLoad(e: BeforeUnloadEvent) {}
   constructor(private authService: AuthService, private router: Router) {}
+
+  ngOnInit() {
+    // Limpiar campos de login cada vez que se cargue el componente
+    this.username = '';
+    this.password = '';
+    this.error = '';
+    // Hacer scroll hacia el inicio de la página
+    window.scrollTo(0, 0);
+  }
 
   // Método que se llama al enviar el formulario de login
   login() {

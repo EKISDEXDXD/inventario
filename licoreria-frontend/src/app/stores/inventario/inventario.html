@@ -5,8 +5,40 @@
   </div>
 
   <header class="card inventario-header">
-    <button class="btn btn-primary" (click)="goBack()"><i class="bx bx-chevron-left"></i> Volver</button>
-    <h1 *ngIf="store"><i class="bx bx-package"></i> Inventario - {{ store.name }}</h1>
+    <div class="inventario-header-top">
+      <button class="btn btn-primary back-button" (click)="goBack()"><i class="bx bx-chevron-left"></i> Volver</button>
+      <div class="inventario-title-group">
+        <h1 *ngIf="store"><i class="bx bx-package"></i> Inventario - {{ store.name }}</h1>
+      </div>
+      <button class="icon-btn small" type="button" (click)="toggleThresholdConfig()" title="Ajustar umbral de stock">
+        <i class="bx bx-slider"></i>
+      </button>
+    </div>
+
+    <div *ngIf="showThresholdConfig" class="threshold-popup">
+      <div class="threshold-popup-header">
+        <div>
+          <span class="panel-title"><i class="bx bx-slider"></i> Umbrales de stock</span>
+          <p class="panel-subtitle">Ajusta los valores de stock bajo y normal.</p>
+        </div>
+        <button class="icon-btn small" type="button" (click)="toggleThresholdConfig()" aria-label="Cerrar umbrales"><i class="bx bx-x"></i></button>
+      </div>
+      <form class="threshold-form" (ngSubmit)="saveThresholdConfig()">
+        <div class="form-row compact-row">
+          <div class="form-group">
+            <label>Límite Stock Bajo</label>
+            <input type="number" [(ngModel)]="thresholdForm.lowStockThreshold" name="lowStockThreshold" min="1" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label>Límite Stock Normal</label>
+            <input type="number" [(ngModel)]="thresholdForm.normalStockThreshold" name="normalStockThreshold" min="1" class="form-control" />
+          </div>
+        </div>
+        <div class="form-actions right">
+          <button type="submit" class="btn btn-primary">Guardar umbrales</button>
+        </div>
+      </form>
+    </div>
   </header>
 
   <div class="stats-grid">
@@ -40,132 +72,107 @@
     </div>
   </div>
 
-  <div class="threshold-card card">
-    <div class="flex-between">
-      <div>
-        <p class="threshold-title">Umbrales de stock</p>
-        <p class="threshold-subtitle">Bajo: &lt; {{ lowStockThreshold }}, Normal: &gt; {{ normalStockThreshold }}</p>
-      </div>
-      <button class="btn btn-secondary btn-sm" (click)="toggleThresholdConfig()">
-        <span *ngIf="!showThresholdConfig"><i class="bx bx-edit"></i> Ajustar umbrales</span>
-        <span *ngIf="showThresholdConfig"><i class="bx bx-x"></i> Cerrar</span>
-      </button>
-    </div>
+  <div class="content-layout">
+    <div class="main-content">
+      <div class="card products-card">
+        <div class="flex-between products-header">
+          <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Buscar por nombre o descripción..." class="form-control search-input">
+          <button class="btn btn-primary" (click)="loadStoreProducts()" title="Actualizar"><i class="bx bx-refresh"></i> Actualizar lista</button>
+        </div>
 
-    <div *ngIf="showThresholdConfig" class="threshold-form-wrapper">
-      <form (ngSubmit)="saveThresholdConfig()">
-        <div class="form-row">
-          <div class="form-group">
-            <label>Límite Stock Bajo</label>
-            <input type="number" [(ngModel)]="thresholdForm.lowStockThreshold" name="lowStockThreshold" min="1" class="form-control" />
+        <div *ngIf="loading" class="state-message">
+          <i class="bx bx-loader bx-spin"></i> Cargando productos...
+        </div>
+
+        <div *ngIf="!loading">
+          <div *ngIf="filteredProducts.length === 0" class="state-message">
+            <p *ngIf="searchTerm"><i class="bx bx-error-circle"></i> No se encontraron productos</p>
+            <p *ngIf="!searchTerm"><i class="bx bx-inbox"></i> No hay productos en esta tienda</p>
           </div>
-          <div class="form-group">
-            <label>Límite Stock Normal</label>
-            <input type="number" [(ngModel)]="thresholdForm.normalStockThreshold" name="normalStockThreshold" min="1" class="form-control" />
+
+          <div *ngIf="filteredProducts.length > 0" class="table-responsive">
+            <table class="products-table">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Descripción</th>
+                  <th>Stock</th>
+                  <th>Costo</th>
+                  <th>Precio</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let product of filteredProducts">
+                  <td><strong>{{ product.name }}</strong></td>
+                  <td>{{ product.description }}</td>
+                  <td>
+                    <span class="stock-badge" 
+                          [ngClass]="{
+                            'stock-low': product.stock > 0 && product.stock < lowStockThreshold,
+                            'stock-out': product.stock === 0,
+                            'stock-normal': product.stock > normalStockThreshold
+                          }">
+                      {{ product.stock }}
+                    </span>
+                  </td>
+                  <td>${{ product.cost | number: '1.0-2' }}</td>
+                  <td>${{ product.price | number: '1.0-2' }}</td>
+                  <td>
+                    <div class="action-buttons">
+                      <button class="btn btn-danger btn-icon" (click)="deleteProduct(product.id)" title="Eliminar"><i class="bx bx-trash"></i></button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
-        <div style="text-align: right;">
-          <button type="submit" class="btn btn-primary">Guardar umbrales</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="flex-between">
-      <h2 style="margin: 0; font-size: 1.25rem;">Añadir Producto</h2>
-      <button class="btn btn-success" (click)="toggleCreateForm()">
-        <span *ngIf="!showCreateForm"><i class="bx bx-plus"></i> Nuevo Producto</span>
-        <span *ngIf="showCreateForm"><i class="bx bx-x"></i> Cancelar</span>
-      </button>
-    </div>
-
-    <div *ngIf="showCreateForm" class="create-form-wrapper">
-      <form (ngSubmit)="createProduct()">
-        <div class="form-row">
-          <div class="form-group">
-            <label>Nombre</label>
-            <input type="text" [(ngModel)]="newProduct.name" name="name" class="form-control" placeholder="Ej: Vodka Absolut" required>
-          </div>
-          <div class="form-group">
-            <label>Descripción</label>
-            <input type="text" [(ngModel)]="newProduct.description" name="description" class="form-control" placeholder="Ej: Botella 1L" required>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Costo</label>
-            <input type="number" [(ngModel)]="newProduct.cost" name="cost" step="0.01" min="0" class="form-control" placeholder="0.00" required>
-          </div>
-          <div class="form-group">
-            <label>Precio de Venta</label>
-            <input type="number" [(ngModel)]="newProduct.price" name="price" step="0.01" min="0" class="form-control" placeholder="0.00" required>
-          </div>
-          <div class="form-group">
-            <label>Stock Inicial</label>
-            <input type="number" [(ngModel)]="newProduct.stock" name="stock" min="0" class="form-control" placeholder="0" required>
-          </div>
-        </div>
-        <div style="text-align: right;">
-          <button type="submit" class="btn btn-primary">Guardar Producto</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="flex-between" style="margin-bottom: 1.5rem;">
-      <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Buscar por nombre o descripción..." class="form-control search-input">
-      <button class="btn btn-primary" (click)="loadStoreProducts()" title="Actualizar"><i class="bx bx-refresh"></i> Actualizar Lista</button>
-    </div>
-
-    <div *ngIf="loading" class="state-message">
-      <i class="bx bx-loader bx-spin"></i> Cargando productos...
-    </div>
-
-    <div *ngIf="!loading">
-      <div *ngIf="filteredProducts.length === 0" class="state-message">
-        <p *ngIf="searchTerm"><i class="bx bx-error-circle"></i> No se encontraron productos</p>
-        <p *ngIf="!searchTerm"><i class="bx bx-inbox"></i> No hay productos en esta tienda</p>
-      </div>
-
-      <div *ngIf="filteredProducts.length > 0" class="table-responsive">
-        <table class="products-table">
-          <thead>
-            <tr>
-              <th>Producto</th>
-              <th>Descripción</th>
-              <th>Stock</th>
-              <th>Costo</th>
-              <th>Precio</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let product of filteredProducts">
-              <td><strong>{{ product.name }}</strong></td>
-              <td>{{ product.description }}</td>
-              <td>
-                <span class="stock-badge" 
-                      [ngClass]="{
-                        'stock-low': product.stock > 0 && product.stock < lowStockThreshold,
-                        'stock-out': product.stock === 0,
-                        'stock-normal': product.stock > normalStockThreshold
-                      }">
-                  {{ product.stock }}
-                </span>
-              </td>
-              <td>${{ product.cost | number: '1.0-2' }}</td>
-              <td>${{ product.price | number: '1.0-2' }}</td>
-              <td>
-                <div class="action-buttons">
-                  <button class="btn btn-danger btn-icon" (click)="deleteProduct(product.id)" title="Eliminar"><i class="bx bx-trash"></i></button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
       </div>
     </div>
+
+    <aside class="sidebar">
+      <div class="card action-card">
+        <div class="action-card-header">
+          <div>
+            <h2 class="action-title">Crear producto</h2>
+            <p class="action-subtitle">Completa los datos clave y guarda en un solo paso.</p>
+          </div>
+        </div>
+
+        <div class="create-form-wrapper">
+          <form (ngSubmit)="createProduct()">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Nombre</label>
+                <input type="text" [(ngModel)]="newProduct.name" name="name" class="form-control" placeholder="Ej: Vodka Absolut" required>
+              </div>
+              <div class="form-group">
+                <label>Descripción</label>
+                <input type="text" [(ngModel)]="newProduct.description" name="description" class="form-control" placeholder="Ej: Botella 1L" required>
+              </div>
+            </div>
+            <div class="form-row compact-row">
+              <div class="form-group">
+                <label>Costo</label>
+                <input type="number" [(ngModel)]="newProduct.cost" name="cost" step="0.01" min="0" class="form-control" placeholder="0.00" required>
+              </div>
+              <div class="form-group">
+                <label>Precio de Venta</label>
+                <input type="number" [(ngModel)]="newProduct.price" name="price" step="0.01" min="0" class="form-control" placeholder="0.00" required>
+              </div>
+              <div class="form-group">
+                <label>Stock Inicial</label>
+                <input type="number" [(ngModel)]="newProduct.stock" name="stock" min="0" class="form-control" placeholder="0" required>
+              </div>
+            </div>
+            <div class="form-actions right">
+              <button type="submit" class="btn btn-success">Guardar producto</button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </aside>
   </div>
 </div>
