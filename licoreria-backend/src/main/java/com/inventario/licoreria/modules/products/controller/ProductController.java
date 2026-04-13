@@ -46,6 +46,11 @@ public class ProductController {
         return productService.getSuggestions(query);
     }
 
+    @GetMapping("/store/external/{storeId}")
+    public List<Product> getByStoreExternal(@PathVariable @NonNull Long storeId) {
+        return productService.findByStoreId(storeId);
+    }
+
     @GetMapping("/store/{storeId}")
     public List<Product> getByStore(@PathVariable @NonNull Long storeId, Authentication authentication) {
         return productService.findByStoreId(storeId, authentication.getName());

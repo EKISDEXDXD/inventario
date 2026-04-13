@@ -1,23 +1,35 @@
 package com.inventario.licoreria.modules.inventory.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.inventario.licoreria.modules.products.model.Product;
+import com.inventario.licoreria.modules.users.model.User;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import org.springframework.lang.NonNull;
 
 @Entity
+@Table(name = "transaction")
 public class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long productId;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
+
+    @Column(nullable = false)
     private String type;
+
+    @Column(nullable = false)
     private Integer quantity;
+
+    @Column(name = "date_time", nullable = false)
     private LocalDateTime dateTime;
-    private Long userId;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     public Transaction() {
     }
@@ -32,12 +44,24 @@ public class Transaction {
 
     @NonNull
     @SuppressWarnings("null")
+    public Product getProduct() {
+        return (Product) product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    // Helper method for backwards compatibility
+    @NonNull
+    @SuppressWarnings("null")
     public Long getProductId() {
-        return (Long) productId;
+        return product != null ? product.getId() : null;
     }
 
     public void setProductId(Long productId) {
-        this.productId = productId;
+        // This is handled by the product relationship now
+        // But kept for backwards compatibility
     }
 
     public String getType() {
@@ -66,11 +90,23 @@ public class Transaction {
 
     @NonNull
     @SuppressWarnings("null")
+    public User getUser() {
+        return (User) user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    // Helper method for backwards compatibility
+    @NonNull
+    @SuppressWarnings("null")
     public Long getUserId() {
-        return (Long) userId;
+        return user != null ? user.getId() : null;
     }
 
     public void setUserId(Long userId) {
-        this.userId = userId;
+        // This is handled by the user relationship now
+        // But kept for backwards compatibility
     }
 }

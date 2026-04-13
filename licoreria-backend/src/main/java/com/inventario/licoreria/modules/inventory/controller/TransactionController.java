@@ -11,11 +11,14 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.lang.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api/transactions")
 public class TransactionController {
 
+    private static final Logger logger = LoggerFactory.getLogger(TransactionController.class);
     private final TransactionService transactionService;
 
     public TransactionController(TransactionService transactionService) {
@@ -34,7 +37,16 @@ public class TransactionController {
 
     @PostMapping
     public ResponseEntity<Transaction> create(@Valid @RequestBody TransactionDTO dto) {
-        return ResponseEntity.ok(transactionService.create(dto));
+        logger.info("📨 [API] POST /api/transactions - Recibida solicitud: productId={}, type={}, quantity={}, userId={}", 
+            dto.getProductId(), dto.getType(), dto.getQuantity(), dto.getUserId());
+        try {
+            Transaction created = transactionService.create(dto);
+            logger.info("✅ [API] Transacción creada exitosamente: ID = {}", created.getId());
+            return ResponseEntity.ok(created);
+        } catch (Exception e) {
+            logger.error("❌ [API] Error al crear transacción: {}", e.getMessage());
+            throw e;
+        }
     }
 
     @GetMapping("/product/{productId}")

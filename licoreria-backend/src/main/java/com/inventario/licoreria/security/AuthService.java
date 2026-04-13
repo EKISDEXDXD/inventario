@@ -39,7 +39,7 @@ public class AuthService {
         if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales inválidas");
         }
-        String token = jwtUtil.generateTokenWithRole(username, user.getRole().name());
+        String token = jwtUtil.generateTokenWithRoleAndId(username, user.getRole().name(), user.getId());
         loginLogRepository.save(new LoginLog(username));
         return token;
     }

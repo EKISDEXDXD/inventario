@@ -81,12 +81,22 @@ export class HomeComponent {
 
     this.http.post<any>(`${this.apiUrl}/external-access`, body, { headers }).subscribe({
       next: (store) => {
+        console.log('✅ Tienda externa obtenida:', store);
+        // Guardar que es acceso externo
+        const externalData = {
+          id: store.id,
+          name: store.name,
+          isExternal: true
+        };
+        console.log('💾 Guardando en sessionStorage:', externalData);
+        sessionStorage.setItem('externalStore', JSON.stringify(externalData));
+        console.log('✅ SessionStorage guardado. Valor:', sessionStorage.getItem('externalStore'));
         // Navegar a la tienda externa
         this.router.navigate(['/tienda', store.id]);
         this.closeExternalModal();
       },
       error: (err) => {
-        console.error('Error accediendo a tienda externa:', err);
+        console.error('❌ Error accediendo a tienda externa:', err);
         if (err.status === 404) {
           alert('Tienda no encontrada o contraseña incorrecta.');
         } else if (err.status === 403) {

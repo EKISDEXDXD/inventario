@@ -39,7 +39,7 @@ public class StoreService {
 
     public StoreResponseDTO findById(Long id, String username) {
         Store store = findStoreById(id);
-        validateUserAccess(store, username);
+        // Permitir que cualquier usuario autenticado vea cualquier tienda (acceso en lectura)
         return convertToResponseDTO(store);
     }
 
@@ -89,6 +89,10 @@ public class StoreService {
         StoreResponseDTO dto = convertToResponseDTO(store);
         dto.setExternal(true);
         return dto;
+    }
+
+    public Store findStoreByIdExternal(Long id) {
+        return findStoreById(id);
     }
 
     public void validateUserAccess(Store store, String username) {

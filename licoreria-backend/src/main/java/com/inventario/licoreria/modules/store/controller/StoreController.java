@@ -2,6 +2,7 @@ package com.inventario.licoreria.modules.store.controller;
 
 import com.inventario.licoreria.modules.store.dto.StoreCreateDTO;
 import com.inventario.licoreria.modules.store.dto.StoreResponseDTO;
+import com.inventario.licoreria.modules.store.model.Store;
 import com.inventario.licoreria.modules.store.service.StoreService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,11 @@ public class StoreController {
     @GetMapping
     public ResponseEntity<List<StoreResponseDTO>> getAll(Authentication authentication) {
         return ResponseEntity.ok(storeService.findAllByUser(authentication.getName()));
+    }
+
+    @GetMapping("/external/{id}")
+    public ResponseEntity<Store> getByIdExternal(@PathVariable Long id) {
+        return ResponseEntity.ok(storeService.findStoreByIdExternal(id));
     }
 
     @GetMapping("/{id}")

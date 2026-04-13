@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { JwtHelper } from '../../core/jwt.helper';
 
 @Component({
   selector: 'app-movimientos',
@@ -19,6 +20,7 @@ export class MovimientosComponent implements OnInit {
   transactions: any[] = [];
   loading: boolean = true;
   searchTerm: string = '';
+  userId: number | null = null;
 
   // Form fields
   movement = {
@@ -31,6 +33,7 @@ export class MovimientosComponent implements OnInit {
   private apiStoresUrl = 'http://localhost:8081/api/stores';
   private apiProductsUrl = 'http://localhost:8081/api/products';
   private apiTransactionsUrl = 'http://localhost:8081/api/transactions';
+  private jwtHelper = new JwtHelper();
 
   constructor(
     private route: ActivatedRoute,
@@ -39,8 +42,21 @@ export class MovimientosComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.extractUserIdFromToken();
     this.tryLoadStoreData();
     this.watchStoreIdChanges();
+  }
+
+  private extractUserIdFromToken() {
+    const token = localStorage.getItem('token');
+    if (token) {
+      this.userId = this.jwtHelper.getUserId(token);
+      if (this.userId) {
+        console.log('UserID extraído del token:', this.userId);
+      } else {
+        console.warn('No se pudo extraer el userId del token');
+      }
+    }
   }
 
   private tryLoadStoreData() {
@@ -158,6 +174,11 @@ export class MovimientosComponent implements OnInit {
       return;
     }
 
+    if (!this.userId) {
+      alert('Error: No se pudo identificar el usuario');
+      return;
+    }
+
     const token = localStorage.getItem('token');
     if (!token) return;
 
@@ -171,7 +192,7 @@ export class MovimientosComponent implements OnInit {
       type: this.movement.type,
       quantity: this.movement.quantity,
       dateTime: new Date().toISOString(),
-      userId: 1
+      userId: this.userId
     };
 
     // Actualización optimista: agregar transacción inmediatamente

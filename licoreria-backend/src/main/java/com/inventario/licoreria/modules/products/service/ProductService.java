@@ -5,7 +5,6 @@ import com.inventario.licoreria.modules.products.model.Product;
 import com.inventario.licoreria.modules.products.repository.ProductRepository;
 import com.inventario.licoreria.modules.store.model.Store;
 import com.inventario.licoreria.modules.store.service.StoreService;
-import com.inventario.licoreria.modules.users.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,12 +17,10 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final StoreService storeService;
-    private final UserService userService;
 
-    public ProductService(ProductRepository productRepository, StoreService storeService, UserService userService) {
+    public ProductService(ProductRepository productRepository, StoreService storeService) {
         this.productRepository = productRepository;
         this.storeService = storeService;
-        this.userService = userService;
     }
 
     private void validateUserOwnsStore(@NonNull Long storeId, @NonNull String username) {
@@ -134,7 +131,7 @@ public class ProductService {
     }
 
     public List<Product> findByStoreId(@NonNull Long storeId, @NonNull String username) {
-        validateUserOwnsStore(storeId, username);
+        // Permitir que cualquier usuario autenticado vea los productos de cualquier tienda (acceso en lectura)
         return productRepository.findByStoreId(storeId);
     }
 

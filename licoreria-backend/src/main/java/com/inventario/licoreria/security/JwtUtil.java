@@ -52,6 +52,20 @@ public class JwtUtil {
                 .compact();
     }
 
+    public String generateTokenWithRoleAndId(String username, String role, Long userId) {
+        Instant now = Instant.now();
+        Instant expiryDate = now.plusMillis(jwtExpiration);
+
+        return Jwts.builder()
+                .subject(username)
+                .claim("role", role)
+                .claim("userId", userId)
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(expiryDate))
+                .signWith(getSigningKey())
+                .compact();
+    }
+
     public String extractUsername(String token) {
         try {
             Claims claims = getAllClaimsFromToken(token);
@@ -70,6 +84,24 @@ public class JwtUtil {
         } catch (Exception e) {
             e.printStackTrace();
             return "USER";
+        }
+    }
+
+    public Long extractUserId(String token) {
+        try {
+            Claims claims = getAllClaimsFromToken(token);
+            Object userId = claims.get("userId");
+            if (userId != null) {
+                if (userId instanceof Long) {
+                    return (Long) userId;
+                } else if (userId instanceof Integer) {
+                    return ((Integer) userId).longValue();
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 

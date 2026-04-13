@@ -43,8 +43,12 @@ public class SalesReportService {
         List<Transaction> transactions = allTransactions.stream()
             .filter(t -> {
                 try {
-                    Product product = productService.findById(t.getProductId());
-                    return product != null && product.getStore().getId().equals(storeId) 
+                    // Usar la relación Product desde Transaction
+                    Product product = t.getProduct();
+                    if (product == null) {
+                        return false;
+                    }
+                    return product.getStore() != null && product.getStore().getId().equals(storeId) 
                         && t.getDateTime().toLocalDate().isAfter(dateFrom.minusDays(1))
                         && t.getDateTime().toLocalDate().isBefore(dateTo.plusDays(1));
                 } catch (Exception e) {
@@ -118,12 +122,7 @@ public class SalesReportService {
         BigDecimal totalCostSold = BigDecimal.ZERO;
 
         for (Transaction t : transactions) {
-            Product product;
-            try {
-                product = productService.findById(t.getProductId());
-            } catch (Exception e) {
-                continue;
-            }
+            Product product = t.getProduct();
             if (product == null) continue;
 
             if ("ENTRADA".equalsIgnoreCase(t.getType())) {
@@ -215,7 +214,7 @@ public class SalesReportService {
         for (Transaction t : transactions) {
             if ("SALIDA".equalsIgnoreCase(t.getType())) {
                 try {
-                    Product product = productService.findById(t.getProductId());
+                    Product product = t.getProduct();
                     if (product != null) {
                         String productKey = product.getName();
                         productQuantity.put(productKey, productQuantity.getOrDefault(productKey, 0) + t.getQuantity());
@@ -399,7 +398,7 @@ public class SalesReportService {
         // Agrupar por producto
         Map<Long, List<Transaction>> transactionsByProductId = transactions.stream()
             .collect(Collectors.groupingBy(
-                Transaction::getProductId,
+                t -> t.getProduct().getId(),
                 Collectors.toList()
             ));
 
@@ -408,12 +407,8 @@ public class SalesReportService {
             Long productId = entry.getKey();
             List<Transaction> productTransactions = entry.getValue();
             
-            Product product;
-            try {
-                product = productService.findById(productId);
-            } catch (Exception e) {
-                continue;
-            }
+            if (productTransactions.isEmpty()) continue;
+            Product product = productTransactions.get(0).getProduct();
             if (product == null || !product.getStore().getId().equals(storeId)) continue;
 
             int cantEntrada = productTransactions.stream()

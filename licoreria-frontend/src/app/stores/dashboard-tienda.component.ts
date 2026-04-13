@@ -51,14 +51,26 @@ export class DashboardTiendaComponent implements OnInit {
       'Authorization': `Bearer ${token}`
     });
 
-    this.http.get<any>(`${this.apiStoresUrl}/${this.storeId}`, { headers }).subscribe({
+    // Verificar si es acceso externo
+    const externalStore = sessionStorage.getItem('externalStore');
+    console.log('🔍 ExternalStore desde sessionStorage:', externalStore);
+    const isExternal = externalStore ? JSON.parse(externalStore).isExternal : false;
+    console.log('🔍 ¿Es acceso externo?', isExternal);
+    
+    // Usar endpoint apropiado
+    const endpoint = isExternal 
+      ? `${this.apiStoresUrl}/external/${this.storeId}`
+      : `${this.apiStoresUrl}/${this.storeId}`;
+    console.log('🔍 Endpoint usado:', endpoint);
+
+    this.http.get<any>(endpoint, { headers }).subscribe({
       next: (data) => {
-        console.log('Tienda cargada:', data);
+        console.log('✅ Tienda cargada:', data);
         this.store = data;
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Error cargando tienda:', err);
+        console.error('❌ Error cargando tienda:', err);
         alert('Error al cargar la tienda');
         this.router.navigate(['/my-stores']);
       }
@@ -76,15 +88,28 @@ export class DashboardTiendaComponent implements OnInit {
       'Authorization': `Bearer ${token}`
     });
 
-    this.http.get<any[]>(`${this.apiProductsUrl}/store/${this.storeId}`, { headers }).subscribe({
+    // Verificar si es acceso externo
+    const externalStore = sessionStorage.getItem('externalStore');
+    console.log('🔍 LoadStoreProducts - ExternalStore:', externalStore);
+    const isExternal = externalStore ? JSON.parse(externalStore).isExternal : false;
+    console.log('🔍 LoadStoreProducts - ¿Es externo?', isExternal);
+    
+    // Usar endpoint apropiado
+    const endpoint = isExternal 
+      ? `${this.apiProductsUrl}/store/external/${this.storeId}`
+      : `${this.apiProductsUrl}/store/${this.storeId}`;
+    console.log('🔍 LoadStoreProducts - Endpoint:', endpoint);
+    console.log('🔍 LoadStoreProducts - StoreId:', this.storeId);
+
+    this.http.get<any[]>(endpoint, { headers }).subscribe({
       next: (data) => {
-        console.log('Productos de la tienda:', data);
+        console.log('✅ Productos cargados:', data);
         this.products = data;
         this.loading = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Error cargando productos:', err);
+        console.error('❌ Error cargando productos:', err);
         this.loading = false;
         this.cdr.detectChanges();
       }
