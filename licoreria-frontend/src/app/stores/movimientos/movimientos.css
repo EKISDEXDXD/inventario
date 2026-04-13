@@ -47,6 +47,7 @@
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: var(--text-main);
   transition: background-color 0.3s ease, color 0.3s ease;
+  position: relative;
 }
 
 .main-title-card {
@@ -237,8 +238,8 @@
 .movimientos-header {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  gap: 1.5rem;
+  justify-content: space-between;
+  gap: 1rem;
   flex-wrap: wrap;
 }
 
@@ -720,8 +721,12 @@
   box-shadow: 0 2px 4px rgba(34, 197, 94, 0.1);
 }
 
-/* Back button in header */
-.back-button-header {
+/* Back button floating above headers */
+.back-button-floating {
+  position: absolute;
+  top: -60px;
+  left: 20px;
+  z-index: 500;
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -733,26 +738,34 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  flex-shrink: 0;
+  padding: 0;
+  line-height: 1;
+  pointer-events: auto;
 }
 
-.back-button-header:hover {
+.back-button-floating:hover {
   transform: scale(1.1);
-  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.6);
 }
 
-.back-button-header:active {
+.back-button-floating:active {
   transform: scale(0.95);
 }
 
-:host-context(.dark) .back-button-header {
-  background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+.back-button-floating i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-:host-context(.dark) .back-button-header:hover {
-  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.5);
+:host-context(.dark) .back-button-floating {
+  background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.5);
+}
+
+:host-context(.dark) .back-button-floating:hover {
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.7);
 }
 }

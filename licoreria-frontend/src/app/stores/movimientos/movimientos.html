@@ -1,4 +1,8 @@
 <div class="movimientos-container">
+  <button class="back-button-floating" (click)="goBack()" title="Volver atrás">
+    <i class="bx bx-chevron-left"></i>
+  </button>
+  
   <div class="card main-title-card">
     <h1 class="main-title"><i class="bx bx-trending-up"></i> Movimientos</h1>
     <p class="main-subtitle">Historial completo de entradas y salidas de productos</p>
@@ -6,9 +10,6 @@
 
   <div class="card header-card">
     <div class="movimientos-header">
-      <button class="back-button-header" (click)="goBack()" title="Volver atrás">
-        <i class="bx bx-chevron-left"></i>
-      </button>
       <h1 *ngIf="store"><i class="bx bx-trending-up"></i> Movimientos - {{ store.name }}</h1>
     </div>
   </div>

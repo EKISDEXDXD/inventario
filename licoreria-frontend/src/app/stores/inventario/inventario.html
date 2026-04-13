@@ -1,13 +1,14 @@
 <div class="inventario-container">
+  <button class="back-button-floating" (click)="goBack()" title="Volver atrás">
+    <i class="bx bx-chevron-left"></i>
+  </button>
+  
   <div class="card main-title-card">
     <h1 class="main-title"><i class="bx bx-package"></i> Inventario</h1>
     <p class="main-subtitle">Gestión completa de productos y stock de tu tienda</p>
   </div>
 
   <header class="card inventario-header">
-    <button class="back-button-header" (click)="goBack()" title="Volver atrás">
-      <i class="bx bx-chevron-left"></i>
-    </button>
     <div class="inventario-header-top">
       <div class="inventario-title-group">
         <h1 *ngIf="store"><i class="bx bx-package"></i> Inventario - {{ store.name }}</h1>
