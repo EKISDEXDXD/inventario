@@ -7,6 +7,8 @@ import com.inventario.licoreria.modules.store.repository.StoreRepository;
 import com.inventario.licoreria.modules.users.model.User;
 import com.inventario.licoreria.modules.users.service.UserService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -17,20 +19,28 @@ public class StoreService {
 
     private final StoreRepository storeRepository;
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
     public StoreService(StoreRepository storeRepository, UserService userService) {
         this.storeRepository = storeRepository;
         this.userService = userService;
+        this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
-    public List<StoreResponseDTO> findAll() {
-        return storeRepository.findAll().stream()
+    public List<StoreResponseDTO> findAllByUser(String username) {
+        User user = userService.findByUsername(username);
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuario no encontrado");
+        }
+        return storeRepository.findByManager(user).stream()
                 .map(this::convertToResponseDTO)
                 .toList();
     }
 
-    public StoreResponseDTO findById(Long id) {
-        return convertToResponseDTO(findStoreById(id));
+    public StoreResponseDTO findById(Long id, String username) {
+        Store store = findStoreById(id);
+        validateUserAccess(store, username);
+        return convertToResponseDTO(store);
     }
 
     public StoreResponseDTO create(StoreCreateDTO dto, String username) {
@@ -47,6 +57,7 @@ public class StoreService {
         store.setName(dto.getName());
         store.setDescription(dto.getDescription());
         store.setAddress(dto.getAddress());
+        store.setAccessPassword(passwordEncoder.encode(dto.getAccessPassword()));
         store.setManager(manager);
 
         Store saved = storeRepository.save(store);
@@ -68,6 +79,23 @@ public class StoreService {
 
     public Store findStoreEntity(Long id) {
         return findStoreById(id);
+    }
+
+    public StoreResponseDTO accessExternal(String storeName, String password) {
+        Store store = storeRepository.findByName(storeName);
+        if (store == null || !passwordEncoder.matches(password, store.getAccessPassword())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Tienda no encontrada o contraseña incorrecta");
+        }
+        StoreResponseDTO dto = convertToResponseDTO(store);
+        dto.setExternal(true);
+        return dto;
+    }
+
+    public void validateUserAccess(Store store, String username) {
+        User user = userService.findByUsername(username);
+        if (user == null || !store.getManager().getId().equals(user.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para acceder a esta tienda");
+        }
     }
 
     private StoreResponseDTO convertToResponseDTO(Store store) {

@@ -16,7 +16,7 @@
   <div class="form-container">
     <!-- Form Card -->
     <div class="form-card">
-      <form (ngSubmit)="createStore()">
+      <form [formGroup]="storeForm" (ngSubmit)="createStore()">
         <!-- Nombre de la tienda -->
         <div class="form-group">
           <label for="name" class="form-label">
@@ -28,11 +28,21 @@
             <input 
               type="text" 
               id="name" 
-              name="name"
-              [(ngModel)]="formData.name" 
+              formControlName="name"
               placeholder="Ej: Tienda Centro"
               class="form-input"
-              required/>
+              [class.input-error]="name?.invalid && name?.touched"/>
+          </div>
+          <div class="validation-messages" *ngIf="name?.invalid && name?.touched">
+            <small class="error-text" *ngIf="name?.errors?.['required']">
+              <i class="bx bx-x"></i> El nombre es requerido
+            </small>
+            <small class="error-text" *ngIf="name?.errors?.['minlength']">
+              <i class="bx bx-x"></i> Mínimo 3 caracteres
+            </small>
+            <small class="error-text" *ngIf="name?.errors?.['maxlength']">
+              <i class="bx bx-x"></i> Máximo 100 caracteres
+            </small>
           </div>
         </div>
 
@@ -46,13 +56,23 @@
             <span class="input-icon"><i class="bx bx-edit"></i></span>
             <textarea 
               id="description"
-              name="description" 
-              [(ngModel)]="formData.description" 
+              formControlName="description"
               placeholder="Describe tu tienda, productos, ubicación, horario..."
               class="form-textarea"
-              rows="4"
-              required>
+              [class.input-error]="description?.invalid && description?.touched"
+              rows="4">
             </textarea>
+          </div>
+          <div class="validation-messages" *ngIf="description?.invalid && description?.touched">
+            <small class="error-text" *ngIf="description?.errors?.['required']">
+              <i class="bx bx-x"></i> La descripción es requerida
+            </small>
+            <small class="error-text" *ngIf="description?.errors?.['minlength']">
+              <i class="bx bx-x"></i> Mínimo 10 caracteres
+            </small>
+            <small class="error-text" *ngIf="description?.errors?.['maxlength']">
+              <i class="bx bx-x"></i> Máximo 500 caracteres
+            </small>
           </div>
         </div>
 
@@ -67,27 +87,63 @@
             <input
               type="text"
               id="address"
-              [(ngModel)]="formData.address"
-              name="address"
+              formControlName="address"
               placeholder="Ej: Obrajes, La Paz"
               class="form-input"
-              required/>
+              [class.input-error]="address?.invalid && address?.touched"/>
+          </div>
+          <div class="validation-messages" *ngIf="address?.invalid && address?.touched">
+            <small class="error-text" *ngIf="address?.errors?.['required']">
+              <i class="bx bx-x"></i> La dirección es requerida
+            </small>
+            <small class="error-text" *ngIf="address?.errors?.['minlength']">
+              <i class="bx bx-x"></i> Mínimo 5 caracteres
+            </small>
+            <small class="error-text" *ngIf="address?.errors?.['maxlength']">
+              <i class="bx bx-x"></i> Máximo 200 caracteres
+            </small>
           </div>
         </div>
 
-        <!-- Messages -->
+        <!-- Contraseña de acceso -->
+        <div class="form-group">
+          <label for="accessPassword" class="form-label">
+            <span class="label-text">Contraseña de Acceso</span>
+            <span class="required">*</span>
+          </label>
+          <div class="input-wrapper">
+            <span class="input-icon"><i class="bx bx-lock"></i></span>
+            <input
+              type="password"
+              id="accessPassword"
+              formControlName="accessPassword"
+              placeholder="Contraseña para compartir acceso"
+              class="form-input"
+              [class.input-error]="accessPassword?.invalid && accessPassword?.touched"/>
+          </div>
+          <div class="validation-messages" *ngIf="accessPassword?.invalid && accessPassword?.touched">
+            <small class="error-text" *ngIf="accessPassword?.errors?.['required']">
+              <i class="bx bx-x"></i> La contraseña es requerida
+            </small>
+            <small class="error-text" *ngIf="accessPassword?.errors?.['minlength']">
+              <i class="bx bx-x"></i> Mínimo 6 caracteres
+            </small>
+            <small class="error-text" *ngIf="accessPassword?.errors?.['maxlength']">
+              <i class="bx bx-x"></i> Máximo 50 caracteres
+            </small>
+          </div>
+          <small class="form-hint">Esta contraseña permitirá que otros usuarios accedan a tu tienda de forma externa.</small>
+        </div>
+
+        <!-- Error Message -->
         <div *ngIf="errorMessage" class="message error-message">
           <span class="message-icon"><i class="bx bx-error"></i></span>
           <span>{{ errorMessage }}</span>
         </div>
-        <div *ngIf="successMessage" class="message success-message">
-          <span class="message-icon"><i class="bx bx-check"></i></span>
-          <span>{{ successMessage }}</span>
-        </div>
 
         <!-- Submit Button -->
         <div class="form-actions">
-          <button type="submit" class="submit-btn" [disabled]="isLoading">
+          <button type="submit" class="submit-btn" [disabled]="isLoading || storeForm.invalid">
             <span *ngIf="!isLoading">Crear Tienda</span>
             <span *ngIf="isLoading" class="loading">Creando...</span>
           </button>

@@ -27,7 +27,7 @@
         <!-- Card Header -->
         <div class="card-header">
           <div class="store-info">
-            <h3>{{ store.name }}</h3>
+            <h3>{{ store.name }} <span *ngIf="store.isExternal" class="external-badge">Externa</span></h3>
             <p class="store-description">{{ store.description }}</p>
           </div>
           <div class="card-menu">
@@ -40,7 +40,7 @@
                 <span class="dropdown-icon"><i class="bx bx-chevron-right"></i></span>
                 <span>Gestionar Inventario</span>
               </button>
-              <button class="dropdown-item delete" (click)="deleteStore(store.id); closeMenu()">
+              <button *ngIf="!store.isExternal" class="dropdown-item delete" (click)="deleteStore(store.id); closeMenu()">
                 <span class="dropdown-icon"><i class="bx bx-x"></i></span>
                 <span>Eliminar Tienda</span>
               </button>
@@ -69,4 +69,5 @@
       </div>
     </div>
   </div>
+
 </div>

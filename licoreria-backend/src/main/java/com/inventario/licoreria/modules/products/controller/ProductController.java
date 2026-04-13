@@ -27,8 +27,8 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<Product> getAll() {
-        return productService.findAll();
+    public List<Product> getAll(Authentication authentication) {
+        return productService.findAllByUsername(authentication.getName());
     }
 
     @GetMapping("/{id}")
@@ -47,18 +47,18 @@ public class ProductController {
     }
 
     @GetMapping("/store/{storeId}")
-    public List<Product> getByStore(@PathVariable @NonNull Long storeId) {
-        return productService.findByStoreId(storeId);
+    public List<Product> getByStore(@PathVariable @NonNull Long storeId, Authentication authentication) {
+        return productService.findByStoreId(storeId, authentication.getName());
     }
 
     @PostMapping
-    public Product create(@Valid @RequestBody ProductDTO dto) {
-        return productService.create(dto);
+    public Product create(@Valid @RequestBody ProductDTO dto, Authentication authentication) {
+        return productService.create(dto, authentication.getName());
     }
 
     @PutMapping("/{id}")
-    public Product update(@PathVariable @NonNull Long id, @Valid @RequestBody ProductDTO dto) {
-        return productService.update(id, dto);
+    public Product update(@PathVariable @NonNull Long id, @Valid @RequestBody ProductDTO dto, Authentication authentication) {
+        return productService.update(id, dto, authentication.getName());
     }
 
     @DeleteMapping("/{id}")
@@ -70,10 +70,11 @@ public class ProductController {
     @PatchMapping("/{id}/adjust-stock")
     public Product adjustStock(
         @PathVariable @NonNull Long id, 
-        @Valid @RequestBody AdjustStockDTO request
+        @Valid @RequestBody AdjustStockDTO request,
+        Authentication authentication
     ) {
-        // Ajustar el stock
-        Product updated = productService.adjustStock(id, request.getDelta());
+        // Ajustar el stock con validación de permisos
+        Product updated = productService.adjustStock(id, request.getDelta(), authentication.getName());
         
         // Registrar la transacción automáticamente
         try {

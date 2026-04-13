@@ -42,6 +42,24 @@
     align-items: center;
     gap: 1.5rem;
     width: 100%;
+    justify-content: flex-start;
+}
+
+.external-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border: none;
+    color: white;
+    padding: 0.75rem 1.25rem;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.external-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
 }
 
 .back-btn {
@@ -209,10 +227,24 @@
     font-weight: 700;
     color: #0f172a;
     word-break: break-word;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 :host-context(.dark) .card-header h3 {
     color: #f1f5f9;
+}
+
+.external-badge {
+    background: #10b981;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .store-description {
@@ -455,3 +487,5 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* ============ EXTERNAL STORE MODAL ============ */

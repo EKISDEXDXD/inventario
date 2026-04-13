@@ -387,6 +387,36 @@
     cursor: not-allowed;
 }
 
+/* ============ VALIDATION ============ */
+.input-error {
+    border-color: #dc2626 !important;
+    background-color: #fef2f2 !important;
+}
+
+:host-context(.dark) .input-error {
+    border-color: #ef4444 !important;
+    background-color: #7f1d1d !important;
+}
+
+.validation-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-top: 0.5rem;
+}
+
+.error-text {
+    font-size: 0.8rem;
+    color: #dc2626;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+:host-context(.dark) .error-text {
+    color: #ef4444;
+}
+
 .success-message {
     margin-top: 1.5rem;
     padding: 1rem;

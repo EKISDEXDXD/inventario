@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/stores")
@@ -22,13 +23,13 @@ public class StoreController {
     }
 
     @GetMapping
-    public ResponseEntity<List<StoreResponseDTO>> getAll() {
-        return ResponseEntity.ok(storeService.findAll());
+    public ResponseEntity<List<StoreResponseDTO>> getAll(Authentication authentication) {
+        return ResponseEntity.ok(storeService.findAllByUser(authentication.getName()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<StoreResponseDTO> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(storeService.findById(id));
+    public ResponseEntity<StoreResponseDTO> getById(@PathVariable Long id, Authentication authentication) {
+        return ResponseEntity.ok(storeService.findById(id, authentication.getName()));
     }
 
     @PostMapping
@@ -40,5 +41,12 @@ public class StoreController {
     public ResponseEntity<Void> delete(@PathVariable Long id, Authentication authentication) {
         storeService.delete(id, authentication.getName());
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/external-access")
+    public ResponseEntity<StoreResponseDTO> accessExternal(@RequestBody Map<String, String> request) {
+        String storeName = request.get("storeName");
+        String password = request.get("password");
+        return ResponseEntity.ok(storeService.accessExternal(storeName, password));
     }
 }

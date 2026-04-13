@@ -1,55 +1,71 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-create-store',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, ReactiveFormsModule, HttpClientModule],
   templateUrl: './create-store.component.html',
   styleUrls: ['./create-store.component.css']
 })
-export class CreateStoreComponent {
-  formData = {
-    name: '',
-    description: '',
-    address: ''
-  };
-
+export class CreateStoreComponent implements OnInit {
+  storeForm!: FormGroup;
   isLoading = false;
-  successMessage = '';
   errorMessage = '';
 
-  constructor(private router: Router, private http: HttpClient) {}
+  constructor(
+    private router: Router,
+    private http: HttpClient,
+    private fb: FormBuilder
+  ) {}
+
+  ngOnInit() {
+    this.initializeForm();
+  }
+
+  initializeForm() {
+    this.storeForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+      description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
+      address: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(200)]],
+      accessPassword: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(50)]]
+    });
+  }
+
+  get name() {
+    return this.storeForm.get('name');
+  }
+
+  get description() {
+    return this.storeForm.get('description');
+  }
+
+  get address() {
+    return this.storeForm.get('address');
+  }
+
+  get accessPassword() {
+    return this.storeForm.get('accessPassword');
+  }
 
   createStore() {
-    if (!this.formData.name || !this.formData.description || !this.formData.address) {
-      this.errorMessage = 'Por favor completa todos los campos del formulario.';
+    if (!this.storeForm.valid) {
+      this.errorMessage = 'Por favor completa todos los campos correctamente.';
       return;
     }
 
     this.isLoading = true;
     this.errorMessage = '';
-    this.successMessage = '';
 
     const token = localStorage.getItem('token');
     const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined;
-    const payload = {
-      name: this.formData.name.trim(),
-      description: this.formData.description.trim(),
-      address: this.formData.address.trim()
-    };
 
-    this.http.post('http://localhost:8081/api/stores', payload, { headers }).subscribe({
+    this.http.post('http://localhost:8081/api/stores', this.storeForm.value, { headers }).subscribe({
       next: () => {
-        this.successMessage = '¡Tienda creada exitosamente!';
-        this.formData = { name: '', description: '', address: '' };
-        this.isLoading = false;
-        setTimeout(() => {
-          this.router.navigate(['/my-stores']);
-        }, 1000);
+        this.router.navigate(['/my-stores']);
       },
       error: (error) => {
         console.error('CreateStoreComponent - Error al crear tienda:', error);

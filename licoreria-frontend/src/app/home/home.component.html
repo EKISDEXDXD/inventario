@@ -46,6 +46,45 @@
         <p>Gestiona y edita tus sucursales actuales</p>
       </div>
     </div>
+
+    <div class="action-card external surface-card" (click)="openExternalModal()">
+      <div class="icon-box">
+        <i class="bx bx-link-external"></i>
+      </div>
+      <div class="card-text">
+        <h4>Tiendas Externas</h4>
+        <p>Accede a tiendas compartidas por otros usuarios</p>
+      </div>
+    </div>
     
+  </div>
+
+  <!-- External Store Modal -->
+  <div class="modal-overlay" *ngIf="showExternalModal" (click)="closeExternalModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Acceder a Tienda Externa</h3>
+        <button class="close-btn" (click)="closeExternalModal()"><i class="bx bx-x"></i></button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="accessExternalStore()">
+          <div class="form-group">
+            <label for="storeName">Nombre de la Tienda</label>
+            <input type="text" id="storeName" [(ngModel)]="externalStoreName" name="storeName" required placeholder="Ingresa el nombre exacto de la tienda">
+          </div>
+          <div class="form-group">
+            <label for="password">Contraseña de Acceso</label>
+            <input type="password" id="password" [(ngModel)]="externalPassword" name="password" required placeholder="Contraseña proporcionada por el propietario">
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="cancel-btn" (click)="closeExternalModal()">Cancelar</button>
+            <button type="submit" class="access-btn" [disabled]="loadingExternal">
+              <span *ngIf="loadingExternal">Accediendo...</span>
+              <span *ngIf="!loadingExternal">Acceder</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </div>

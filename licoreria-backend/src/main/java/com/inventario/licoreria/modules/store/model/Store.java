@@ -19,6 +19,7 @@ public class Store {
     private String name;
     private String description;
     private String address;
+    private String accessPassword;
 
     @ManyToOne
     @JoinColumn(name = "manager_id", nullable = false)
@@ -57,6 +58,14 @@ public class Store {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getAccessPassword() {
+        return accessPassword;
+    }
+
+    public void setAccessPassword(String accessPassword) {
+        this.accessPassword = accessPassword;
     }
 
     public User getManager() {

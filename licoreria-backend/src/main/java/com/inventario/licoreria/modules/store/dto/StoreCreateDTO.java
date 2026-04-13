@@ -13,6 +13,9 @@ public class StoreCreateDTO {
     @NotBlank(message = "La dirección de la tienda es obligatoria")
     private String address;
 
+    @NotBlank(message = "La contraseña de acceso es obligatoria")
+    private String accessPassword;
+
     public String getName() {
         return name;
     }
@@ -35,5 +38,13 @@ public class StoreCreateDTO {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getAccessPassword() {
+        return accessPassword;
+    }
+
+    public void setAccessPassword(String accessPassword) {
+        this.accessPassword = accessPassword;
     }
 }

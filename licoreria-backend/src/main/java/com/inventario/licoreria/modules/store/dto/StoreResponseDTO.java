@@ -8,6 +8,7 @@ public class StoreResponseDTO {
     private String address;
     private Long managerId;
     private String managerUsername;
+    private boolean isExternal;
 
     public StoreResponseDTO(Long id, String name, String description, String address, Long managerId, String managerUsername) {
         this.id = id;
@@ -16,6 +17,17 @@ public class StoreResponseDTO {
         this.address = address;
         this.managerId = managerId;
         this.managerUsername = managerUsername;
+        this.isExternal = false;
+    }
+
+    public StoreResponseDTO(Long id, String name, String description, String address, Long managerId, String managerUsername, boolean isExternal) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.address = address;
+        this.managerId = managerId;
+        this.managerUsername = managerUsername;
+        this.isExternal = isExternal;
     }
 
     public Long getId() {
@@ -64,5 +76,13 @@ public class StoreResponseDTO {
 
     public void setManagerUsername(String managerUsername) {
         this.managerUsername = managerUsername;
+    }
+
+    public boolean isExternal() {
+        return isExternal;
+    }
+
+    public void setExternal(boolean external) {
+        isExternal = external;
     }
 }
