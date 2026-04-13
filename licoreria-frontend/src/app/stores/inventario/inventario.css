@@ -641,15 +641,15 @@
   }
 }
 
-/* Back button - Text version */
+/* Back button - Square version */
 .back-button-floating {
   position: absolute;
   top: -45px;
   left: 20px;
   z-index: 999;
-  width: 60px;
+  width: 70px;
   height: 50px;
-  border-radius: 50%;
+  border-radius: 4px;
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
   border: none;
   color: white;

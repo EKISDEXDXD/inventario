@@ -49,15 +49,15 @@
   box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
 }
 
-/* Back button - Text version */
+/* Back button - Square version */
 .back-button-floating {
   position: absolute;
   top: -45px;
   left: 20px;
   z-index: 999;
-  width: 60px;
+  width: 70px;
   height: 50px;
-  border-radius: 50%;
+  border-radius: 4px;
   background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
   border: none;
   color: white;
