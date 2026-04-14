@@ -89,6 +89,11 @@ export class MainLayoutComponent implements HasUnsavedChanges, OnInit {
     this.router.navigate(['/create-store']);
   }
 
+  goToExternalStores() {
+    this.menuService.closeMenu();
+    this.router.navigate(['/home']);
+  }
+
   logout() {
     this.authService.logout();
     this.router.navigate(['/login']);
