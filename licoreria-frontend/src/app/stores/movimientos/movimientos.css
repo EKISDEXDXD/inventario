@@ -721,6 +721,77 @@
   box-shadow: 0 2px 4px rgba(34, 197, 94, 0.1);
 }
 
+/* ============ MOBILE OPTIMIZATION 390px ============ */
+/* ============ AJUSTE DE MOVIMIENTOS PARA MÓVIL ============ */
+@media (max-width: 480px) {
+  /* 1. Ocultar botón de volver que sale del recuadro */
+  .back-button-floating {
+    display: none !important;
+  }
+
+  /* 2. Ajustar contenedor principal al ancho total */
+  .movimientos-container {
+    padding: 0.5rem !important;
+    width: 100% !important;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+
+  /* 3. Ajustar cards para que no tengan márgenes grandes */
+  .card, .products-card, .history-card {
+    padding: 0.75rem !important;
+    margin-bottom: 0.75rem !important;
+    width: 100% !important;
+    border-radius: 8px;
+    box-sizing: border-box;
+  }
+
+  /* 4. Títulos más pequeños */
+  .main-title {
+    font-size: 1.2rem !important;
+  }
+
+  .movimientos-header h1 {
+    font-size: 1.1rem !important;
+  }
+
+  /* 5. TABLA DE MOVIMIENTOS: "Side-to-Side" con letra pequeña */
+  .transactions-section {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .transactions-table {
+    width: 100% !important;
+    min-width: 100% !important;
+    font-size: 0.65rem !important; /* Letra bien pequeña para que entre la info */
+    border-collapse: collapse;
+  }
+
+  .transactions-table th,
+  .transactions-table td {
+    padding: 0.4rem 0.2rem !important; /* Padding mínimo lateral */
+    text-align: left;
+    white-space: nowrap; /* Evita que el texto salte de línea */
+  }
+
+  /* 6. Ajustar insignias (Badges) para que no ocupen mucho espacio */
+  .type-badge {
+    padding: 0.2rem 0.4rem !important;
+    font-size: 0.6rem !important;
+    min-width: auto !important;
+  }
+
+  /* 7. Ocultar columnas menos críticas en móvil para leer mejor */
+  /* Ocultamos 'Razón' para priorizar Producto, Tipo y Cantidad */
+  .transactions-table th:nth-child(4),
+  .transactions-table td:nth-child(4) {
+    display: none !important;
+  }
+}
+
+
 /* Back button - Square version */
 .back-button-floating {
   position: absolute;

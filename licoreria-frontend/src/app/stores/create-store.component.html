@@ -1,14 +1,11 @@
 <div class="create-store-container">
   <!-- Header -->
-  <header class="create-header">
+  <header class="header surface-card">
     <div class="header-content">
-      <button class="back-btn" (click)="goBack()">
-        <span class="back-icon"><i class="bx bx-chevron-left"></i></span>
+      <button class="menu-toggle-btn" (click)="toggleMenu()" title="Abrir menú">
+        <i class="bx" [class.bx-menu]="!(isMenuOpen$ | async)" [class.bx-x]="isMenuOpen$ | async"></i>
       </button>
-      <div class="header-title">
-        <h1>Crear Nueva Tienda</h1>
-        <p class="header-subtitle">Agrega una nueva tienda a tu negocio</p>
-      </div>
+      <h1 class="logo-title">BaseStock</h1>
     </div>
   </header>
 
@@ -16,6 +13,15 @@
   <div class="form-container">
     <!-- Form Card -->
     <div class="form-card">
+      <!-- Form Title -->
+      <div class="form-title-section">
+        <h2 class="form-title">
+          <i class="bx bx-store-alt"></i>
+          Crear Nueva Tienda
+        </h2>
+        <p class="form-subtitle">Completa la información de tu tienda para comenzar a gestionar inventario</p>
+      </div>
+
       <form [formGroup]="storeForm" (ngSubmit)="createStore()">
         <!-- Nombre de la tienda -->
         <div class="form-group">

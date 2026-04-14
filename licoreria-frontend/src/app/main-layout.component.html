@@ -1,7 +1,7 @@
-<div class="home-container" [class.close]="!isMenuOpen" [class.dark]="isDarkMode">
+<div class="home-container" [class.close]="!(isMenuOpen$ | async)" [class.dark]="isDarkMode">
 
   <!-- Barra Lateral (Sidebar) -->
-  <nav class="menu-main" [class.close]="!isMenuOpen">
+  <nav class="menu-main" [class.close]="!(isMenuOpen$ | async)" [class.open]="isMenuOpen$ | async">
     <div class="text-header-menu">
       <div class="logo-details">
         <div class="logo-box">BS</div>
@@ -22,7 +22,7 @@
           
           <!-- Opción: Inicio -->
           <li class="nav-link">
-            <a routerLink="/">
+            <a routerLink="/" (click)="closeMenuOnMobile()">
               <i class="bx bx-home-alt"></i>
               <span class="text nav-text">Inicio</span>
             </a>
@@ -31,13 +31,13 @@
           <!-- Sección: Inventarios -->
           <li class="menu-section-title">Inventarios</li>
           <li class="nav-link">
-            <a routerLink="/my-stores">
+            <a routerLink="/my-stores" (click)="closeMenuOnMobile()">
               <i class="bx bx-store-alt"></i>
               <span class="text nav-text">Mis Tiendas</span>
             </a>
           </li>
           <li class="nav-link">
-            <a routerLink="/create-store">
+            <a routerLink="/create-store" (click)="closeMenuOnMobile()">
               <i class="bx bx-plus-circle"></i>
               <span class="text nav-text">Crear Tienda</span>
             </a>
@@ -45,7 +45,7 @@
 
           <!-- Opción: Configuración (Settings) -->
           <li class="nav-link">
-            <a href="#">
+            <a href="#" (click)="closeMenuOnMobile()">
               <i class="bx bx-cog"></i>
               <span class="text nav-text">Configuración</span>
             </a>
@@ -83,6 +83,9 @@
       </ul>
     </div>
   </nav>
+
+  <!-- Menu Overlay for Mobile -->
+  <div class="menu-overlay" [class.open]="isMenuOpen$ | async" (click)="closeMenuOnMobile()"></div>
 
   <main class="main-content">
     <!-- router-outlet: Aquí se inyectan las diferentes páginas (home, my-stores, etc) -->

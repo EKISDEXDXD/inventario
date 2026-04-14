@@ -1,19 +1,25 @@
 <div class="stores-container">
   <!-- Header -->
-  <header class="stores-header">
+  <header class="header surface-card">
     <div class="header-content">
-      <button class="back-btn" (click)="goBack()">
-        <span><i class="bx bx-chevron-left"></i></span>
+      <button class="menu-toggle-btn" (click)="toggleAppMenu()" title="Abrir menú">
+        <i class="bx" [class.bx-menu]="!(isMenuOpen$ | async)" [class.bx-x]="isMenuOpen$ | async"></i>
       </button>
-      <div class="header-title">
-        <h1>Mis Tiendas</h1>
-        <p class="header-subtitle">Gestiona todas tus tiendas en un solo lugar</p>
-      </div>
+      <h1 class="logo-title">BaseStock</h1>
     </div>
   </header>
 
   <!-- Main Content -->
   <div class="stores-content">
+    <!-- Page Title Section -->
+    <div class="page-title-section">
+      <h2 class="page-title">
+        <i class="bx bx-store-alt"></i>
+        Mis Tiendas
+      </h2>
+      <p class="page-subtitle">Gestiona todas tus tiendas en un solo lugar</p>
+    </div>
+
     <!-- Empty State -->
     <div *ngIf="stores.length === 0" class="empty-state">
       <div class="empty-state-icon"><i class="bx bx-building"></i></div>

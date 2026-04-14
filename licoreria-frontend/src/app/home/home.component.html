@@ -1,8 +1,14 @@
 <header class="header surface-card">
   <div class="header-content">
+    <button class="menu-toggle-btn" (click)="toggleMenu()" title="Abrir menú">
+      <i class="bx" [class.bx-menu]="!(isMenuOpen$ | async)" [class.bx-x]="isMenuOpen$ | async"></i>
+    </button>
     <h1 class="logo-title">BaseStock</h1>
   </div>
 </header>
+
+<!-- Page Title Section -->
+
 
 <div class="dashboard-grid">
   <div class="info-panel">

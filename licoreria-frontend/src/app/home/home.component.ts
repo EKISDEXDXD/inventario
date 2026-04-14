@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { MenuService } from '../core/menu.service';
 
 @Component({
   selector: 'app-home',
@@ -19,8 +20,16 @@ export class HomeComponent {
   loadingExternal = false;
   private apiUrl = 'http://localhost:8081/api/stores';
 
-  constructor(private router: Router, private http: HttpClient) {
+  get isMenuOpen$() {
+    return this.menuService.isMenuOpen$;
+  }
+
+  constructor(private router: Router, private http: HttpClient, private menuService: MenuService) {
     this.loadUsername();
+  }
+
+  toggleMenu() {
+    this.menuService.toggleMenu();
   }
 
   loadUsername() {

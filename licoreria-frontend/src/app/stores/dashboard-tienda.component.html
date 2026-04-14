@@ -1,17 +1,28 @@
 <div class="dashboard-container">
-  <button class="back-button-floating" (click)="goBack()" title="Volver atrás">
-    Volver
-  </button>
-  
-  <header class="dashboard-header">
+  <!-- Header -->
+  <header class="header surface-card">
     <div class="header-content">
-      <div *ngIf="store" class="store-info">
-        <h1>{{ store.name }}</h1>
-        <p class="store-description">{{ store.description }}</p>
-        <p class="store-address"><i class="bx bx-map-pin"></i> {{ store.address }}</p>
-      </div>
+      <button class="menu-toggle-btn" (click)="toggleAppMenu()" title="Abrir menú">
+        <i class="bx" [class.bx-menu]="!(isMenuOpen$ | async)" [class.bx-x]="isMenuOpen$ | async"></i>
+      </button>
+      <h1 class="logo-title">BaseStock</h1>
     </div>
   </header>
+
+  <!-- Page Title Section - Mejorado -->
+  <section class="page-title-section">
+    <div class="title-header">
+      <i class="bx bx-shop"></i>
+      <div class="title-block">
+        <h2 class="page-title">Gestión de Tienda</h2>
+        <div *ngIf="store" class="store-details">
+          <div class="store-name">{{ store?.name || 'Tienda' }}</div>
+          <div *ngIf="store.description" class="store-description">{{ store.description }}</div>
+          <div *ngIf="store.address" class="address-info"><i class="bx bx-map-pin"></i> {{ store.address }}</div>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- Info Box -->
   <div class="info-box">

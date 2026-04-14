@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MenuService } from '../core/menu.service';
 import { ExportModalComponent } from './export-modal.component';
 
 @Component({
@@ -23,13 +24,22 @@ export class DashboardTiendaComponent implements OnInit {
   private apiStoresUrl = 'http://localhost:8081/api/stores';
   private apiProductsUrl = 'http://localhost:8081/api/products';
 
+  get isMenuOpen$() {
+    return this.menuService.isMenuOpen$;
+  }
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private http: HttpClient,
     private cdr: ChangeDetectorRef,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private menuService: MenuService
   ) {}
+
+  toggleAppMenu() {
+    this.menuService.toggleMenu();
+  }
 
   ngOnInit() {
     // Capturar el ID de la tienda desde la URL

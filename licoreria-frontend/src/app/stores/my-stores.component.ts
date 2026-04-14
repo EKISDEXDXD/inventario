@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { MenuService } from '../core/menu.service';
 
 @Component({
   selector: 'app-my-stores',
@@ -15,14 +16,23 @@ export class MyStoresComponent implements OnInit {
   openMenuId: number | null = null;
   private apiUrl = 'http://localhost:8081/api/stores';
 
+  get isMenuOpen$() {
+    return this.menuService.isMenuOpen$;
+  }
+
   constructor(
     private router: Router, 
     private http: HttpClient,
-    private cdr: ChangeDetectorRef 
+    private cdr: ChangeDetectorRef,
+    private menuService: MenuService 
   ) {}
 
   ngOnInit() {
     this.loadStores();
+  }
+
+  toggleAppMenu() {
+    this.menuService.toggleMenu();
   }
 
   loadStores() {

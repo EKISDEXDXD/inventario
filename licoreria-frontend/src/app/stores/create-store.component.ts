@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
+import { MenuService } from '../core/menu.service';
 
 @Component({
   selector: 'app-create-store',
@@ -15,15 +16,25 @@ export class CreateStoreComponent implements OnInit {
   storeForm!: FormGroup;
   isLoading = false;
   errorMessage = '';
+  private apiUrl = 'http://localhost:8081/api/stores';
+
+  get isMenuOpen$() {
+    return this.menuService.isMenuOpen$;
+  }
 
   constructor(
     private router: Router,
     private http: HttpClient,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private menuService: MenuService
   ) {}
 
   ngOnInit() {
     this.initializeForm();
+  }
+
+  toggleMenu() {
+    this.menuService.toggleMenu();
   }
 
   initializeForm() {

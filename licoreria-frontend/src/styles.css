@@ -258,3 +258,58 @@ html, body {
 .home-container.dark .sun-moon i.moon { opacity: 0; }
 
 .home-container.dark .header { background-color: rgba(0,0,0,.2); border-bottom: 1px solid rgba(255,255,255,.05); }
+
+/* ============ GLOBAL RESPONSIVE STYLES ============ */
+@media (max-width: 768px) {
+  body,
+  html {
+    font-size: 14px;
+  }
+
+  * {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  body,
+  html {
+    font-size: 13px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+  }
+
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+@media (max-width: 360px) {
+  body,
+  html {
+    font-size: 12px;
+  }
+
+  h1 {
+    font-size: 1.25rem;
+  }
+
+  h2 {
+    font-size: 1.1rem;
+  }
+
+  h3 {
+    font-size: 1rem;
+  }
+}

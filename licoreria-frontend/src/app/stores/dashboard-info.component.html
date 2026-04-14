@@ -1,12 +1,30 @@
 <div class="dashboard-info-container">
+  <!-- Header -->
+  <header class="header surface-card">
+    <div class="header-content">
+      <button class="menu-toggle-btn" (click)="toggleAppMenu()" title="Abrir menú">
+        <i class="bx" [class.bx-menu]="!(isMenuOpen$ | async)" [class.bx-x]="isMenuOpen$ | async"></i>
+      </button>
+      <h1 class="logo-title">BaseStock</h1>
+    </div>
+  </header>
+
   <header class="dashboard-info-header">
-    <button class="back-btn" (click)="goBack()"><i class="bx bx-chevron-left"></i> Volver al panel</button>
     <div class="dashboard-info-title">
       <p class="eyebrow">Resumen de la tienda</p>
       <h1>Dashboard Info</h1>
       <p class="subtitle">Gráficos y métricas clave para controlar inventario, valor de stock y alertas de existencia.</p>
     </div>
   </header>
+
+  <!-- Page Title Section -->
+  <div class="page-title-section">
+    <h2 class="page-title">
+      <i class="bx bx-bar-chart"></i>
+      Dashboard
+    </h2>
+    <p class="page-subtitle">Métricas y análisis de tu inventario</p>
+  </div>
 
   <div *ngIf="loading" class="loading">Cargando métricas...</div>
 

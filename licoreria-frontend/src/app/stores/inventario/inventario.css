@@ -325,10 +325,10 @@
 }
 
 .content-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1.8fr) minmax(320px, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 1.5rem;
-  align-items: start;
+  align-items: stretch;
   margin-top: 1.5rem;
 }
 
@@ -607,39 +607,70 @@
   }
 }
 
+/* ============ AJUSTES PARA TABLA COMPLETA EN MÓVIL ============ */
 @media (max-width: 480px) {
+  /* Ocultamos el botón que se sale del recuadro */
+  .back-button-floating {
+    display: none !important;
+  }
+
+  /* Reducimos el margen del contenedor para ganar espacio lateral */
   .inventario-container {
-    padding: 0.75rem;
+    padding: 0rem !important;
+    width: 100% !important;
+    box-sizing: border-box;
   }
 
+  /* El recuadro blanco ahora ocupa todo el ancho */
   .card {
-    padding: 1rem;
-    margin-bottom: 1rem;
+    padding: 0.6rem !important;
+    margin-bottom: 0.75rem !important;
+    width: 100% !important;
+    border-radius: 8px;
   }
 
-  .inventario-header h1 {
-    font-size: 1.25rem;
+  /* Contenedor de la tabla: quitamos márgenes para que llegue al borde */
+  .table-wrapper {
+    margin: 0 !important;
+    width: 100% !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
-  .btn {
-    padding: 0.5rem 1rem;
-    font-size: 0.85rem;
+  /* Ajuste de la fuente para que todo entre en una sola línea */
+  .products-table {
+    min-width: 100%;
+    font-size: 0.25rem !important; /* Letra bien pequeña para maximizar espacio */
   }
 
   .products-table th,
   .products-table td {
-    padding: 0.75rem 0.5rem;
-    font-size: 0.8rem;
+    padding: 0.05rem 0.2rem !important; /* Espaciado interno mínimo */
+    white-space: nowrap; /* Evita que el texto salte de línea y rompa la tabla */
   }
 
-  .alert-box {
-    padding: 1rem;
+  /* Ocultamos columnas que no son críticas para que las importantes respiren */
+  .product-description, 
+  .product-cost { 
+    display: none !important; 
   }
 
-  .flex-between {
-    gap: 0.5rem;
+  /* Hacemos los botones de acción más pequeños y en fila */
+  .action-buttons {
+    display: flex;
+    gap: 2px;
+  }
+
+  .btn-add-stock,
+  .btn-remove-stock,
+  .btn-delete {
+    padding: 0.3rem !important;
+    font-size: 0.25rem !important;
+    min-width: auto !important;
   }
 }
+
+
 
 /* Back button - Square version */
 .back-button-floating {

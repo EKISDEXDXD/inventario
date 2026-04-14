@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { MenuService } from '../core/menu.service';
 
 @Component({
   selector: 'app-dashboard-info',
@@ -29,12 +30,21 @@ export class DashboardInfoComponent implements OnInit {
   private apiStoresUrl = 'http://localhost:8081/api/stores';
   private apiProductsUrl = 'http://localhost:8081/api/products';
 
+  get isMenuOpen$() {
+    return this.menuService.isMenuOpen$;
+  }
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private http: HttpClient,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private menuService: MenuService
   ) {}
+
+  toggleAppMenu() {
+    this.menuService.toggleMenu();
+  }
 
   ngOnInit() {
     this.route.params.subscribe(params => {
