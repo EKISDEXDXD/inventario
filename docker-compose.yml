@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  # ============ BASE DE DATOS (PostgreSQL) ============
+  postgres:
+    image: postgres:16-alpine
+    container_name: licoreria-postgres
+    environment:
+      POSTGRES_DB: licoreria_db
+      POSTGRES_USER: licoreria_user
+      POSTGRES_PASSWORD: licoreria_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U licoreria_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - licoreria-network
+    restart: unless-stopped
+
+  # ============ BACKEND (Spring Boot) ============
+  backend:
+    build:
+      context: ./licoreria-backend
+      dockerfile: Dockerfile
+    container_name: licoreria-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/licoreria_db
+      SPRING_DATASOURCE_USERNAME: licoreria_user
+      SPRING_DATASOURCE_PASSWORD: licoreria_password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+    ports:
+      - "8081:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - licoreria-network
+    restart: unless-stopped
+
+  # ============ FRONTEND (Nginx + Angular) ============
+  frontend:
+    build:
+      context: ./licoreria-frontend
+      dockerfile: Dockerfile
+    container_name: licoreria-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - licoreria-network
+    restart: unless-stopped
+
+# ============ VOLÚMENES ============
+volumes:
+  postgres_data:
+    driver: local
+
+# ============ REDES ============
+networks:
+  licoreria-network:
+    driver: bridge
