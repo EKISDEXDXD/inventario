@@ -7,7 +7,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { formatDate } from '@angular/common';
 
 interface ExportOption {
-  type: 'COMPLETE' | 'SIMPLE';
+  type: 'COMPLETE' | 'SIMPLE' | 'DAILY';
   label: string;
   description: string;
   icon: string;
@@ -59,11 +59,15 @@ interface ExportHistory {
                 <div class="info-items">
                   <div class="info-item">
                     <span class="info-label">Completo:</span>
-                    <span class="info-text">4 hojas con análisis detallado</span>
+                    <span class="info-text">4 hojas + Costos Administrativos</span>
                   </div>
                   <div class="info-item">
                     <span class="info-label">Resumido:</span>
-                    <span class="info-text">2 hojas rápidas</span>
+                    <span class="info-text">2 hojas + Costos Administrativos</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Diario:</span>
+                    <span class="info-text">Reporte del día + Costos (atajo rápido)</span>
                   </div>
                 </div>
               </div>
@@ -175,6 +179,31 @@ interface ExportHistory {
                 </div>
               </div>
 
+              <!-- Daily Report -->
+              <div class="export-card">
+                <div class="card-header">
+                  <div class="card-icon daily">
+                    <i class="bx bx-calendar-event"></i>
+                  </div>
+                  <div class="card-info">
+                    <h4>Reporte Diario</h4>
+                    <p>Ventas del día actual (0:00 - 23:59 horas)</p>
+                  </div>
+                </div>
+
+                <div class="card-content">
+                  <p class="daily-info">Este reporte incluye todas las transacciones de hoy. Se genera automáticamente sin opciones de período.</p>
+                  <button
+                    class="export-btn primary"
+                    (click)="downloadDailyReport()"
+                    [disabled]="isLoading">
+                    <i class="bx bx-download" *ngIf="!isLoading"></i>
+                    <i class="bx bx-loader-alt bx-spin" *ngIf="isLoading"></i>
+                    <span>{{ isLoading ? 'Generando...' : 'Descargar Hoy' }}</span>
+                  </button>
+                </div>
+              </div>
+
               <!-- History -->
               <div class="export-card">
                 <div class="card-header">
@@ -200,8 +229,8 @@ interface ExportHistory {
                         <div class="history-date">{{ item.dateGenerated | date: 'dd/MM/yyyy HH:mm' }}</div>
                       </div>
                       <div class="history-type">
-                        <span class="type-badge" [class]="item.reportType === 'COMPLETE' ? 'complete' : 'simple'">
-                          {{ item.reportType === 'COMPLETE' ? 'Completo' : 'Resumido' }}
+                        <span class="type-badge" [class]="item.reportType === 'COMPLETE' ? 'complete' : (item.reportType === 'SIMPLE' ? 'simple' : 'daily')">
+                          {{ item.reportType === 'COMPLETE' ? 'Completo' : (item.reportType === 'SIMPLE' ? 'Resumido' : 'Diario') }}
                         </span>
                       </div>
                       <div class="history-actions">
@@ -498,6 +527,11 @@ interface ExportHistory {
       color: white;
     }
 
+    .card-icon.daily {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: white;
+    }
+
     .card-icon.history {
       background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
       color: white;
@@ -572,6 +606,23 @@ interface ExportHistory {
     /* Date Picker */
     .date-picker {
       margin: 1rem 0;
+    }
+
+    .daily-info {
+      margin: 0 0 1rem 0;
+      padding: 1rem;
+      background: #fef3c7;
+      border-left: 4px solid #f59e0b;
+      border-radius: 6px;
+      color: #92400e;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    :host-context(.dark) .daily-info {
+      background: #4a3a1a;
+      border-left-color: #f59e0b;
+      color: #fcd34d;
     }
 
     .date-input-group {
@@ -724,6 +775,11 @@ interface ExportHistory {
     .type-badge.simple {
       background: #dcfce7;
       color: #15803d;
+    }
+
+    .type-badge.daily {
+      background: #fef3c7;
+      color: #92400e;
     }
 
     .history-actions {
@@ -921,6 +977,10 @@ export class ExportModalComponent implements OnInit {
   simpleFromDate: string = '';
   simpleToDate: string = '';
 
+  // Daily Report
+  dailyFromDate: string = '';
+  dailyToDate: string = '';
+
   // History
   exportHistory: ExportHistory[] = [];
 
@@ -947,6 +1007,10 @@ export class ExportModalComponent implements OnInit {
 
     this.simpleToDate = this.formatDateForInput(today);
     this.simpleFromDate = this.formatDateForInput(thirtyDaysAgo);
+
+    // Daily report uses today's date
+    this.dailyFromDate = this.formatDateForInput(today);
+    this.dailyToDate = this.formatDateForInput(today);
   }
 
   formatDateForInput(date: Date): string {
@@ -1017,6 +1081,66 @@ export class ExportModalComponent implements OnInit {
       error: (err) => {
         this.isLoading = false;
         console.error('Error descargando reporte:', err);
+        
+        if (err.status === 403) {
+          this.errorMessage = 'Acceso denegado (403). Verifica tus permisos.';
+        } else if (err.status === 401) {
+          this.errorMessage = 'No autenticado. Por favor, inicia sesión nuevamente.';
+        } else if (err.status === 400) {
+          this.errorMessage = 'Parámetros inválidos. Verifica las fechas.';
+        } else {
+          this.errorMessage = `Error al generar el reporte (${err.status}). Intenta nuevamente.`;
+        }
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  downloadDailyReport(): void {
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      this.errorMessage = 'Token no encontrado. Por favor, inicia sesión nuevamente.';
+      console.error('Token no encontrado en localStorage');
+      return;
+    }
+
+    this.isLoading = true;
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    const params = {
+      storeId: this.storeId.toString(),
+      dateFrom: this.dailyFromDate,
+      dateTo: this.dailyToDate,
+      reportType: 'DAILY'
+    };
+
+    console.log('Enviando solicitud de reporte diario:', { 
+      url: 'http://localhost:8081/api/export/sales-report',
+      params,
+      hasToken: !!token
+    });
+
+    this.http.post('http://localhost:8081/api/export/sales-report', {}, {
+      headers,
+      params,
+      responseType: 'blob'
+    }).subscribe({
+      next: (blob) => {
+        this.handleDownload(blob, 'DAILY', this.dailyFromDate, this.dailyToDate);
+        this.isLoading = false;
+        this.successMessage = '✅ Reporte diario descargado exitosamente';
+        this.cdr.detectChanges();
+        setTimeout(() => this.loadExportHistory(), 500);
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.error('Error descargando reporte diario:', err);
         
         if (err.status === 403) {
           this.errorMessage = 'Acceso denegado (403). Verifica tus permisos.';

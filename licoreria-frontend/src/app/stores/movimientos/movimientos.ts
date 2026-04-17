@@ -21,6 +21,18 @@ export class MovimientosComponent implements OnInit {
   loading: boolean = true;
   searchTerm: string = '';
   userId: number | null = null;
+  userName: string = '';
+
+  // Administrative Costs properties
+  administrativeCosts: any[] = [];
+  adminCostMovements: any[] = [];
+  loadingAdminCosts: boolean = false;
+  showAdminCostMovementForm: boolean = false;
+
+  // UI State
+  showProductsList: boolean = false;
+  showHistoryList: boolean = false;
+  showAdminMovementsList: boolean = false;
 
   // Form fields
   movement = {
@@ -30,9 +42,19 @@ export class MovimientosComponent implements OnInit {
     reason: 'VENTA'
   };
 
+  // Administrative Cost Movement form
+  adminCostMovement = {
+    administrativeCostId: 0,
+    amountPaid: 0,
+    type: 'PAGO',
+    dateTime: new Date()
+  };
+
   private apiStoresUrl = 'http://localhost:8081/api/stores';
   private apiProductsUrl = 'http://localhost:8081/api/products';
   private apiTransactionsUrl = 'http://localhost:8081/api/transactions';
+  private apiAdminCostsUrl = 'http://localhost:8081/api/administrative-costs';
+  private apiAdminCostMovementsUrl = 'http://localhost:8081/api/administrative-cost-movements';
   private jwtHelper = new JwtHelper();
 
   constructor(
@@ -51,6 +73,9 @@ export class MovimientosComponent implements OnInit {
     const token = localStorage.getItem('token');
     if (token) {
       this.userId = this.jwtHelper.getUserId(token);
+      // Extraer nombre de usuario del token
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      this.userName = payload.sub || 'Usuario';
       if (this.userId) {
         console.log('UserID extraído del token:', this.userId);
       } else {
@@ -65,6 +90,8 @@ export class MovimientosComponent implements OnInit {
       this.storeId = initialStoreId;
       this.loadStoreData();
       this.loadStoreProducts();
+      this.loadAdministrativeCosts();
+      this.loadAdministrativeCostMovements();
     }
   }
 
@@ -77,6 +104,8 @@ export class MovimientosComponent implements OnInit {
           this.storeId = nextStoreId;
           this.loadStoreData();
           this.loadStoreProducts();
+          this.loadAdministrativeCosts();
+          this.loadAdministrativeCostMovements();
         }
       });
       current = current.parent;
@@ -304,5 +333,142 @@ export class MovimientosComponent implements OnInit {
   get todayLabel(): string {
     const today = new Date();
     return `${this.padDate(today.getDate())}/${this.padDate(today.getMonth() + 1)}`;
+  }
+
+  // ===================== ADMINISTRATIVE COSTS METHODS =====================
+
+  loadAdministrativeCosts() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    this.http.get<any[]>(`${this.apiAdminCostsUrl}/store/${this.storeId}`, { headers }).subscribe({
+      next: (data) => {
+        this.administrativeCosts = data;
+      },
+      error: (err) => {
+        console.error('Error cargando costos administrativos:', err);
+      }
+    });
+  }
+
+  loadAdministrativeCostMovements() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    this.loadingAdminCosts = true;
+    this.http.get<any[]>(`${this.apiAdminCostMovementsUrl}/store/${this.storeId}`, { headers }).subscribe({
+      next: (data) => {
+        this.adminCostMovements = data.sort((a, b) => new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime());
+        this.loadingAdminCosts = false;
+      },
+      error: (err) => {
+        console.error('Error cargando movimientos administrativos:', err);
+        this.loadingAdminCosts = false;
+      }
+    });
+  }
+
+  toggleAdminCostMovementForm() {
+    this.showAdminCostMovementForm = !this.showAdminCostMovementForm;
+    if (!this.showAdminCostMovementForm) {
+      this.adminCostMovement = {
+        administrativeCostId: 0,
+        amountPaid: 0,
+        type: 'PAGO',
+        dateTime: new Date()
+      };
+    }
+  }
+
+  toggleProductsList() {
+    this.showProductsList = !this.showProductsList;
+  }
+
+  toggleHistoryList() {
+    this.showHistoryList = !this.showHistoryList;
+  }
+
+  toggleAdminMovementsList() {
+    this.showAdminMovementsList = !this.showAdminMovementsList;
+  }
+
+  createAdminCostMovement() {
+    if (this.adminCostMovement.administrativeCostId === 0 || this.adminCostMovement.amountPaid <= 0) {
+      alert('Por favor selecciona un costo administrativo y monto válido');
+      return;
+    }
+
+    if (!this.userId) {
+      alert('Error: No se pudo identificar el usuario');
+      return;
+    }
+
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+
+    const movementData = {
+      administrativeCostId: this.adminCostMovement.administrativeCostId,
+      type: this.adminCostMovement.type,
+      amountPaid: this.adminCostMovement.amountPaid,
+      dateTime: this.adminCostMovement.dateTime.toISOString()
+    };
+
+    this.http.post(`${this.apiAdminCostMovementsUrl}`, movementData, { headers }).subscribe({
+      next: () => {
+        this.loadAdministrativeCostMovements();
+        this.adminCostMovement = {
+          administrativeCostId: 0,
+          amountPaid: 0,
+          type: 'PAGO',
+          dateTime: new Date()
+        };
+        this.showAdminCostMovementForm = false;
+        alert('Movimiento registrado correctamente');
+      },
+      error: (err) => {
+        console.error('Error registrando movimiento administrativo:', err);
+        alert('Error al registrar el movimiento. Inténtalo de nuevo.');
+      }
+    });
+  }
+
+  deleteAdminCostMovement(movementId: number) {
+    if (confirm('¿Estás seguro de eliminar este movimiento?')) {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      });
+
+      this.http.delete(`${this.apiAdminCostMovementsUrl}/${movementId}`, { headers }).subscribe({
+        next: () => {
+          this.loadAdministrativeCostMovements();
+          alert('Movimiento eliminado correctamente');
+        },
+        error: (err) => {
+          console.error('Error eliminando movimiento:', err);
+          alert('Error al eliminar el movimiento');
+        }
+      });
+    }
+  }
+
+  getAdminCostName(costId: number): string {
+    const cost = this.administrativeCosts.find(c => c.id === costId);
+    return cost ? cost.name : 'Costo desconocido';
   }
 }

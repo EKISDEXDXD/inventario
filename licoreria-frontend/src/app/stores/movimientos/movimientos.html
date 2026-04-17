@@ -2,7 +2,7 @@
   <button class="back-button-floating" (click)="goBack()" title="Volver atrás">
     Volver
   </button>
-  
+
   <div class="card main-title-card">
     <h1 class="main-title"><i class="bx bx-trending-up"></i> Movimientos</h1>
     <p class="main-subtitle">Historial completo de entradas y salidas de productos</p>
@@ -94,89 +94,211 @@
   <!-- Historial y Lista de Productos -->
   <div class="two-column-layout">
     <div class="card history-card">
-      <div class="flex-between" style="margin-bottom: 1.5rem;">
+      <div class="flex-between history-header" (click)="toggleHistoryList()" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
         <h2 style="margin: 0; font-size: 1.25rem;">Historial de Movimientos</h2>
-      <button class="btn btn-primary" (click)="loadTransactions()" title="Actualizar lista"><i class="bx bx-refresh"></i> Actualizar</button>
-    </div>
-
-    <div *ngIf="loading" class="state-message">
-      <i class="bx bx-loader bx-spin"></i> Cargando movimientos...
-    </div>
-
-    <div *ngIf="!loading">
-      <div *ngIf="transactions.length === 0" class="state-message">
-        <p><i class="bx bx-inbox"></i> No hay movimientos registrados aún</p>
+        <p>Consulta el historial completo de entradas y salidas de productos en esta tienda.</p>
+        
+        <i class="bx" [ngClass]="showHistoryList ? 'bx-chevron-down' : 'bx-chevron-right'" style="font-size: 1.8rem; color: #666;"></i>
       </div>
 
-      <table *ngIf="transactions.length > 0" class="transactions-table">
-        <thead>
-          <tr>
-            <th>Fecha</th>
-            <th>Tipo</th>
-            <th>Producto</th>
-            <th>Cantidad</th>
-            <th>Motivo</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let transaction of transactions">
-            <td>{{ transaction.dateTime | date:'dd/MM/yyyy HH:mm' }}</td>
-            <td>
-              <span class="type-badge"
-                [ngClass]="{'entrada': transaction.type === 'ENTRADA', 'salida': transaction.type === 'SALIDA'}">
-                {{ transaction.type }}
-              </span>
-            </td>
-            <td>{{ getProductName(transaction.productId) }}</td>
-            <td>{{ transaction.quantity }}</td>
-            <td>{{ transaction.type === 'ENTRADA' ? 'Compra' : 'Venta' }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <div *ngIf="showHistoryList" class="history-list-container">
+        <div *ngIf="loading" class="state-message">
+          <i class="bx bx-loader bx-spin"></i> Cargando movimientos...
+        </div>
+
+        <div *ngIf="!loading">
+          <div *ngIf="transactions.length === 0" class="state-message">
+            <p><i class="bx bx-inbox"></i> No hay movimientos registrados aún</p>
+          </div>
+
+          <table *ngIf="transactions.length > 0" class="transactions-table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Tipo</th>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Motivo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let transaction of transactions">
+              <td>{{ transaction.dateTime | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td>
+                <span class="type-badge"
+                  [ngClass]="{'entrada': transaction.type === 'ENTRADA', 'salida': transaction.type === 'SALIDA'}">
+                  {{ transaction.type }}
+                </span>
+              </td>
+              <td>{{ getProductName(transaction.productId) }}</td>
+              <td>{{ transaction.quantity }}</td>
+              <td>{{ transaction.type === 'ENTRADA' ? 'Compra' : 'Venta' }}</td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
     </div>
-  </div>
 
 
     <!-- Lista de Productos -->
     <div class="products-section products-card">
-      <div class="products-section-header">
-        <h2>Productos en tienda</h2>
-        <p>Consulta el stock disponible y los precios actuales.</p>
-      </div>
-      <div class="search-bar">
-        <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Buscar productos..."
-          class="search-input">
-        <button class="refresh-btn" (click)="loadStoreProducts()" title="Actualizar lista"><i
-            class="bx bx-refresh"></i></button>
+      <div class="products-section-header" (click)="toggleProductsList()"
+        style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <h2>Productos en tienda</h2>
+          <p>Consulta el stock disponible y los precios actuales.</p>
+        </div>
+        <i class="bx" [ngClass]="showProductsList ? 'bx-chevron-down' : 'bx-chevron-right'"
+          style="font-size: 1.8rem; color: #666;"></i>
       </div>
 
-    <div *ngIf="filteredProducts.length === 0" class="no-products">
-      <p>{{ searchTerm ? 'No se encontraron productos' : 'No hay productos en esta tienda' }}</p>
+      <div *ngIf="showProductsList" class="products-list-container">
+        <div class="search-bar">
+          <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Buscar productos..."
+            class="search-input">
+          
+        </div>
+
+        <div *ngIf="filteredProducts.length === 0" class="no-products">
+          <p>{{ searchTerm ? 'No se encontraron productos' : 'No hay productos en esta tienda' }}</p>
+        </div>
+
+        <table *ngIf="filteredProducts.length > 0" class="products-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Descripción</th>
+              <th>Stock</th>
+              <th>Precio</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let product of filteredProducts">
+              <td>{{ product.name }}</td>
+              <td>{{ product.description }}</td>
+              <td>
+                <span class="stock-badge"
+                  [ngClass]="{'low': product.stock < 10, 'out': product.stock === 0, 'normal': product.stock >= 10}">
+                  {{ product.stock }}
+                </span>
+              </td>
+              <td>${{ product.price }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+  </div>
+
+
+
+    <!-- ==================== ADMINISTRATIVE COSTS MOVEMENTS SECTION ==================== -->
+    <div class="card main-title-card">
+      <h1 class="main-title"><i class="bx bx-receipt"></i> Movimientos de Costos Administrativos</h1>
+      <p class="main-subtitle">Registra los pagos de gastos operativos de tu tienda</p>
+    </div>
+<div class="two-column-layout">
+    <!-- Lista de Movimientos Administrativos -->
+    <div class="card history-card">
+      <div class="flex-between admin-payments-header" (click)="toggleAdminMovementsList()" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 style="margin: 0; font-size: 1.25rem;">Registro de Pagos</h2>
+        <p>Consulta y gestiona los pagos realizados por costos administrativos en esta tienda.</p>
+
+        <i class="bx" [ngClass]="showAdminMovementsList ? 'bx-chevron-down' : 'bx-chevron-right'" style="font-size: 1.8rem; color: #666;"></i>
+      </div>
+
+      <div *ngIf="showAdminMovementsList" class="admin-payments-list-container">
+        <button class="btn btn-primary" (click)="loadAdministrativeCostMovements()" title="Actualizar lista" style="margin-bottom: 1rem; width: 100%;"><i class="bx bx-refresh"></i> Actualizar</button>
+
+        <div *ngIf="loadingAdminCosts" class="state-message">
+          <i class="bx bx-loader bx-spin"></i> Cargando movimientos...
+        </div>
+
+        <div *ngIf="!loadingAdminCosts">
+        <div *ngIf="adminCostMovements.length === 0" class="state-message">
+          <p><i class="bx bx-inbox"></i> No hay movimientos de costos registrados</p>
+        </div>
+
+        <div *ngIf="adminCostMovements.length > 0" class="admin-movements-list">
+          <div *ngFor="let movement of adminCostMovements" class="admin-movement-item">
+            <div class="movement-info">
+              <div class="movement-header">
+                <h4>{{ getAdminCostName(movement.administrativeCost.id) }}</h4>
+                <span class="movement-type" [ngClass]="'type-' + movement.type.toLowerCase()">{{ movement.type }}</span>
+              </div>
+              <p class="movement-date">{{ movement.dateTime | date:'dd/MM/yyyy HH:mm' }}</p>
+              <div class="movement-details">
+                <div class="detail">
+                  <span class="detail-label">Monto:</span>
+                  <span class="detail-value">${{ movement.amountPaid | number: '1.0-2' }}</span>
+                </div>
+                <div class="detail">
+                  <span class="detail-label">Usuario:</span>
+                  <span class="detail-value">{{ movement.user.username }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="movement-actions">
+              <button class="btn btn-danger btn-icon" (click)="deleteAdminCostMovement(movement.id)" title="Eliminar"><i
+                  class="bx bx-trash"></i></button>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <table *ngIf="filteredProducts.length > 0" class="products-table">
-      <thead>
-        <tr>
-          <th>Producto</th>
-          <th>Descripción</th>
-          <th>Stock</th>
-          <th>Precio</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let product of filteredProducts">
-          <td>{{ product.name }}</td>
-          <td>{{ product.description }}</td>
-          <td>
-            <span class="stock-badge"
-              [ngClass]="{'low': product.stock < 10, 'out': product.stock === 0, 'normal': product.stock >= 10}">
-              {{ product.stock }}
-            </span>
-          </td>
-          <td>${{ product.price }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <!-- Formulario para crear movimiento administrativo -->
+    <div class="card movement-card">
+      <div class="movement-card-header">
+        <div>
+          <h2 class="movement-title">Registrar Pago</h2>
+          <p class="movement-subtitle">Registra el pago de un costo administrativo.</p>
+        </div>
+      </div>
+
+      <div *ngIf="!showAdminCostMovementForm">
+        <button class="btn btn-primary" type="button" (click)="toggleAdminCostMovementForm()" style="width: 100%;">
+          <i class="bx bx-plus"></i> Nuevo Pago
+        </button>
+      </div>
+
+      <form *ngIf="showAdminCostMovementForm" (ngSubmit)="createAdminCostMovement()" class="movement-form">
+        <div class="movement-grid">
+          <div class="form-group">
+            <label>Costo Administrativo</label>
+            <select [(ngModel)]="adminCostMovement.administrativeCostId" name="administrativeCostId"
+              class="form-control" required>
+              <option value="0">Seleccionar costo</option>
+              <option *ngFor="let cost of administrativeCosts" [value]="cost.id">{{ cost.name }} (${{ cost.cost |
+                number: '1.0-2' }})</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tipo de Movimiento</label>
+            <select [(ngModel)]="adminCostMovement.type" name="type" class="form-control" required>
+              <option value="PAGO">Pago</option>
+              <option value="AJUSTE">Ajuste</option>
+              <option value="DEVOLUCIÓN">Devolución</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Monto Pagado</label>
+            <input type="number" [(ngModel)]="adminCostMovement.amountPaid" name="amountPaid" class="form-control"
+              step="0.01" min="0" placeholder="0.00" required>
+          </div>
+          <div class="form-group">
+            <label>Fecha del Pago</label>
+            <input type="datetime-local" [(ngModel)]="adminCostMovement.dateTime" name="dateTime" class="form-control"
+              required>
+          </div>
+        </div>
+        <div class="form-actions" style="margin-top: 1rem;">
+          <button type="button" class="btn btn-secondary" (click)="toggleAdminCostMovementForm()">Cancelar</button>
+          <button type="submit" class="btn btn-success">Registrar Pago</button>
+        </div>
+      </form>
+    </div>
   </div>
-</div>
-</div>

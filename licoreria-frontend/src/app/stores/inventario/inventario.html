@@ -75,60 +75,78 @@
     </div>
   </div>
 
-  <div class="content-layout">
-    <div class="main-content">
-      <div class="card products-card">
-        <div class="flex-between products-header">
-          <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Buscar por nombre o descripción..." class="form-control search-input">
-          <button class="btn btn-primary" (click)="loadStoreProducts()" title="Actualizar"><i class="bx bx-refresh"></i> Actualizar lista</button>
-        </div>
+  <!-- PRODUCTS SECTION -->
+  <div class="card main-title-card">
+    <h1 class="main-title"><i class="bx bx-package"></i> Productos en tienda</h1>
+    <p class="main-subtitle">Gestiona el inventario de productos disponibles</p>
+  </div>
 
-        <div *ngIf="loading" class="state-message">
-          <i class="bx bx-loader bx-spin"></i> Cargando productos...
-        </div>
-
-        <div *ngIf="!loading">
-          <div *ngIf="filteredProducts.length === 0" class="state-message">
-            <p *ngIf="searchTerm"><i class="bx bx-error-circle"></i> No se encontraron productos</p>
-            <p *ngIf="!searchTerm"><i class="bx bx-inbox"></i> No hay productos en esta tienda</p>
+  <div class="two-column-layout">
+    <div class="content-layout">
+      <div class="main-content">
+        <div class="card products-card">
+          <div class="flex-between products-header" (click)="toggleProductsList()" [style.cursor]="'pointer'" [style.userSelect]="'none'">
+            <div>
+              <h3><i class=""></i> Lista de Productos</h3>
+              <p>Gestiona los productos disponibles en tu tienda.</p>
+            </div>
+            <i class="bx bx-lg" [ngClass]="showProductsList ? 'bx-chevron-down' : 'bx-chevron-right'"></i>
           </div>
 
-          <div *ngIf="filteredProducts.length > 0" class="table-responsive">
-            <table class="products-table">
-              <thead>
-                <tr>
-                  <th>Producto</th>
-                  <th>Descripción</th>
-                  <th>Stock</th>
-                  <th>Costo</th>
-                  <th>Precio</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let product of filteredProducts">
-                  <td><strong>{{ product.name }}</strong></td>
-                  <td>{{ product.description }}</td>
-                  <td>
-                    <span class="stock-badge" 
-                          [ngClass]="{
-                            'stock-low': product.stock > 0 && product.stock < lowStockThreshold,
-                            'stock-out': product.stock === 0,
-                            'stock-normal': product.stock > normalStockThreshold
-                          }">
-                      {{ product.stock }}
-                    </span>
-                  </td>
-                  <td>${{ product.cost | number: '1.0-2' }}</td>
-                  <td>${{ product.price | number: '1.0-2' }}</td>
-                  <td>
-                    <div class="action-buttons">
-                      <button class="btn btn-danger btn-icon" (click)="deleteProduct(product.id)" title="Eliminar"><i class="bx bx-trash"></i></button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div *ngIf="showProductsList" class="products-list-container">
+            <div class="search-section">
+              <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Buscar por nombre o descripción..." class="form-control search-input">
+              
+            </div>
+
+            <div *ngIf="loading" class="state-message">
+              <i class="bx bx-loader bx-spin"></i> Cargando productos...
+            </div>
+
+            <div *ngIf="!loading">
+              <div *ngIf="filteredProducts.length === 0" class="state-message">
+                <p *ngIf="searchTerm"><i class="bx bx-error-circle"></i> No se encontraron productos</p>
+                <p *ngIf="!searchTerm"><i class="bx bx-inbox"></i> No hay productos en esta tienda</p>
+              </div>
+
+              <div *ngIf="filteredProducts.length > 0" class="table-responsive">
+                <table class="products-table">
+                  <thead>
+                    <tr>
+                      <th>Producto</th>
+                      <th>Descripción</th>
+                      <th>Stock</th>
+                      <th>Costo</th>
+                      <th>Precio</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let product of filteredProducts">
+                      <td><strong>{{ product.name }}</strong></td>
+                      <td>{{ product.description }}</td>
+                      <td>
+                        <span class="stock-badge" 
+                              [ngClass]="{
+                                'stock-low': product.stock > 0 && product.stock < lowStockThreshold,
+                                'stock-out': product.stock === 0,
+                                'stock-normal': product.stock > normalStockThreshold
+                              }">
+                          {{ product.stock }}
+                        </span>
+                      </td>
+                      <td>${{ product.cost | number: '1.0-2' }}</td>
+                      <td>${{ product.price | number: '1.0-2' }}</td>
+                      <td>
+                        <div class="action-buttons">
+                          <button class="btn btn-danger btn-icon" (click)="deleteProduct(product.id)" title="Eliminar"><i class="bx bx-trash"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -174,6 +192,93 @@
             </div>
           </form>
 
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ADMINISTRATIVE COSTS SECTION -->
+  <div class="card main-title-card">
+    <h1 class="main-title"><i class="bx bx-receipt"></i> Costos Administrativos</h1>
+    <p class="main-subtitle">Gestiona los gastos operativos de tu tienda</p>
+  </div>
+  <div class="two-column-layout">
+    <div class="content-layout">
+      <div class="main-content">
+        <div class="card products-card">
+          <div class="flex-between products-header" (click)="toggleAdminCostsList()" [style.cursor]="'pointer'" [style.userSelect]="'none'">
+            <div>
+              <h3><i class=""></i> Lista de Costos Administrativos</h3>
+              <p>Consulta y gestiona los gastos operativos registrados en esta tienda.</p>
+            </div>
+            <i class="bx bx-lg" [ngClass]="showAdminCostsList ? 'bx-chevron-down' : 'bx-chevron-right'"></i>
+          </div>
+
+          <div *ngIf="showAdminCostsList" class="admin-costs-list-container">
+            <div *ngIf="loadingAdminCosts" class="state-message">
+              <i class="bx bx-loader bx-spin"></i> Cargando costos administrativos...
+            </div>
+
+            <div *ngIf="!loadingAdminCosts">
+              <div *ngIf="administrativeCosts.length === 0" class="state-message">
+                <p><i class="bx bx-inbox"></i> No hay costos administrativos registrados</p>
+              </div>
+
+              <div *ngIf="administrativeCosts.length > 0" class="admin-costs-list">
+                <div *ngFor="let cost of administrativeCosts" class="admin-cost-item">
+                  <div class="cost-info">
+                    <h4>{{ cost.name }}</h4>
+                    <p class="cost-description">{{ cost.description }}</p>
+                    <div class="cost-details">
+                      <span class="cost-amount">${{ cost.cost | number: '1.0-2' }}</span>
+                    </div>
+                  </div>
+                  <div class="cost-actions">
+                    <button class="btn btn-warning btn-icon" (click)="startEditAdminCost(cost)" title="Editar"><i class="bx bx-edit"></i></button>
+                    <button class="btn btn-danger btn-icon" (click)="deleteAdminCost(cost.id)" title="Eliminar"><i class="bx bx-trash"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="sidebar">
+      <div class="card action-card">
+        <div class="action-card-header">
+          <div>
+            <h2 class="action-title">{{ editingAdminCostId ? 'Editar' : 'Crear' }} Costo</h2>
+            <p class="action-subtitle">{{ editingAdminCostId ? 'Actualiza los datos del costo administrativo' : 'Registra un nuevo gasto de la tienda' }}</p>
+          </div>
+        </div>
+
+        <div class="create-form-wrapper">
+          <form (ngSubmit)="saveAdminCost()">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Nombre del Costo</label>
+                <input type="text" [(ngModel)]="newAdminCost.name" name="name" class="form-control" placeholder="Ej: Alquiler" required>
+              </div>
+            </div>
+            <div class="form-row compact-row">
+              <div class="form-group">
+                <label>Costo</label>
+                <input type="number" [(ngModel)]="newAdminCost.cost" name="cost" step="0.01" min="0" class="form-control" placeholder="0.00" required>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Descripción</label>
+                <textarea [(ngModel)]="newAdminCost.description" name="description" class="form-control" placeholder="Ej: Alquiler del local principal" rows="3" required></textarea>
+              </div>
+            </div>
+            <div class="form-actions right">
+              <button *ngIf="editingAdminCostId" type="button" class="btn btn-secondary" (click)="cancelEditAdminCost()">Cancelar</button>
+              <button type="submit" class="btn btn-success">{{ editingAdminCostId ? 'Actualizar' : 'Guardar' }} Costo</button>
+            </div>
+          </form>
         </div>
       </div>
     </aside>

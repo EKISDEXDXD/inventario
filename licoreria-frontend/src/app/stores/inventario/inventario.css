@@ -332,6 +332,20 @@
   margin-top: 1.5rem;
 }
 
+.two-column-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 992px) {
+  .two-column-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
 .main-content {
   display: flex;
   flex-direction: column;
@@ -345,9 +359,13 @@
 }
 
 .products-card {
-  min-height: 420px;
+  min-height: 120px;
 }
-
+.products-card p {
+  margin: 0.5rem 0 0 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
 .action-card {
   padding: 1.75rem;
 }
@@ -371,7 +389,11 @@
   gap: 1rem;
   flex-wrap: wrap;
 }
-
+.products-header p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
 .threshold-panel-header {
   display: flex;
   justify-content: space-between;
@@ -711,4 +733,175 @@
 
 :host-context(.dark) .back-button-floating:hover {
   box-shadow: 0 8px 24px rgba(139, 92, 246, 0.7);
+}
+
+/* ============ ADMINISTRATIVE COSTS SECTION ============ */
+.admin-costs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.admin-cost-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1.25rem;
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+}
+
+.admin-cost-item:hover {
+  background-color: rgba(99, 102, 241, 0.03);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.cost-info {
+  flex-grow: 1;
+}
+
+.cost-info h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.cost-description {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.cost-details {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.9rem;
+}
+
+.cost-amount {
+  padding: 0.35rem 0.85rem;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
+  color: white;
+  border-radius: 999px;
+  font-weight: 700;
+  min-width: 100px;
+  text-align: center;
+  display: inline-block;
+}
+
+.cost-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  margin-left: 1rem;
+}
+
+.btn-warning {
+  background-color: var(--color-warning);
+  border: none;
+  color: white;
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+}
+
+.btn-warning:hover {
+  background-color: #d97706;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.btn-icon {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+/* ============ RESPONSIVE ADMIN COSTS ============ */
+@media (max-width: 768px) {
+  .admin-cost-item {
+    flex-direction: column;
+  }
+
+  .cost-actions {
+    margin-left: 0;
+    margin-top: 1rem;
+    width: 100%;
+  }
+
+  .cost-actions .btn-icon {
+    flex-grow: 1;
+  }
+
+  .admin-costs-list {
+    max-height: 400px;
+  }
+
+  textarea.form-control {
+    min-height: 80px;
+  }
+}
+
+/* ============ COLLAPSIBLE SECTIONS ============ */
+.products-list-container {
+  animation: slideDown 0.3s ease-out;
+}
+
+.search-section {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.search-section .form-control {
+  flex: 1;
+}
+
+.search-section .btn {
+  padding: 0.5rem 1rem;
+  height: fit-content;
+}
+
+.admin-costs-list-container {
+  animation: slideDown 0.3s ease-out;
+}
+
+.products-header,
+.admin-payments-header {
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.products-header:hover,
+.admin-payments-header:hover {
+  opacity: 0.8;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 1000px;
+  }
 }

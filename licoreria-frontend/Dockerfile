@@ -27,9 +27,6 @@ COPY nginx.conf /etc/nginx/nginx.conf
 # Copiar los archivos compilados desde la etapa anterior
 COPY --from=builder /app/dist/licoreria-frontend/browser /usr/share/nginx/html
 
-# Crear archivo .htaccess para Angular routing
-RUN echo '<IfModule mod_rewrite.c>\n  RewriteEngine On\n  RewriteBase /\n  RewriteRule ^index\.html$ - [L]\n  RewriteCond %{REQUEST_FILENAME} !-f\n  RewriteCond %{REQUEST_FILENAME} !-d\n  RewriteRule . /index.html [L]\nIfModule>' > /usr/share/nginx/html/.htaccess
-
 # Exponemos el puerto 80
 EXPOSE 80
 

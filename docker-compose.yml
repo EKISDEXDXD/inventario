@@ -29,9 +29,11 @@ services:
       dockerfile: Dockerfile
     container_name: licoreria-backend
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/licoreria_db
-      SPRING_DATASOURCE_USERNAME: licoreria_user
-      SPRING_DATASOURCE_PASSWORD: licoreria_password
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: licoreria_db
+      POSTGRES_USER: licoreria_user
+      POSTGRES_PASSWORD: licoreria_password
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
     ports:

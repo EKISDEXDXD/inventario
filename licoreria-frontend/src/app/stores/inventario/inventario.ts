@@ -20,6 +20,18 @@ export class InventarioComponent implements OnInit {
   searchTerm: string = '';
   showCreateForm: boolean = false;
 
+  // Administrative Costs properties
+  administrativeCosts: any[] = [];
+  showCreateAdminCostForm: boolean = false;
+  editingAdminCostId: number | null = null;
+  loadingAdminCosts: boolean = false;
+
+  newAdminCost = {
+    name: '',
+    cost: 0,
+    description: ''
+  };
+
   lowStockThreshold = 50;
   normalStockThreshold = 50;
   showThresholdConfig = false;
@@ -27,6 +39,10 @@ export class InventarioComponent implements OnInit {
     lowStockThreshold: 50,
     normalStockThreshold: 50
   };
+
+  // Collapsible state variables
+  showProductsList: boolean = false;
+  showAdminCostsList: boolean = false;
 
   // Form fields
   newProduct = {
@@ -39,6 +55,7 @@ export class InventarioComponent implements OnInit {
 
   private apiStoresUrl = 'http://localhost:8081/api/stores';
   private apiProductsUrl = 'http://localhost:8081/api/products';
+  private apiAdminCostsUrl = 'http://localhost:8081/api/administrative-costs';
 
   constructor(
     private route: ActivatedRoute,
@@ -57,6 +74,7 @@ export class InventarioComponent implements OnInit {
       this.storeId = initialStoreId;
       this.loadStoreData();
       this.loadStoreProducts();
+      this.loadAdministrativeCosts();
     }
   }
 
@@ -69,6 +87,7 @@ export class InventarioComponent implements OnInit {
           this.storeId = nextStoreId;
           this.loadStoreData();
           this.loadStoreProducts();
+          this.loadAdministrativeCosts();
         }
       });
       current = current.parent;
@@ -273,6 +292,14 @@ export class InventarioComponent implements OnInit {
     this.showThresholdConfig = false;
   }
 
+  toggleProductsList() {
+    this.showProductsList = !this.showProductsList;
+  }
+
+  toggleAdminCostsList() {
+    this.showAdminCostsList = !this.showAdminCostsList;
+  }
+
   get totalProducts() {
     return this.products.length;
   }
@@ -287,5 +314,125 @@ export class InventarioComponent implements OnInit {
 
   getNormalStockProducts() {
     return this.products.filter(p => p.stock > this.normalStockThreshold);
+  }
+
+  // Administrative Costs Methods
+  loadAdministrativeCosts() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    this.loadingAdminCosts = true;
+    this.http.get<any[]>(`${this.apiAdminCostsUrl}/store/${this.storeId}`, { headers }).subscribe({
+      next: (data) => {
+        this.administrativeCosts = data;
+        this.loadingAdminCosts = false;
+      },
+      error: (err) => {
+        console.error('Error cargando costos administrativos:', err);
+        this.loadingAdminCosts = false;
+      }
+    });
+  }
+
+  toggleCreateAdminCostForm() {
+    this.showCreateAdminCostForm = !this.showCreateAdminCostForm;
+    this.editingAdminCostId = null;
+    if (!this.showCreateAdminCostForm) {
+      this.newAdminCost = { name: '', cost: 0, description: '' };
+    }
+  }
+
+  startEditAdminCost(cost: any) {
+    this.editingAdminCostId = cost.id;
+    this.newAdminCost = {
+      name: cost.name,
+      cost: cost.cost,
+      description: cost.description
+    };
+    this.showCreateAdminCostForm = true;
+  }
+
+  cancelEditAdminCost() {
+    this.editingAdminCostId = null;
+    this.newAdminCost = { name: '', cost: 0, description: '' };
+    this.showCreateAdminCostForm = false;
+  }
+
+  saveAdminCost() {
+    if (!this.newAdminCost.name || !this.newAdminCost.description || this.newAdminCost.cost <= 0) {
+      alert('Por favor completa todos los campos correctamente');
+      return;
+    }
+
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+
+    const adminCostData = {
+      ...this.newAdminCost,
+      storeId: this.storeId
+    };
+
+    if (this.editingAdminCostId) {
+      // Update existing cost
+      this.http.put(`${this.apiAdminCostsUrl}/${this.editingAdminCostId}`, adminCostData, { headers }).subscribe({
+        next: () => {
+          this.loadAdministrativeCosts();
+          this.cancelEditAdminCost();
+          alert('Costo administrativo actualizado correctamente');
+        },
+        error: (err) => {
+          console.error('Error actualizando costo administrativo:', err);
+          alert('Error al actualizar el costo administrativo');
+        }
+      });
+    } else {
+      // Create new cost
+      this.http.post(`${this.apiAdminCostsUrl}`, adminCostData, { headers }).subscribe({
+        next: () => {
+          this.loadAdministrativeCosts();
+          this.newAdminCost = { name: '', cost: 0, description: '' };
+          this.showCreateAdminCostForm = false;
+          alert('Costo administrativo creado correctamente');
+        },
+        error: (err) => {
+          console.error('Error creando costo administrativo:', err);
+          alert('Error al crear el costo administrativo');
+        }
+      });
+    }
+  }
+
+  deleteAdminCost(costId: number) {
+    if (confirm('¿Estás seguro de eliminar este costo administrativo? Esta acción no se puede deshacer.')) {
+      const confirmDelete = confirm('Esta es su última advertencia. ¿Desea continuar con la eliminación?');
+      if (!confirmDelete) return;
+
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      });
+
+      this.http.delete(`${this.apiAdminCostsUrl}/${costId}`, { headers }).subscribe({
+        next: () => {
+          this.loadAdministrativeCosts();
+          alert('Costo administrativo eliminado correctamente');
+        },
+        error: (err) => {
+          console.error('Error al eliminar costo administrativo:', err);
+          alert('Error al eliminar el costo administrativo');
+        }
+      });
+    }
   }
 }

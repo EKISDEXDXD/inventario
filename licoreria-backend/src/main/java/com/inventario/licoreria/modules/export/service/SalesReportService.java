@@ -1,5 +1,7 @@
 package com.inventario.licoreria.modules.export.service;
 
+import com.inventario.licoreria.modules.administrative_costs.model.AdministrativeCostMovement;
+import com.inventario.licoreria.modules.administrative_costs.service.AdministrativeCostMovementService;
 import com.inventario.licoreria.modules.inventory.model.Transaction;
 import com.inventario.licoreria.modules.inventory.service.TransactionService;
 import com.inventario.licoreria.modules.products.model.Product;
@@ -24,13 +26,16 @@ public class SalesReportService {
     private final TransactionService transactionService;
     private final ProductService productService;
     private final UserService userService;
+    private final AdministrativeCostMovementService administrativeCostMovementService;
 
     public SalesReportService(TransactionService transactionService, 
                              ProductService productService, 
-                             UserService userService) {
+                             UserService userService,
+                             AdministrativeCostMovementService administrativeCostMovementService) {
         this.transactionService = transactionService;
         this.productService = productService;
         this.userService = userService;
+        this.administrativeCostMovementService = administrativeCostMovementService;
     }
 
     public byte[] generateSalesReport(Long storeId, LocalDate dateFrom, LocalDate dateTo, String reportType) throws IOException {
@@ -60,12 +65,14 @@ public class SalesReportService {
         // Crear hojas según tipo de reporte
         createExecutiveSummarySheet(workbook, transactions);
         createDetailedMovementsSheet(workbook, transactions);
+        createAdministrativeCostsSheet(workbook, storeId, dateFrom, dateTo);
         
         // Si es COMPLETE, agregar hojas adicionales
         if ("COMPLETE".equalsIgnoreCase(reportType)) {
             createProductAnalysisSheet(workbook, transactions, storeId);
             createDailyCashFlowSheet(workbook, transactions);
         }
+        // Para DAILY, no hay hojas adicionales (similar a SIMPLE)
 
         // Escribir a bytes
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -560,6 +567,136 @@ public class SalesReportService {
             row.createCell(3).setCellValue(ganancia.doubleValue());
             row.getCell(3).setCellStyle(currencyStyle);
             addBorders(row.getCell(3));
+        }
+
+        // Auto-ajustar columnas
+        for (int i = 0; i < headers.length; i++) {
+            sheet.autoSizeColumn(i);
+        }
+    }
+
+    private void createAdministrativeCostsSheet(Workbook workbook, Long storeId, LocalDate dateFrom, LocalDate dateTo) {
+        Sheet sheet = workbook.createSheet("Costos Administrativos");
+        
+        CellStyle headerStyle = createHeaderStyle(workbook);
+        CellStyle currencyStyle = createCurrencyStyle(workbook);
+        CellStyle altRowStyle = createAlternateRowStyle(workbook);
+
+        int rowNum = 0;
+
+        // Título
+        Row titleRow = sheet.createRow(rowNum++);
+        titleRow.setHeightInPoints(25);
+        Cell titleCell = titleRow.createCell(0);
+        titleCell.setCellValue("💰 MOVIMIENTOS DE COSTOS ADMINISTRATIVOS");
+        titleCell.setCellStyle(headerStyle);
+        sheet.addMergedRegion(new org.apache.poi.ss.util.CellRangeAddress(0, 0, 0, 4));
+
+        // Período
+        Row periodRow = sheet.createRow(rowNum++);
+        periodRow.setHeightInPoints(16);
+        Cell periodCell = periodRow.createCell(0);
+        periodCell.setCellValue(String.format("Período: %s al %s", dateFrom, dateTo));
+        sheet.addMergedRegion(new org.apache.poi.ss.util.CellRangeAddress(1, 1, 0, 4));
+        rowNum++;
+
+        // Encabezados
+        Row headerRow = sheet.createRow(rowNum++);
+        headerRow.setHeightInPoints(18);
+        String[] headers = {"Fecha", "Costo", "Tipo", "Monto Pagado", "Usuario"};
+        
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(headerStyle);
+        }
+
+        // Obtener costos administrativos filtrados
+        try {
+            List<AdministrativeCostMovement> movements = administrativeCostMovementService.findByStoreId(storeId).stream()
+                .filter(m -> {
+                    try {
+                        return m != null && 
+                               m.getDateTime() != null &&
+                               m.getDateTime().toLocalDate().isAfter(dateFrom.minusDays(1)) &&
+                               m.getDateTime().toLocalDate().isBefore(dateTo.plusDays(1));
+                    } catch (Exception e) {
+                        System.err.println("Error filtrando movimiento: " + e.getMessage());
+                        return false;
+                    }
+                })
+                .collect(Collectors.toList());
+
+            // Llenar datos
+            BigDecimal totalAmount = BigDecimal.ZERO;
+            boolean alternate = false;
+            
+            for (AdministrativeCostMovement movement : movements) {
+                Row dataRow = sheet.createRow(rowNum++);
+                dataRow.setHeightInPoints(14);
+                CellStyle rowStyle = alternate ? altRowStyle : null;
+                
+                // Fecha
+                Cell dateCell = dataRow.createCell(0);
+                dateCell.setCellValue(movement.getDateTime().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+                if (rowStyle != null) dateCell.setCellStyle(rowStyle);
+                
+                // Nombre del costo
+                Cell costNameCell = dataRow.createCell(1);
+                costNameCell.setCellValue(movement.getAdministrativeCost().getName() != null ? 
+                    movement.getAdministrativeCost().getName() : "N/A");
+                if (rowStyle != null) costNameCell.setCellStyle(rowStyle);
+                
+                // Tipo
+                Cell typeCell = dataRow.createCell(2);
+                typeCell.setCellValue(movement.getType() != null ? movement.getType() : "N/A");
+                if (rowStyle != null) typeCell.setCellStyle(rowStyle);
+                
+                // Monto pagado
+                Cell amountCell = dataRow.createCell(3);
+                if (movement.getAmountPaid() != null) {
+                    amountCell.setCellValue(movement.getAmountPaid().doubleValue());
+                    totalAmount = totalAmount.add(movement.getAmountPaid());
+                } else {
+                    amountCell.setCellValue(0.0);
+                }
+                amountCell.setCellStyle(currencyStyle);
+                
+                // Usuario
+                Cell userCell = dataRow.createCell(4);
+                userCell.setCellValue(movement.getUser() != null && movement.getUser().getUsername() != null ? 
+                    movement.getUser().getUsername() : "N/A");
+                if (rowStyle != null) userCell.setCellStyle(rowStyle);
+                
+                alternate = !alternate;
+            }
+
+            // Total
+            if (!movements.isEmpty()) {
+                rowNum++;
+                Row totalRow = sheet.createRow(rowNum);
+                totalRow.setHeightInPoints(16);
+                Cell totalLabelCell = totalRow.createCell(2);
+                totalLabelCell.setCellValue("TOTAL:");
+                totalLabelCell.setCellStyle(headerStyle);
+                
+                Cell totalValueCell = totalRow.createCell(3);
+                totalValueCell.setCellValue(totalAmount.doubleValue());
+                totalValueCell.setCellStyle(currencyStyle);
+            } else {
+                // Si no hay datos
+                Row noDataRow = sheet.createRow(rowNum);
+                Cell noDataCell = noDataRow.createCell(0);
+                noDataCell.setCellValue("No hay movimientos de costos para este período");
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error al crear hoja de costos administrativos: " + e.getMessage());
+            e.printStackTrace();
+            // En caso de error, mostrar mensaje en la hoja
+            Row errorRow = sheet.createRow(rowNum);
+            Cell errorCell = errorRow.createCell(0);
+            errorCell.setCellValue("Error al cargar datos de costos administrativos: " + e.getMessage());
         }
 
         // Auto-ajustar columnas

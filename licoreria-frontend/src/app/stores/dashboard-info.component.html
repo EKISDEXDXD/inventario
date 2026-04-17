@@ -87,6 +87,130 @@
       </section>
     </div>
 
+    <!-- Nuevo: Reportes de Niveles de Stock (Desplegable) -->
+    <section class="expandable-card stock-levels-card">
+      <div class="expandable-header" (click)="toggleSection('stockLevels')">
+        <div class="header-left">
+          <i class="bx" [class.bx-chevron-down]="expandedSections['stockLevels']" [class.bx-chevron-right]="!expandedSections['stockLevels']"></i>
+          <div class="header-text">
+            <h2>📊 Reportes de Niveles de Stock</h2>
+            <p>Monitorea productos con stock crítico o bajo</p>
+          </div>
+        </div>
+        <span class="badge-count">{{ productsWithZeroStock.length + productsWithLowStock.length }}</span>
+      </div>
+
+      <div class="expandable-content" [class.expanded]="expandedSections['stockLevels']">
+        <div class="stock-report-grid">
+          <!-- Productos sin stock -->
+          <div class="stock-report-section zero-stock">
+            <div class="section-header">
+              <i class="bx bx-alert-circle"></i>
+              <h3>Productos sin stock (0 unidades)</h3>
+              <span class="count">{{ productsWithZeroStock.length }}</span>
+            </div>
+            <div class="product-list">
+              <div *ngIf="productsWithZeroStock.length === 0" class="empty-state">
+                <p>✓ No hay productos sin stock</p>
+              </div>
+              <div *ngFor="let product of productsWithZeroStock" class="product-item critical">
+                <span class="product-name">{{ product.name }}</span>
+                <span class="product-code">{{ product.sku || 'N/A' }}</span>
+                <span class="stock-badge zero">0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Productos con stock bajo -->
+          <div class="stock-report-section low-stock">
+            <div class="section-header">
+              <i class="bx bx-exclamation-triangle"></i>
+              <h3>Productos con stock bajo (&lt;10 unidades)</h3>
+              <span class="count">{{ productsWithLowStock.length }}</span>
+            </div>
+            <div class="product-list">
+              <div *ngIf="productsWithLowStock.length === 0" class="empty-state">
+                <p>✓ No hay productos con stock bajo</p>
+              </div>
+              <div *ngFor="let product of productsWithLowStock" class="product-item warning">
+                <span class="product-name">{{ product.name }}</span>
+                <span class="product-code">{{ product.sku || 'N/A' }}</span>
+                <span class="stock-badge low">{{ product.stock || 0 }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Nuevo: Top 5 Productos Más Vendidos -->
+    <section class="expandable-card top-sold-card">
+      <div class="expandable-header" (click)="toggleSection('topSold')">
+        <div class="header-left">
+          <i class="bx" [class.bx-chevron-down]="expandedSections['topSold']" [class.bx-chevron-right]="!expandedSections['topSold']"></i>
+          <div class="header-text">
+            <h2>🔥 Top 5 Productos Más Vendidos</h2>
+            <p>Los productos que más salidas han registrado</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="expandable-content" [class.expanded]="expandedSections['topSold']">
+        <div class="ranking-list">
+          <div *ngIf="topSoldProducts.length === 0" class="empty-state">
+            <p>No hay datos de productos vendidos</p>
+          </div>
+          <div *ngFor="let product of topSoldProducts; let i = index" class="ranking-item">
+            <div class="rank-number" [ngClass]="'rank-' + (i + 1)">{{ i + 1 }}</div>
+            <div class="ranking-info">
+              <h4>{{ product.name }}</h4>
+              <p class="product-code">{{ product.sku || 'N/A' }}</p>
+            </div>
+            <div class="ranking-stats">
+              <span class="stat-label">Stock:</span>
+              <span class="stat-value">
+                {{ product.stock || 0 }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Nuevo: Top 5 Productos Menos Vendidos -->
+    <section class="expandable-card bottom-sold-card">
+      <div class="expandable-header" (click)="toggleSection('bottomSold')">
+        <div class="header-left">
+          <i class="bx" [class.bx-chevron-down]="expandedSections['bottomSold']" [class.bx-chevron-right]="!expandedSections['bottomSold']"></i>
+          <div class="header-text">
+            <h2>📉 Top 5 Productos Menos Vendidos</h2>
+            <p>Los productos con menor movimiento de salidas</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="expandable-content" [class.expanded]="expandedSections['bottomSold']">
+        <div class="ranking-list">
+          <div *ngIf="bottomSoldProducts.length === 0" class="empty-state">
+            <p>No hay datos de productos vendidos</p>
+          </div>
+          <div *ngFor="let product of bottomSoldProducts; let i = index" class="ranking-item">
+            <div class="rank-number rank-low">{{ i + 1 }}</div>
+            <div class="ranking-info">
+              <h4>{{ product.name }}</h4>
+              <p class="product-code">{{ product.sku || 'N/A' }}</p>
+            </div>
+            <div class="ranking-stats">
+              <span class="stat-label">Stock:</span>
+              <span class="stat-value low">
+                {{ product.stock || 0 }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="detail-card">
       <div class="detail-header">
         <h2>Resumen de inventario</h2>

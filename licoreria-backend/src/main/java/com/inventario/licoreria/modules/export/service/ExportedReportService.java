@@ -113,8 +113,17 @@ public class ExportedReportService {
      * Genera nombre descriptivo del archivo
      */
     private String generateFileName(String reportType, String dateFrom, String dateTo) {
-        String type = "COMPLETE".equals(reportType) ? "completo" : "resumido";
-        String period = formatFilePeriod(dateFrom, dateTo);
+        String type;
+        String period;
+        
+        if ("DAILY".equals(reportType)) {
+            type = "diario";
+            period = dateFrom; // Ej: 2026-04-16
+        } else {
+            type = "COMPLETE".equals(reportType) ? "completo" : "resumido";
+            period = formatFilePeriod(dateFrom, dateTo);
+        }
+        
         String timestamp = String.valueOf(System.currentTimeMillis());
         return String.format("reporte-%s-%s-%s.xlsx", type, period, timestamp);
     }
