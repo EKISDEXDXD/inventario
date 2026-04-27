@@ -210,7 +210,7 @@
       </div>
 
       <div *ngIf="showAdminMovementsList" class="admin-payments-list-container">
-        <button class="btn btn-primary" (click)="loadAdministrativeCostMovements()" title="Actualizar lista" style="margin-bottom: 1rem; width: 100%;"><i class="bx bx-refresh"></i> Actualizar</button>
+        
 
         <div *ngIf="loadingAdminCosts" class="state-message">
           <i class="bx bx-loader bx-spin"></i> Cargando movimientos...
@@ -225,7 +225,7 @@
           <div *ngFor="let movement of adminCostMovements" class="admin-movement-item">
             <div class="movement-info">
               <div class="movement-header">
-                <h4>{{ getAdminCostName(movement.administrativeCost.id) }}</h4>
+                <h4>{{ getAdminCostName(movement.administrativeCostId) }}</h4>
                 <span class="movement-type" [ngClass]="'type-' + movement.type.toLowerCase()">{{ movement.type }}</span>
               </div>
               <p class="movement-date">{{ movement.dateTime | date:'dd/MM/yyyy HH:mm' }}</p>
@@ -236,7 +236,7 @@
                 </div>
                 <div class="detail">
                   <span class="detail-label">Usuario:</span>
-                  <span class="detail-value">{{ movement.user.username }}</span>
+                  <span class="detail-value">{{ movement.user?.username || userName || 'Sistema' }}</span>
                 </div>
               </div>
             </div>

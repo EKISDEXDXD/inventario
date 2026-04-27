@@ -44,6 +44,7 @@
   min-height: 100vh;
   background-color: var(--bg-body);
   padding: 2rem;
+  border-radius: var(--radius-lg);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: var(--text-main);
   transition: background-color 0.3s ease, color 0.3s ease;

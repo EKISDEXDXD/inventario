@@ -156,12 +156,18 @@
       <div class="card action-card">
         <div class="action-card-header">
           <div>
-            <h2 class="action-title">Crear producto</h2>
-            <p class="action-subtitle">Completa los datos clave y guarda en un solo paso.</p>
+            <h2 class="action-title">Crear Producto</h2>
+            <p class="action-subtitle">Agrega nuevos productos a tu inventario</p>
           </div>
         </div>
 
-        <div class="create-form-wrapper">
+        <div *ngIf="!showCreateForm">
+          <button class="btn btn-primary" type="button" (click)="toggleCreateForm()" style="width: 100%;">
+            <i class="bx bx-plus"></i> Nuevo Producto
+          </button>
+        </div>
+
+        <div *ngIf="showCreateForm" class="create-form-wrapper">
           <form (ngSubmit)="createProduct()">
             <div class="form-row">
               <div class="form-group">
@@ -187,11 +193,11 @@
                 <input type="number" [(ngModel)]="newProduct.stock" name="stock" min="0" class="form-control" placeholder="0" required>
               </div>
             </div>
-            <div class="form-actions right">
-              <button type="submit" class="btn btn-success">Guardar producto</button>
+            <div class="form-actions" style="margin-top: 1rem;">
+              <button type="button" class="btn btn-secondary" (click)="toggleCreateForm()">Cancelar</button>
+              <button type="submit" class="btn btn-success">Guardar Producto</button>
             </div>
           </form>
-
         </div>
       </div>
     </aside>
@@ -249,12 +255,18 @@
       <div class="card action-card">
         <div class="action-card-header">
           <div>
-            <h2 class="action-title">{{ editingAdminCostId ? 'Editar' : 'Crear' }} Costo</h2>
-            <p class="action-subtitle">{{ editingAdminCostId ? 'Actualiza los datos del costo administrativo' : 'Registra un nuevo gasto de la tienda' }}</p>
+            <h2 class="action-title">Crear Costo</h2>
+            <p class="action-subtitle">Registra nuevos gastos operativos</p>
           </div>
         </div>
 
-        <div class="create-form-wrapper">
+        <div *ngIf="!showCreateAdminCostForm">
+          <button class="btn btn-primary" type="button" (click)="toggleCreateAdminCostForm()" style="width: 100%;">
+            <i class="bx bx-plus"></i> Nuevo Costo
+          </button>
+        </div>
+
+        <div *ngIf="showCreateAdminCostForm" class="create-form-wrapper">
           <form (ngSubmit)="saveAdminCost()">
             <div class="form-row">
               <div class="form-group">
@@ -274,9 +286,9 @@
                 <textarea [(ngModel)]="newAdminCost.description" name="description" class="form-control" placeholder="Ej: Alquiler del local principal" rows="3" required></textarea>
               </div>
             </div>
-            <div class="form-actions right">
-              <button *ngIf="editingAdminCostId" type="button" class="btn btn-secondary" (click)="cancelEditAdminCost()">Cancelar</button>
-              <button type="submit" class="btn btn-success">{{ editingAdminCostId ? 'Actualizar' : 'Guardar' }} Costo</button>
+            <div class="form-actions" style="margin-top: 1rem;">
+              <button type="button" class="btn btn-secondary" (click)="toggleCreateAdminCostForm()">Cancelar</button>
+              <button type="submit" class="btn btn-success">Guardar Costo</button>
             </div>
           </form>
         </div>

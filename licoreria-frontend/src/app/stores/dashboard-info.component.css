@@ -19,6 +19,7 @@
   align-items: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   margin-bottom: 2rem;
+  border-radius: 8px;
 }
 
 :host-context(.dark) .header {

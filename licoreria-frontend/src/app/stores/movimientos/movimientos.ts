@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -12,7 +12,7 @@ import { JwtHelper } from '../../core/jwt.helper';
   templateUrl: './movimientos.html',
   styleUrl: './movimientos.css'
 })
-export class MovimientosComponent implements OnInit {
+export class MovimientosComponent implements OnInit, OnDestroy {
   storeId: number = 0;
   store: any = null;
   products: any[] = [];
@@ -56,17 +56,26 @@ export class MovimientosComponent implements OnInit {
   private apiAdminCostsUrl = 'http://localhost:8081/api/administrative-costs';
   private apiAdminCostMovementsUrl = 'http://localhost:8081/api/administrative-cost-movements';
   private jwtHelper = new JwtHelper();
+  private refreshInterval: any = null;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private http: HttpClient
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     this.extractUserIdFromToken();
     this.tryLoadStoreData();
     this.watchStoreIdChanges();
+  }
+
+  ngOnDestroy() {
+    // Limpiar el intervalo cuando se destruye el componente
+    if (this.refreshInterval) {
+      clearInterval(this.refreshInterval);
+    }
   }
 
   private extractUserIdFromToken() {
@@ -135,6 +144,7 @@ export class MovimientosComponent implements OnInit {
     this.http.get<any>(`${this.apiStoresUrl}/${this.storeId}`, { headers }).subscribe({
       next: (data) => {
         this.store = data;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error cargando tienda:', err);
@@ -150,14 +160,18 @@ export class MovimientosComponent implements OnInit {
       'Authorization': `Bearer ${token}`
     });
 
+    console.log('Cargando productos para storeId:', this.storeId);
     this.http.get<any[]>(`${this.apiProductsUrl}/store/${this.storeId}`, { headers }).subscribe({
       next: (data) => {
+        console.log('Productos cargados, total:', data?.length);
         this.products = data;
         this.filteredProducts = data;
+        this.cdr.detectChanges();
         this.loadTransactions();
       },
       error: (err) => {
         console.error('Error cargando productos:', err);
+        this.cdr.detectChanges();
       }
     });
   }
@@ -170,20 +184,35 @@ export class MovimientosComponent implements OnInit {
       'Authorization': `Bearer ${token}`
     });
 
+    console.log('Cargando transacciones para storeId:', this.storeId);
     // Para obtener transacciones de la tienda, asumimos que hay un endpoint o filtramos por productos de la tienda
     // Por ahora, cargamos todas y filtramos después
     this.http.get<any[]>(`${this.apiTransactionsUrl}`, { headers }).subscribe({
       next: (data) => {
+        console.log('Transacciones cargadas, total:', data?.length);
         // Filtrar transacciones de productos de esta tienda
         const productIds = this.products.map(p => p.id);
-        this.transactions = data.filter(t => productIds.includes(t.productId)).sort((a, b) => new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime());
+        console.log('Product IDs de esta tienda:', productIds);
+        const filteredTransactions = data.filter(t => productIds.includes(t.productId));
+        console.log('Transacciones filtradas para esta tienda:', filteredTransactions?.length);
+        this.transactions = filteredTransactions.sort((a, b) => new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime());
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error cargando transacciones:', err);
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
+  }
+
+  private sortTransactions() {
+    this.transactions = this.transactions.sort((a, b) => new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime());
+  }
+
+  private sortAdminCostMovements() {
+    this.adminCostMovements = this.adminCostMovements.sort((a, b) => new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime());
   }
 
   onSearch() {
@@ -231,6 +260,7 @@ export class MovimientosComponent implements OnInit {
       dateTime: new Date().toISOString()
     };
     this.transactions.unshift(optimisticTransaction); // Agregar al inicio
+    this.cdr.detectChanges();
     const originalTransactions = [...this.transactions];
 
     // También actualizar stock optimistamente
@@ -239,16 +269,23 @@ export class MovimientosComponent implements OnInit {
     if (productIndex !== -1) {
       originalStock = this.products[productIndex].stock;
       this.products[productIndex].stock += this.movement.type === 'ENTRADA' ? this.movement.quantity : -this.movement.quantity;
+      this.cdr.detectChanges();
     }
 
     this.http.post(`${this.apiTransactionsUrl}`, transactionData, { headers }).subscribe({
       next: (createdTransaction: any) => {
+        console.log('Transacción creada:', createdTransaction);
         // Reemplazar la transacción optimista con la real
         const index = this.transactions.findIndex(t => t.id === optimisticTransaction.id);
         if (index !== -1) {
           this.transactions[index] = createdTransaction;
+          // Re-ordenar después de reemplazar
+          this.sortTransactions();
         }
+        // Recargar también la lista de productos para actualizar stock
+        this.loadStoreProducts();
         this.movement = { type: 'ENTRADA', productId: 0, quantity: 0, reason: 'VENTA' };
+        this.cdr.detectChanges();
         alert('Movimiento registrado correctamente');
       },
       error: (err) => {
@@ -258,6 +295,7 @@ export class MovimientosComponent implements OnInit {
         if (productIndex !== -1) {
           this.products[productIndex].stock = originalStock;
         }
+        this.cdr.detectChanges();
         alert('Error al registrar el movimiento. Inténtalo de nuevo.');
       }
     });
@@ -345,9 +383,12 @@ export class MovimientosComponent implements OnInit {
       'Authorization': `Bearer ${token}`
     });
 
+    console.log('Cargando costos administrativos para storeId:', this.storeId);
     this.http.get<any[]>(`${this.apiAdminCostsUrl}/store/${this.storeId}`, { headers }).subscribe({
       next: (data) => {
+        console.log('Costos administrativos cargados, total:', data?.length);
         this.administrativeCosts = data;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error cargando costos administrativos:', err);
@@ -363,15 +404,19 @@ export class MovimientosComponent implements OnInit {
       'Authorization': `Bearer ${token}`
     });
 
+    console.log('Cargando movimientos administrativos para storeId:', this.storeId);
     this.loadingAdminCosts = true;
     this.http.get<any[]>(`${this.apiAdminCostMovementsUrl}/store/${this.storeId}`, { headers }).subscribe({
       next: (data) => {
+        console.log('Movimientos administrativos cargados, total:', data?.length);
         this.adminCostMovements = data.sort((a, b) => new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime());
         this.loadingAdminCosts = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error cargando movimientos administrativos:', err);
         this.loadingAdminCosts = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -401,6 +446,7 @@ export class MovimientosComponent implements OnInit {
   }
 
   createAdminCostMovement() {
+    console.log('createAdminCostMovement iniciando, adminCostMovement:', this.adminCostMovement);
     if (this.adminCostMovement.administrativeCostId === 0 || this.adminCostMovement.amountPaid <= 0) {
       alert('Por favor selecciona un costo administrativo y monto válido');
       return;
@@ -426,9 +472,30 @@ export class MovimientosComponent implements OnInit {
       dateTime: this.adminCostMovement.dateTime.toISOString()
     };
 
+    console.log('Enviando movimiento administrativo:', movementData);
+    // Actualización optimista: crear movimiento con ID temporal
+    const optimisticMovement = {
+      id: Date.now(),
+      ...movementData,
+      dateTime: new Date(movementData.dateTime)
+    };
+    console.log('Movimiento optimista:', optimisticMovement);
+    this.adminCostMovements.unshift(optimisticMovement);
+    this.cdr.detectChanges();
+    const originalMovements = [...this.adminCostMovements];
+
     this.http.post(`${this.apiAdminCostMovementsUrl}`, movementData, { headers }).subscribe({
-      next: () => {
-        this.loadAdministrativeCostMovements();
+      next: (createdMovement: any) => {
+        console.log('Movimiento administrativo creado:', createdMovement);
+        // Reemplazar el movimiento optimista con el real
+        const index = this.adminCostMovements.findIndex(m => m.id === optimisticMovement.id);
+        if (index !== -1) {
+          this.adminCostMovements[index] = createdMovement;
+          // Re-ordenar después de reemplazar
+          this.sortAdminCostMovements();
+        }
+        // Recargar también lista de costos para actualizar datos
+        this.loadAdministrativeCosts();
         this.adminCostMovement = {
           administrativeCostId: 0,
           amountPaid: 0,
@@ -436,10 +503,14 @@ export class MovimientosComponent implements OnInit {
           dateTime: new Date()
         };
         this.showAdminCostMovementForm = false;
+        this.cdr.detectChanges();
         alert('Movimiento registrado correctamente');
       },
       error: (err) => {
         console.error('Error registrando movimiento administrativo:', err);
+        // Revertir cambios optimistas
+        this.adminCostMovements = originalMovements;
+        this.cdr.detectChanges();
         alert('Error al registrar el movimiento. Inténtalo de nuevo.');
       }
     });

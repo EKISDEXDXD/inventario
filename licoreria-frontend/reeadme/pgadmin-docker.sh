@@ -43,6 +43,6 @@ docker start licoreria-pgadmin
 # Ver logs
 docker logs licoreria-pgadmin
 
-
+# host.docker.internal
 
 Host: host.docker.internal

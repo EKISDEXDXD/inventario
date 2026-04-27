@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Windows alternate data stream metadata
+*.Zone.Identifier

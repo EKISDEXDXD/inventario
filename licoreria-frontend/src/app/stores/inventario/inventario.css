@@ -45,7 +45,8 @@
 /* ============ CONTENEDOR PRINCIPAL ============ */
 .inventario-container {
   min-height: 100vh;
-  background-color: var(--bg-body);
+  background-color: var(--bg-surface);
+  border-radius: var(--radius-lg);
   padding: 2rem;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: var(--text-main);
@@ -597,7 +598,7 @@
   }
 
   .inventario-header h1 {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
   }
 
   .flex-between {

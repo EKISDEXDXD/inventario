@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-inventario',
@@ -41,8 +42,8 @@ export class InventarioComponent implements OnInit {
   };
 
   // Collapsible state variables
-  showProductsList: boolean = false;
-  showAdminCostsList: boolean = false;
+  showProductsList: boolean = this.loadCollapsibleState('showProductsList', true);
+  showAdminCostsList: boolean = this.loadCollapsibleState('showAdminCostsList', true);
 
   // Form fields
   newProduct = {
@@ -60,12 +61,33 @@ export class InventarioComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private http: HttpClient
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
-    this.tryLoadStoreData();
-    this.watchStoreIdChanges();
+    console.log('InventarioComponent ngOnInit - iniciando');
+    this.route.params.subscribe(params => {
+      console.log('InventarioComponent route.params:', params);
+      const id = +params['id'];
+      if (id && id !== this.storeId) {
+        console.log('Cargando inventario para storeId:', id);
+        this.storeId = id;
+        this.loadStoreData();
+        this.loadStoreProducts();
+        this.loadAdministrativeCosts();
+      } else if (!this.storeId) {
+        console.log('storeId no definido, intentando obtener de snapshot');
+        const snapshotId = this.getStoreIdFromRoute(this.route);
+        if (snapshotId) {
+          console.log('storeId desde snapshot:', snapshotId);
+          this.storeId = snapshotId;
+          this.loadStoreData();
+          this.loadStoreProducts();
+          this.loadAdministrativeCosts();
+        }
+      }
+    });
   }
 
   private tryLoadStoreData() {
@@ -108,39 +130,48 @@ export class InventarioComponent implements OnInit {
 
   loadStoreData() {
     const token = localStorage.getItem('token');
+    console.log('loadStoreData - token:', !!token);
     if (!token) return;
 
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
 
+    console.log('loadStoreData - haciendo GET a:', `${this.apiStoresUrl}/${this.storeId}`);
     this.http.get<any>(`${this.apiStoresUrl}/${this.storeId}`, { headers }).subscribe({
       next: (data) => {
+        console.log('loadStoreData - SUCCESS:', data);
         this.store = data;
+        this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Error cargando tienda:', err);
+        console.error('loadStoreData - ERROR:', err);
       }
     });
   }
 
   loadStoreProducts() {
     const token = localStorage.getItem('token');
+    console.log('loadStoreProducts - token:', !!token);
     if (!token) return;
 
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
 
+    console.log('loadStoreProducts - haciendo GET a:', `${this.apiProductsUrl}/store/${this.storeId}`);
     this.http.get<any[]>(`${this.apiProductsUrl}/store/${this.storeId}`, { headers }).subscribe({
       next: (data) => {
+        console.log('loadStoreProducts - SUCCESS, cantidad de productos:', data?.length);
         this.products = data;
         this.filteredProducts = data;
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Error cargando productos:', err);
+        console.error('loadStoreProducts - ERROR:', err);
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -294,10 +325,21 @@ export class InventarioComponent implements OnInit {
 
   toggleProductsList() {
     this.showProductsList = !this.showProductsList;
+    this.saveCollapsibleState('showProductsList', this.showProductsList);
   }
 
   toggleAdminCostsList() {
     this.showAdminCostsList = !this.showAdminCostsList;
+    this.saveCollapsibleState('showAdminCostsList', this.showAdminCostsList);
+  }
+
+  private loadCollapsibleState(key: string, defaultValue: boolean): boolean {
+    const saved = localStorage.getItem(`inventario_${key}`);
+    return saved !== null ? JSON.parse(saved) : defaultValue;
+  }
+
+  private saveCollapsibleState(key: string, value: boolean): void {
+    localStorage.setItem(`inventario_${key}`, JSON.stringify(value));
   }
 
   get totalProducts() {
@@ -319,6 +361,7 @@ export class InventarioComponent implements OnInit {
   // Administrative Costs Methods
   loadAdministrativeCosts() {
     const token = localStorage.getItem('token');
+    console.log('loadAdministrativeCosts - token:', !!token);
     if (!token) return;
 
     const headers = new HttpHeaders({
@@ -326,14 +369,18 @@ export class InventarioComponent implements OnInit {
     });
 
     this.loadingAdminCosts = true;
+    console.log('loadAdministrativeCosts - haciendo GET a:', `${this.apiAdminCostsUrl}/store/${this.storeId}`);
     this.http.get<any[]>(`${this.apiAdminCostsUrl}/store/${this.storeId}`, { headers }).subscribe({
       next: (data) => {
+        console.log('loadAdministrativeCosts - SUCCESS, cantidad de costos:', data?.length);
         this.administrativeCosts = data;
         this.loadingAdminCosts = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Error cargando costos administrativos:', err);
+        console.error('loadAdministrativeCosts - ERROR:', err);
         this.loadingAdminCosts = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -381,31 +428,43 @@ export class InventarioComponent implements OnInit {
       storeId: this.storeId
     };
 
+    console.log('saveAdminCost -> adminCostData:', adminCostData, 'editingAdminCostId:', this.editingAdminCostId);
+
     if (this.editingAdminCostId) {
       // Update existing cost
       this.http.put(`${this.apiAdminCostsUrl}/${this.editingAdminCostId}`, adminCostData, { headers }).subscribe({
-        next: () => {
-          this.loadAdministrativeCosts();
+        next: (updatedCost: any) => {
+          console.log('updateAdminCost -> updatedCost:', updatedCost);
+          this.administrativeCosts = this.administrativeCosts.map(cost =>
+            cost.id === this.editingAdminCostId ? updatedCost : cost
+          );
           this.cancelEditAdminCost();
+          this.showAdminCostsList = true;
+          this.cdr.detectChanges();
           alert('Costo administrativo actualizado correctamente');
         },
         error: (err) => {
           console.error('Error actualizando costo administrativo:', err);
-          alert('Error al actualizar el costo administrativo');
+          const message = err?.error?.message || 'Error al actualizar el costo administrativo';
+          alert(message);
         }
       });
     } else {
       // Create new cost
       this.http.post(`${this.apiAdminCostsUrl}`, adminCostData, { headers }).subscribe({
-        next: () => {
-          this.loadAdministrativeCosts();
+        next: (createdCost: any) => {
+          console.log('createAdminCost -> createdCost:', createdCost);
+          this.administrativeCosts = [createdCost, ...this.administrativeCosts];
           this.newAdminCost = { name: '', cost: 0, description: '' };
           this.showCreateAdminCostForm = false;
+          this.showAdminCostsList = true;
+          this.cdr.detectChanges();
           alert('Costo administrativo creado correctamente');
         },
         error: (err) => {
           console.error('Error creando costo administrativo:', err);
-          alert('Error al crear el costo administrativo');
+          const message = err?.error?.message || 'Error al crear el costo administrativo';
+          alert(message);
         }
       });
     }
