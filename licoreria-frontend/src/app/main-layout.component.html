@@ -45,7 +45,7 @@
 
           <!-- Opción: Tiendas Externas -->
           <li class="nav-link">
-            <a href="#" (click)="goToExternalStores(); closeMenuOnMobile()">
+            <a href="#" (click)="goToExternalStores(); closeMenuOnMobile(); $event.preventDefault()">
               <i class="bx bx-link-external"></i>
               <span class="text nav-text">Tiendas Externas</span>
             </a>

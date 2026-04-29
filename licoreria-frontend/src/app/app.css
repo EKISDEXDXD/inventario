@@ -1,7 +1,1 @@
 /* Esto tiene que ser GLOBAL para que afecte al body del navegador */
-html, div {
-    margin: 0 !important;
-    padding: 0 !important;
-    width: 100% !important;
-    height: 100%;
-}

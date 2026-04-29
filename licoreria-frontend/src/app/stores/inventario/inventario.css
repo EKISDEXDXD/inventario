@@ -31,7 +31,7 @@
 /* ============ VARIABLES MODO OSCURO ============ */
 :host-context(.dark) {
   --bg-body: #0f172a;
-  --bg-surface: #1e293b;
+  --bg-surface: #0f0f1a;
   --bg-input: #0f172a;
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
@@ -587,7 +587,19 @@
   .inventario-container {
     padding: 1rem;
   }
+.main-title {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.02em;
+}
 
+.main-subtitle {
+  font-size: 1rem;
+  font-weight: 400;
+  margin: 0;
+  opacity: 0.9;
+}
   .card {
     padding: 1.5rem;
   }

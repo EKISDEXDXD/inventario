@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MenuService } from '../core/menu.service';
+import { ExternalStoreService } from '../core/external-store.service';
 
 @Component({
   selector: 'app-home',
@@ -12,7 +13,7 @@ import { MenuService } from '../core/menu.service';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   username = '';
   showExternalModal = false;
   externalStoreName = '';
@@ -24,8 +25,22 @@ export class HomeComponent {
     return this.menuService.isMenuOpen$;
   }
 
-  constructor(private router: Router, private http: HttpClient, private menuService: MenuService) {
+  constructor(private router: Router, private http: HttpClient, private menuService: MenuService, private activatedRoute: ActivatedRoute, private externalStoreService: ExternalStoreService) {
     this.loadUsername();
+  }
+
+  ngOnInit() {
+    // Escucha cambios en los query params para abrir el modal
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params['openExternal'] === 'true') {
+        this.openExternalModal();
+      }
+    });
+
+    // Escucha el evento del servicio para abrir el modal (funciona incluso si ya estás en home)
+    this.externalStoreService.openExternalModal$.subscribe(() => {
+      this.openExternalModal();
+    });
   }
 
   toggleMenu() {

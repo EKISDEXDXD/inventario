@@ -12,6 +12,7 @@
     flex-direction: column;
     padding-bottom: 2rem;
     box-sizing: border-box;
+    border-radius: 16px;
 }
 
 :host-context(.dark) .create-store-container {
@@ -27,6 +28,7 @@
   align-items: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   margin-bottom: 2rem;
+  border-radius: 16px;
 }
 
 :host-context(.dark) .header {

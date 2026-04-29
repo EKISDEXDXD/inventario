@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { AuthService } from './auth/auth.service';
 import { MenuService } from './core/menu.service';
+import { ExternalStoreService } from './core/external-store.service';
 import { HasUnsavedChanges } from './common/without-unsaved-changes-guard.spec';
 
 @Component({
@@ -25,7 +26,7 @@ export class MainLayoutComponent implements HasUnsavedChanges, OnInit {
     return false;
   }
 
-  constructor(private authService: AuthService, private router: Router, private menuService: MenuService) {
+  constructor(private authService: AuthService, private router: Router, private menuService: MenuService, private externalStoreService: ExternalStoreService) {
     console.log('MainLayoutComponent - Inicializando...');
     this.loadUsername();
     this.checkWindowSize();
@@ -91,7 +92,10 @@ export class MainLayoutComponent implements HasUnsavedChanges, OnInit {
 
   goToExternalStores() {
     this.menuService.closeMenu();
+    // Navega a home
     this.router.navigate(['/home']);
+    // Emite evento para abrir el modal (funciona incluso si ya estás en home)
+    setTimeout(() => this.externalStoreService.triggerOpenExternalModal(), 100);
   }
 
   logout() {

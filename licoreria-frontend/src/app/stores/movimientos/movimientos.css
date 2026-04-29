@@ -28,7 +28,7 @@
 
 /* ============ VARIABLES MODO OSCURO ============ */
 :host-context(.dark) {
-  --bg-body: #0f172a;
+  --bg-body: #0f0f1a;
   --bg-surface: #1e293b;
   --bg-input: #0f172a;
   --text-main: #f8fafc;
@@ -807,7 +807,7 @@
 
   /* 4. Títulos más pequeños */
   .main-title {
-    font-size: 1.2rem !important;
+    font-size: 2rem !important;
   }
 
   .movimientos-header h1 {

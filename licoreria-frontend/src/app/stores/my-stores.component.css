@@ -12,10 +12,14 @@
     flex-direction: column;
     padding-bottom: 2rem;
     box-sizing: border-box;
+    border-radius: 16px;
+
 }
 
 :host-context(.dark) .stores-container {
     background: #0f0f1a;
+    border-radius: 16px;
+
 }
 
 /* ============ HEADER ============ */
@@ -27,12 +31,15 @@
   align-items: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   margin-bottom: 2rem;
+  border-radius: 16px;
+
 }
 
 :host-context(.dark) .header {
   background: #1a1a2e;
   border-bottom-color: #2d2d44;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border-radius: 16px;
 }
 
 .header-content {

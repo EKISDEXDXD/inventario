@@ -2,12 +2,13 @@
   min-height: 100vh;
   background: #f8f9fa;
   padding: 2rem;
+  border-radius: 16px;
   font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
   color: #0f172a;
 }
 
 :host-context(.dark) .dashboard-info-container {
-  background: #0f172a;
+  background: #0f0f1a;
 }
 
 /* ============ HEADER ============ */
@@ -197,6 +198,7 @@
 }
 
 .dashboard-info-title {
+  color: #6366f1;
   display: grid;
   gap: 0.5rem;
 }

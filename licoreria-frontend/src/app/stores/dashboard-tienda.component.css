@@ -10,9 +10,14 @@
 }
 
 .title-header .bx-shop {
-  font-size: 2.2rem;
+  font-size: 3rem;
   color: #667eea;
   margin-top: 0.2rem;
+}
+
+:host-context(.dark) .title-header .bx-shop {
+  color: #79c0ff;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .title-block {
@@ -43,7 +48,10 @@
   color: #667eea;
   letter-spacing: -1.2px;
   line-height: 1.1;
-  
+}
+
+:host-context(.dark) .store-name {
+  color: #f0f6fc;
 }
 
 .store-description {
@@ -51,6 +59,10 @@
   color: #475569;
   font-weight: 500;
   margin-bottom: 0.1rem;
+}
+
+:host-context(.dark) .store-description {
+  color: #cbd5e1;
 }
 
 .address-info {
@@ -77,6 +89,9 @@
 
 :host-context(.dark) .dashboard-container {
   background: #0f0f1a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  padding: 2rem;
+  border-radius: 16px;
 }
 
 /* ============ HEADER ============ */
@@ -86,7 +101,7 @@
   padding: 1.5rem 2rem;
   display: flex;
   align-items: center;
-  border-radius: 8px;
+  border-radius: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   margin-bottom: 2rem;
 }
@@ -95,6 +110,7 @@
   background: #1a1a2e;
   border-bottom-color: #2d2d44;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border-radius: 16px;
 }
 
 .header-content {
@@ -123,7 +139,7 @@
 }
 
 .logo-title {
-  margin: 0;
+  
   font-size: 4.5rem;
   font-weight: 900;
   letter-spacing: -0.5px;
@@ -135,7 +151,7 @@
 
 .header-content {
   max-width: 1200px;
-  margin: 0 auto;
+  
 }
 
 .back-btn {
@@ -176,9 +192,9 @@
 }
 
 :host-context(.dark) .page-title-section {
-    background: #1a1a2e;
-    border-color: #2d2d44;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-color: #30363d;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .title-header {
@@ -205,7 +221,7 @@
 }
 
 :host-context(.dark) .page-title {
-    color: #f1f5f9;
+  color: #f0f6fc;
 }
 
 .page-title i {
@@ -228,7 +244,8 @@
 }
 
 :host-context(.dark) .page-subtitle {
-    color: #f1f5f9;
+  color: #f0f6fc;
+  text-shadow: none;
 }
 
 .store-info-text {
@@ -245,7 +262,7 @@
 }
 
 :host-context(.dark) .store-info-text {
-    color: #cbd5e1;
+  color: #cbd5e1;
 }
 
 .address-info {
@@ -264,18 +281,19 @@
 }
 
 :host-context(.dark) .address-info {
-    color: #cbd5e1;
+  color: #8b949e;
+  background: #1c2128;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 
 
 
 
   .header {
-    padding: 0.75rem 1rem;
-    padding-top: 1rem;
+    padding: 2.5rem;
     margin-bottom: 1rem;
     flex-wrap: nowrap;
-    gap: 0.5rem;
+    
   }
 
   .header-content {
@@ -292,6 +310,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+/* Page Title Section */
 
   .dashboard-container {
     padding: 0.75rem;
@@ -300,7 +319,7 @@
   .page-title-section {
     padding: 0.75rem;
     margin-bottom: 0.75rem;
-    border-radius: 10px;
+    border-radius: 16px;
   }
 /* Page Title Section Gestion de Tiendas */
   .page-title {
@@ -494,9 +513,10 @@
 }
 
 :host-context(.dark) .info-box {
-  background-color: #1a1a2e;
+  background: #1a1a2e;
   border-color: #2d2d44;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  
 }
 
 .info-content h3 {
@@ -518,7 +538,7 @@
 }
 
 :host-context(.dark) .info-content p {
-  color: #cbd5e1;
+  color: #8b949e;
 }
 
 /* Function Cards */
@@ -561,24 +581,31 @@
 }
 
 :host-context(.dark) .card {
-  background-color: #1a1a2e;
-  border-color: #2d2d44;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  background: #1a1a2e;
+    border-color: #2d2d44;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 :host-context(.dark) .card:hover {
-  border-color: #3d3d54;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  border-color: #8b949e;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  transform: translateY(-4px);
 }
 
 :host-context(.dark) .card.active {
-  border-color: #8b5cf6;
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(168, 85, 247, 0.05) 100%);
+  border-color: #79c0ff;
+  background: #1c2128;
 }
 
 .card-icon {
   font-size: 3rem;
   margin-bottom: 1rem;
+}
+
+:host-context(.dark) .card-icon {
+  color: #6366f1;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  
 }
 
 .card h4 {
@@ -589,7 +616,7 @@
 }
 
 :host-context(.dark) .card h4 {
-  color: #f1f5f9;
+  color: #f0f6fc;
 }
 
 .card p {
@@ -599,7 +626,7 @@
 }
 
 :host-context(.dark) .card p {
-  color: #cbd5e1;
+  color: #8b949e;
 }
 
 .content-container {
@@ -613,9 +640,9 @@
 }
 
 :host-context(.dark) .content-container {
-  background-color: #1a1a2e;
-  border-color: #2d2d44;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  background: #161b22;
+  border-color: #30363d;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .tab-content h2 {
@@ -628,8 +655,8 @@
 }
 
 :host-context(.dark) .tab-content h2 {
-  color: #f1f5f9;
-  border-bottom-color: #8b5cf6;
+  color: #f0f6fc;
+  border-bottom-color: #79c0ff;
 }
 
 /* Stats Grid */
@@ -651,9 +678,9 @@
 }
 
 :host-context(.dark) .stat-card {
-  background-color: #2d2d44;
-  border-color: #3d3d54;
-  border-left-color: #8b5cf6;
+  background: #1c2128;
+  border-color: #30363d;
+  border-left-color: #79c0ff;
 }
 
 .stat-card h3 {
@@ -666,7 +693,7 @@
 }
 
 :host-context(.dark) .stat-card h3 {
-  color: #cbd5e1;
+  color: #8b949e;
 }
 
 .stat-number {
@@ -677,7 +704,7 @@
 }
 
 :host-context(.dark) .stat-number {
-  color: #f1f5f9;
+  color: #f0f6fc;
 }
 
 .loading {
@@ -743,8 +770,8 @@
 }
 
 :host-context(.dark) .products-section h2 {
-  color: #f1f5f9;
-  border-bottom-color: #8b5cf6;
+  color: #f0f6fc;
+  border-bottom-color: #79c0ff;
 }
 
 .no-products {
