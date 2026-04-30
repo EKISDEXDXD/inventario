@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MenuService } from '../core/menu.service';
+import { ApiConfigService } from '../auth/api-config.service';
 
 @Component({
   selector: 'app-my-stores',
@@ -14,7 +15,6 @@ import { MenuService } from '../core/menu.service';
 export class MyStoresComponent implements OnInit {
   stores: any[] = [];
   openMenuId: number | null = null;
-  private apiUrl = 'http://localhost:8081/api/stores';
 
   get isMenuOpen$() {
     return this.menuService.isMenuOpen$;
@@ -24,7 +24,8 @@ export class MyStoresComponent implements OnInit {
     private router: Router, 
     private http: HttpClient,
     private cdr: ChangeDetectorRef,
-    private menuService: MenuService 
+    private menuService: MenuService,
+    private apiConfig: ApiConfigService
   ) {}
 
   ngOnInit() {
@@ -36,6 +37,7 @@ export class MyStoresComponent implements OnInit {
   }
 
   loadStores() {
+    const apiUrl = this.apiConfig.getApiUrl('/api/stores');
     const token = localStorage.getItem('token'); 
     
     if (!token) {
@@ -47,7 +49,7 @@ export class MyStoresComponent implements OnInit {
       'Authorization': `Bearer ${token}`
     });
 
-    this.http.get<any[]>(this.apiUrl, { headers }).subscribe({
+    this.http.get<any[]>(apiUrl, { headers }).subscribe({
       next: (data) => {
         console.log('Tiendas cargadas exitosamente:', data);
         this.stores = data; 
@@ -101,8 +103,9 @@ export class MyStoresComponent implements OnInit {
     }
 
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+    const apiUrl = this.apiConfig.getApiUrl('/api/stores');
 
-    this.http.delete(`${this.apiUrl}/${id}`, { headers }).subscribe({
+    this.http.delete(`${apiUrl}/${id}`, { headers }).subscribe({
       next: () => {
         this.stores = this.stores.filter(s => s.id !== id);
         this.cdr.detectChanges();

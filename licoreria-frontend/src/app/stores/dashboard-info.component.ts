@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MenuService } from '../core/menu.service';
+import { ApiConfigService } from '../auth/api-config.service';
 
 @Component({
   selector: 'app-dashboard-info',
@@ -41,8 +42,13 @@ export class DashboardInfoComponent implements OnInit {
     bottomSold: true
   };
 
-  private apiStoresUrl = 'http://localhost:8081/api/stores';
-  private apiProductsUrl = 'http://localhost:8081/api/products';
+  private apiStoresUrl: string = '';
+  private apiProductsUrl: string = '';
+
+  private initializeApiUrls() {
+    this.apiStoresUrl = this.apiConfig.getApiUrl('/api/stores');
+    this.apiProductsUrl = this.apiConfig.getApiUrl('/api/products');
+  }
 
   get isMenuOpen$() {
     return this.menuService.isMenuOpen$;
@@ -53,7 +59,8 @@ export class DashboardInfoComponent implements OnInit {
     private router: Router,
     private http: HttpClient,
     private cdr: ChangeDetectorRef,
-    private menuService: MenuService
+    private menuService: MenuService,
+    private apiConfig: ApiConfigService
   ) {}
 
   toggleAppMenu() {
@@ -61,6 +68,7 @@ export class DashboardInfoComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.initializeApiUrls();
     this.route.params.subscribe(params => {
       this.storeId = +params['id'];
       this.loadStoreData();

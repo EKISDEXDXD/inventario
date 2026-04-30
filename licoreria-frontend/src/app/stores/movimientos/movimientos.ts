@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { JwtHelper } from '../../core/jwt.helper';
+import { ApiConfigService } from '../../auth/api-config.service';
 
 @Component({
   selector: 'app-movimientos',
@@ -50,22 +51,32 @@ export class MovimientosComponent implements OnInit, OnDestroy {
     dateTime: new Date()
   };
 
-  private apiStoresUrl = 'http://localhost:8081/api/stores';
-  private apiProductsUrl = 'http://localhost:8081/api/products';
-  private apiTransactionsUrl = 'http://localhost:8081/api/transactions';
-  private apiAdminCostsUrl = 'http://localhost:8081/api/administrative-costs';
-  private apiAdminCostMovementsUrl = 'http://localhost:8081/api/administrative-cost-movements';
+  private apiStoresUrl: string = '';
+  private apiProductsUrl: string = '';
+  private apiTransactionsUrl: string = '';
+  private apiAdminCostsUrl: string = '';
+  private apiAdminCostMovementsUrl: string = '';
   private jwtHelper = new JwtHelper();
   private refreshInterval: any = null;
+
+  private initializeApiUrls() {
+    this.apiStoresUrl = this.apiConfig.getApiUrl('/api/stores');
+    this.apiProductsUrl = this.apiConfig.getApiUrl('/api/products');
+    this.apiTransactionsUrl = this.apiConfig.getApiUrl('/api/transactions');
+    this.apiAdminCostsUrl = this.apiConfig.getApiUrl('/api/administrative-costs');
+    this.apiAdminCostMovementsUrl = this.apiConfig.getApiUrl('/api/administrative-cost-movements');
+  }
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private http: HttpClient,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private apiConfig: ApiConfigService
   ) {}
 
   ngOnInit() {
+    this.initializeApiUrls();
     this.extractUserIdFromToken();
     this.tryLoadStoreData();
     this.watchStoreIdChanges();

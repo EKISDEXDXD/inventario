@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MenuService } from '../core/menu.service';
 import { ExportModalComponent } from './export-modal.component';
+import { ApiConfigService } from '../auth/api-config.service';
 
 @Component({
   selector: 'app-dashboard-tienda',
@@ -21,8 +22,13 @@ export class DashboardTiendaComponent implements OnInit {
   loading: boolean = true;
   activeTab: string = 'inventory'; // Default tab
   
-  private apiStoresUrl = 'http://localhost:8081/api/stores';
-  private apiProductsUrl = 'http://localhost:8081/api/products';
+  private apiStoresUrl: string = '';
+  private apiProductsUrl: string = '';
+
+  private initializeApiUrls() {
+    this.apiStoresUrl = this.apiConfig.getApiUrl('/api/stores');
+    this.apiProductsUrl = this.apiConfig.getApiUrl('/api/products');
+  }
 
   get isMenuOpen$() {
     return this.menuService.isMenuOpen$;
@@ -34,7 +40,8 @@ export class DashboardTiendaComponent implements OnInit {
     private http: HttpClient,
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog,
-    private menuService: MenuService
+    private menuService: MenuService,
+    private apiConfig: ApiConfigService
   ) {}
 
   toggleAppMenu() {
@@ -42,6 +49,7 @@ export class DashboardTiendaComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.initializeApiUrls();
     // Capturar el ID de la tienda desde la URL
     this.route.params.subscribe(params => {
       this.storeId = +params['id'];

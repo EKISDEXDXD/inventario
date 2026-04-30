@@ -1061,12 +1061,12 @@ export class ExportModalComponent implements OnInit {
     };
 
     console.log('Enviando solicitud de exportación:', { 
-      url: 'http://localhost:8081/api/export/sales-report',
+      url: 'http://192.168.1.238:8081/api/export/sales-report',
       params,
       hasToken: !!token
     });
 
-    this.http.post('http://localhost:8081/api/export/sales-report', {}, {
+    this.http.post('http://192.168.1.238:8081/api/export/sales-report', {}, {
       headers,
       params,
       responseType: 'blob'
@@ -1121,12 +1121,12 @@ export class ExportModalComponent implements OnInit {
     };
 
     console.log('Enviando solicitud de reporte diario:', { 
-      url: 'http://localhost:8081/api/export/sales-report',
+      url: 'http://192.168.1.238:8081/api/export/sales-report',
       params,
       hasToken: !!token
     });
 
-    this.http.post('http://localhost:8081/api/export/sales-report', {}, {
+    this.http.post('http://192.168.1.238:8081/api/export/sales-report', {}, {
       headers,
       params,
       responseType: 'blob'
@@ -1176,7 +1176,7 @@ export class ExportModalComponent implements OnInit {
       'Authorization': `Bearer ${token}`
     });
 
-    this.http.get<ExportHistory[]>(`http://localhost:8081/api/export/history?storeId=${this.storeId}`, { headers })
+    this.http.get<ExportHistory[]>(`http://192.168.1.238:8081/api/export/history?storeId=${this.storeId}`, { headers })
       .subscribe({
         next: (history) => {
           this.exportHistory = history;
@@ -1194,7 +1194,7 @@ export class ExportModalComponent implements OnInit {
       'Authorization': `Bearer ${token}`
     });
 
-    this.http.get(`http://localhost:8081/api/export/download/${item.id}`, {
+    this.http.get(`http://192.168.1.238:8081/api/export/download/${item.id}`, {
       headers,
       responseType: 'blob'
     }).subscribe({
@@ -1221,7 +1221,7 @@ export class ExportModalComponent implements OnInit {
       'Authorization': `Bearer ${token}`
     });
 
-    this.http.delete(`http://localhost:8081/api/export/${item.id}`, { headers })
+    this.http.delete(`http://192.168.1.238:8081/api/export/${item.id}`, { headers })
       .subscribe({
         next: () => {
           this.successMessage = 'Reporte eliminado';

@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
+import { ApiConfigService } from '../../auth/api-config.service';
 
 @Component({
   selector: 'app-inventario',
@@ -54,18 +55,26 @@ export class InventarioComponent implements OnInit {
     stock: 0
   };
 
-  private apiStoresUrl = 'http://localhost:8081/api/stores';
-  private apiProductsUrl = 'http://localhost:8081/api/products';
-  private apiAdminCostsUrl = 'http://localhost:8081/api/administrative-costs';
+  private apiStoresUrl: string = '';
+  private apiProductsUrl: string = '';
+  private apiAdminCostsUrl: string = '';
+
+  private initializeApiUrls() {
+    this.apiStoresUrl = this.apiConfig.getApiUrl('/api/stores');
+    this.apiProductsUrl = this.apiConfig.getApiUrl('/api/products');
+    this.apiAdminCostsUrl = this.apiConfig.getApiUrl('/api/administrative-costs');
+  }
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private http: HttpClient,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private apiConfig: ApiConfigService
   ) {}
 
   ngOnInit() {
+    this.initializeApiUrls();
     console.log('InventarioComponent ngOnInit - iniciando');
     this.route.params.subscribe(params => {
       console.log('InventarioComponent route.params:', params);

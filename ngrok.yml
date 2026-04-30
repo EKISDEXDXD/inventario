@@ -1,0 +1,9 @@
+version: 3
+
+tunnels:
+  frontend:
+    proto: http
+    addr: frontend:80
+  backend:
+    proto: http
+    addr: backend:8081

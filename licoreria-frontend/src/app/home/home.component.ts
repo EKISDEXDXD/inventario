@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MenuService } from '../core/menu.service';
 import { ExternalStoreService } from '../core/external-store.service';
+import { ApiConfigService } from '../auth/api-config.service';
 
 @Component({
   selector: 'app-home',
@@ -19,13 +20,12 @@ export class HomeComponent implements OnInit {
   externalStoreName = '';
   externalPassword = '';
   loadingExternal = false;
-  private apiUrl = 'http://localhost:8081/api/stores';
 
   get isMenuOpen$() {
     return this.menuService.isMenuOpen$;
   }
 
-  constructor(private router: Router, private http: HttpClient, private menuService: MenuService, private activatedRoute: ActivatedRoute, private externalStoreService: ExternalStoreService) {
+  constructor(private router: Router, private http: HttpClient, private menuService: MenuService, private activatedRoute: ActivatedRoute, private externalStoreService: ExternalStoreService, private apiConfig: ApiConfigService) {
     this.loadUsername();
   }
 
@@ -103,7 +103,8 @@ export class HomeComponent implements OnInit {
       password: this.externalPassword.trim()
     };
 
-    this.http.post<any>(`${this.apiUrl}/external-access`, body, { headers }).subscribe({
+    const apiUrl = this.apiConfig.getApiUrl('/api/stores');
+    this.http.post<any>(`${apiUrl}/external-access`, body, { headers }).subscribe({
       next: (store) => {
         console.log('✅ Tienda externa obtenida:', store);
         // Guardar que es acceso externo

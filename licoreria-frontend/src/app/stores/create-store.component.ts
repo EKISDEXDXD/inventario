@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { Router } from '@angular/router';
 import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { MenuService } from '../core/menu.service';
+import { ApiConfigService } from '../auth/api-config.service';
 
 @Component({
   selector: 'app-create-store',
@@ -16,7 +17,6 @@ export class CreateStoreComponent implements OnInit {
   storeForm!: FormGroup;
   isLoading = false;
   errorMessage = '';
-  private apiUrl = 'http://localhost:8081/api/stores';
 
   get isMenuOpen$() {
     return this.menuService.isMenuOpen$;
@@ -26,7 +26,8 @@ export class CreateStoreComponent implements OnInit {
     private router: Router,
     private http: HttpClient,
     private fb: FormBuilder,
-    private menuService: MenuService
+    private menuService: MenuService,
+    private apiConfig: ApiConfigService
   ) {}
 
   ngOnInit() {
@@ -74,7 +75,8 @@ export class CreateStoreComponent implements OnInit {
     const token = localStorage.getItem('token');
     const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined;
 
-    this.http.post('http://localhost:8081/api/stores', this.storeForm.value, { headers }).subscribe({
+    const apiUrl = this.apiConfig.getApiUrl('/api/stores');
+    this.http.post(apiUrl, this.storeForm.value, { headers }).subscribe({
       next: () => {
         this.router.navigate(['/my-stores']);
       },

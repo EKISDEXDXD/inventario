@@ -53,6 +53,28 @@ services:
       - licoreria-network
     restart: unless-stopped
 
+  # ============ NGROK ============
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: licoreria-ngrok
+    environment:
+      NGROK_AUTHTOKEN: 3D53usTgGe45AJfpLOZGtMuo6Mt_7uXgiDM5v9rHd2uDzfiDg
+    volumes:
+      - ./ngrok.yml:/etc/ngrok.yml
+    command: 
+      - "start"
+      - "--config=/etc/ngrok.yml"
+      - "frontend"
+      - "backend"
+    ports:
+      - "4040:4040"
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - licoreria-network
+    restart: unless-stopped
+
 # ============ VOLÚMENES ============
 volumes:
   postgres_data:
