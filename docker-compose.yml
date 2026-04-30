@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # ============ BASE DE DATOS (PostgreSQL) ============
   postgres:
@@ -24,9 +22,7 @@ services:
 
   # ============ BACKEND (Spring Boot) ============
   backend:
-    build:
-      context: ./licoreria-backend
-      dockerfile: Dockerfile
+    image: licoreria-backend:2.0
     container_name: licoreria-backend
     environment:
       POSTGRES_HOST: postgres
@@ -47,9 +43,7 @@ services:
 
   # ============ FRONTEND (Nginx + Angular) ============
   frontend:
-    build:
-      context: ./licoreria-frontend
-      dockerfile: Dockerfile
+    image: licoreria-frontend:2.0
     container_name: licoreria-frontend
     ports:
       - "80:80"
