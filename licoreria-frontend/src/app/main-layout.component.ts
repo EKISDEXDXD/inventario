@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { AuthService } from './auth/auth.service';
 import { MenuService } from './core/menu.service';
+import { UserService } from './core/user.service';
 import { ExternalStoreService } from './core/external-store.service';
 import { HasUnsavedChanges } from './common/without-unsaved-changes-guard.spec';
 
@@ -26,7 +27,7 @@ export class MainLayoutComponent implements HasUnsavedChanges, OnInit {
     return false;
   }
 
-  constructor(private authService: AuthService, private router: Router, private menuService: MenuService, private externalStoreService: ExternalStoreService) {
+  constructor(private authService: AuthService, private router: Router, private menuService: MenuService, private userService: UserService, private externalStoreService: ExternalStoreService) {
     console.log('MainLayoutComponent - Inicializando...');
     this.loadUsername();
     this.checkWindowSize();
@@ -34,6 +35,12 @@ export class MainLayoutComponent implements HasUnsavedChanges, OnInit {
 
   ngOnInit() {
     this.menuService.closeMenu();
+    // Suscribirse a los cambios de nombre de usuario
+    this.userService.getUsername().subscribe((newUsername) => {
+      if (newUsername) {
+        this.username = newUsername;
+      }
+    });
   }
 
   @HostListener('window:resize', ['$event'])
@@ -47,16 +54,22 @@ export class MainLayoutComponent implements HasUnsavedChanges, OnInit {
 
   loadUsername() {
     console.log('MainLayoutComponent - Cargando username...');
-    const token = localStorage.getItem('token');
-    console.log('MainLayoutComponent - Token encontrado:', token ? 'SÍ' : 'NO');
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        console.log('MainLayoutComponent - JWT payload:', payload);
-        this.username = payload.sub || 'Usuario';
-      } catch (error) {
-        console.error('MainLayoutComponent - Error decodificando JWT:', error);
-        this.username = 'Usuario';
+    const currentUsername = this.userService.getCurrentUsername();
+    if (currentUsername) {
+      this.username = currentUsername;
+    } else {
+      // Si no hay username en el servicio, cargar desde el token
+      const token = localStorage.getItem('token');
+      console.log('MainLayoutComponent - Token encontrado:', token ? 'SÍ' : 'NO');
+      if (token) {
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          console.log('MainLayoutComponent - JWT payload:', payload);
+          this.username = payload.sub || 'Usuario';
+        } catch (error) {
+          console.error('MainLayoutComponent - Error decodificando JWT:', error);
+          this.username = 'Usuario';
+        }
       }
     }
   }

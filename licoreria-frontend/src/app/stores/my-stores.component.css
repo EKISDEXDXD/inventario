@@ -327,20 +327,30 @@
     position: absolute;
     top: 100%;
     right: 0;
-    background: #667eea;
-    border: 1px solid #667eea;
-    border-radius: 10px;
-    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    
+    border-radius: 8px;
+    
     z-index: 1000;
     min-width: 200px;
-    overflow: hidden;
+    
     animation: slideDown 0.2s ease-out;
+    background: rgba(255, 255, 255, 0.15);
+
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    
+
 }
 
 :host-context(.dark) .dropdown-menu {
-    background: #667eea;
-    border-color: #8b5cf6;
-    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    background: #1a1a2e;
+    border-color: #3d3d54;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 @keyframes slideDown {
@@ -362,7 +372,7 @@
     padding: 0.75rem 1rem;
     border: none;
     background: none;
-    color: #ffffff;
+    color: #94a3b8;
     font-size: 0.9rem;
     font-weight: 500;
     cursor: pointer;
@@ -376,7 +386,7 @@
 
 .dropdown-item:hover {
     background: rgba(255, 255, 255, 0.15);
-    color: #ffffff;
+    color: #667eea;
 }
 
 :host-context(.dark) .dropdown-item {
@@ -390,19 +400,37 @@
 }
 
 .dropdown-item.delete {
-    color: #fecaca;
+    color: #94a3b8;
 }
 
 .dropdown-item.delete:hover {
     background: rgba(255, 255, 255, 0.25);
-    color: #ffffff;
+    color: #f05a5a;
+}
+
+.dropdown-item.edit {
+    color: #94a3b8;
+}
+
+.dropdown-item.edit:hover {
+    background: rgba(255, 255, 255, 0.25);
+    color: #fbbf24;
 }
 
 :host-context(.dark) .dropdown-item.delete {
-    color: #fecaca;
+    color: #f05a5a;
 }
 
 :host-context(.dark) .dropdown-item.delete:hover {
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+
+:host-context(.dark) .dropdown-item.edit {
+    color: #fbbf24;
+}
+
+:host-context(.dark) .dropdown-item.edit:hover {
     background: rgba(255, 255, 255, 0.25);
     color: #ffffff;
 }
@@ -612,6 +640,14 @@
     }
 
     .dropdown-item.delete:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .dropdown-item.edit {
+        color: #fbbf24;
+    }
+
+    .dropdown-item.edit:hover {
         background: rgba(255, 255, 255, 0.2);
     }
 

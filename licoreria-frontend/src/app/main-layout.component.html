@@ -59,6 +59,14 @@
     <div class="bottom-content">
       <ul class="menu-link">
         
+        <!-- Opción: Configuraciones -->
+        <li class="nav-link">
+          <a routerLink="/settings" (click)="closeMenuOnMobile()">
+            <i class="bx bx-cog"></i>
+            <span class="text nav-text">Configuraciones</span>
+          </a>
+        </li>
+
         <!-- Opción: Cerrar Sesión -->
         <li class="nav-link">
           <a (click)="logout()" style="cursor: pointer;">

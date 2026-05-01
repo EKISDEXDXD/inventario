@@ -22,7 +22,7 @@ services:
 
   # ============ BACKEND (Spring Boot) ============
   backend:
-    image: licoreria-backend:2.0
+    image: licoreria-backend:2.7
     container_name: licoreria-backend
     environment:
       POSTGRES_HOST: postgres

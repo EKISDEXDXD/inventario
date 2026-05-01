@@ -1,0 +1,201 @@
+<div class="settings-container">
+  <!-- Header -->
+  <div class="settings-header">
+    <div class="settings-header-content">
+      <h1>
+        <i class="bx bx-cog" style="color: inherit; margin-right: 0.5rem;"></i>Configuraciones</h1>
+      <p>Gestiona tu perfil y seguridad de manera segura</p>
+    </div>
+  </div>
+
+  <!-- Mensajes de éxito y error -->
+  <div *ngIf="successMessage" class="alert alert-success">
+    <i class="bx bx-check-circle"></i>
+    <span>{{ successMessage }}</span>
+  </div>
+  <div *ngIf="errorMessage" class="alert alert-error">
+    <i class="bx bx-error-circle"></i>
+    <span>{{ errorMessage }}</span>
+  </div>
+
+  <!-- Sección principal -->
+  <div class="settings-content">
+    
+    <!-- Card: Perfil de Usuario -->
+    <div class="settings-card">
+      <div class="card-header">
+        <i class="bx bx-user-circle"></i>
+        <h2>Perfil de Usuario</h2>
+      </div>
+      
+      <div class="card-body">
+        <div class="profile-info">
+          <div class="info-item">
+            <label>Nombre de usuario actual:</label>
+            <span class="current-value">{{ currentUsername }}</span>
+          </div>
+        </div>
+
+        <!-- Formulario de cambio de usuario -->
+        <button 
+          *ngIf="!showUsernameForm"
+          class="btn btn-primary" 
+          (click)="toggleUsernameForm()">
+          <i class="bx bx-edit"></i>
+          Cambiar nombre
+        </button>
+
+        <form 
+          *ngIf="showUsernameForm" 
+          [formGroup]="usernameForm"
+          class="settings-form"
+          (ngSubmit)="onUpdateUsername()">
+          
+          <div class="form-group">
+            <label for="newUsername">
+              <i class="bx bx-user" style="color: #667eea;"></i>
+              Nuevo nombre de usuario:
+            </label>
+            <input
+              type="text"
+              id="newUsername"
+              formControlName="newUsername"
+              placeholder="Ingresa tu nuevo nombre de usuario"
+              class="form-control">
+            <small *ngIf="usernameForm.get('newUsername')?.hasError('required')" class="error-text">
+              <i class="bx bx-info-circle"></i> El nombre de usuario es requerido
+            </small>
+            <small *ngIf="usernameForm.get('newUsername')?.hasError('minlength')" class="error-text">
+              <i class="bx bx-info-circle"></i> El nombre debe tener al menos 3 caracteres
+            </small>
+          </div>
+
+          <div class="form-actions">
+            <button 
+              type="submit" 
+              class="btn btn-success"
+              [disabled]="!usernameForm.valid || loadingUsername">
+              <i class="bx bx-save"></i>
+              <span *ngIf="!loadingUsername">Guardar cambios</span>
+              <span *ngIf="loadingUsername"><i class="bx bx-loader-alt bx-spin"></i> Guardando...</span>
+            </button>
+            <button 
+              type="button"
+              class="btn btn-secondary"
+              (click)="toggleUsernameForm()"
+              [disabled]="loadingUsername">
+              <i class="bx bx-x"></i>
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Card: Seguridad -->
+    <div class="settings-card">
+      <div class="card-header">
+        <i class="bx bx-lock-alt"></i>
+        <h2>Seguridad</h2>
+      </div>
+      
+      <div class="card-body">
+        <p class="section-description">
+          <i class="bx bx-info-circle" style="color: #667eea; margin-right: 0.5rem;"></i>
+          Cambia tu contraseña regularmente para mantener tu cuenta segura y protegida
+        </p>
+
+        <!-- Botón de cambio de contraseña -->
+        <button 
+          *ngIf="!showPasswordForm"
+          class="btn btn-primary" 
+          (click)="togglePasswordForm()">
+          <i class="bx bx-lock"></i>
+          Cambiar contraseña
+        </button>
+
+        <!-- Formulario de cambio de contraseña -->
+        <form 
+          *ngIf="showPasswordForm" 
+          [formGroup]="passwordForm"
+          class="settings-form"
+          (ngSubmit)="onUpdatePassword()">
+          
+          <div class="form-group">
+            <label for="oldPassword">
+              <i class="bx bx-lock" style="color: #667eea;"></i>
+              Contraseña actual:
+            </label>
+            <input
+              type="password"
+              id="oldPassword"
+              formControlName="oldPassword"
+              placeholder="Ingresa tu contraseña actual"
+              class="form-control">
+            <small *ngIf="passwordForm.get('oldPassword')?.hasError('required')" class="error-text">
+              <i class="bx bx-info-circle"></i> La contraseña actual es requerida
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label for="newPassword">
+              <i class="bx bx-lock-open" style="color: #667eea;"></i>
+              Nueva contraseña:
+            </label>
+            <input
+              type="password"
+              id="newPassword"
+              formControlName="newPassword"
+              placeholder="Ingresa tu nueva contraseña"
+              class="form-control">
+            <small *ngIf="passwordForm.get('newPassword')?.hasError('required')" class="error-text">
+              <i class="bx bx-info-circle"></i> La nueva contraseña es requerida
+            </small>
+            <small *ngIf="passwordForm.get('newPassword')?.hasError('minlength')" class="error-text">
+              <i class="bx bx-info-circle"></i> La contraseña debe tener al menos 6 caracteres
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword">
+              <i class="bx bx-check-circle" style="color: #667eea;"></i>
+              Confirmar nueva contraseña:
+            </label>
+            <input
+              type="password"
+              id="confirmPassword"
+              formControlName="confirmPassword"
+              placeholder="Confirma tu nueva contraseña"
+              class="form-control">
+            <small *ngIf="passwordForm.get('confirmPassword')?.hasError('required')" class="error-text">
+              <i class="bx bx-info-circle"></i> Debes confirmar la contraseña
+            </small>
+            <small *ngIf="passwordForm.hasError('passwordMismatch')" class="error-text">
+              <i class="bx bx-info-circle"></i> Las contraseñas no coinciden
+            </small>
+          </div>
+
+          <div class="form-actions">
+            <button 
+              type="submit" 
+              class="btn btn-success"
+              [disabled]="!passwordForm.valid || loadingPassword">
+              <i class="bx bx-save"></i>
+              <span *ngIf="!loadingPassword">Guardar cambios</span>
+              <span *ngIf="loadingPassword"><i class="bx bx-loader-alt bx-spin"></i> Guardando...</span>
+            </button>
+            <button 
+              type="button"
+              class="btn btn-secondary"
+              (click)="togglePasswordForm()"
+              [disabled]="loadingPassword">
+              <i class="bx bx-x"></i>
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>

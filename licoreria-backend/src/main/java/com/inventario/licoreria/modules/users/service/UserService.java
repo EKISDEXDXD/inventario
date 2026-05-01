@@ -65,6 +65,25 @@ public class UserService {
         return convertToResponseDTO(updatedUser);
     }
 
+    public UserResponseDTO updatePassword(@NonNull final Long id, @NonNull final String oldPassword, @NonNull final String newPassword) {
+        try {
+            User user = findById(id);
+            if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "La contraseña actual es incorrecta");
+            }
+            if (newPassword.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La nueva contraseña no puede estar vacía");
+            }
+            user.setPassword(passwordEncoder.encode(newPassword));
+            User updatedUser = userRepository.save(user);
+            return convertToResponseDTO(updatedUser);
+        } catch (ResponseStatusException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al actualizar la contraseña: " + e.getMessage());
+        }
+    }
+
     public User findById(@NonNull final Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));

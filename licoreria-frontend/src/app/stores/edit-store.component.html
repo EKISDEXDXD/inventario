@@ -1,0 +1,119 @@
+<div class="edit-store-container">
+  <!-- Header -->
+  
+
+  <!-- Main Content -->
+  <div class="form-container">
+    <!-- Form Card -->
+    <div class="form-card">
+      <!-- Form Title -->
+      <div class="form-title-section">
+        <h2 class="form-title">
+          <i class="bx bx-edit"></i>
+          Editar Tienda
+        </h2>
+        <p class="form-subtitle">Actualiza el nombre y contraseña de acceso de tu tienda</p>
+      </div>
+
+      <form [formGroup]="storeForm" (ngSubmit)="updateStore()">
+        <!-- Nombre de la tienda -->
+        <div class="form-group">
+          <label for="name" class="form-label">
+            <span class="label-text">Nombre de la Tienda</span>
+            <span class="required">*</span>
+          </label>
+          <div class="input-wrapper">
+            <span class="input-icon"><i class="bx bx-store"></i></span>
+            <input 
+              type="text" 
+              id="name" 
+              formControlName="name"
+              placeholder="Ej: Tienda Centro"
+              class="form-input"
+              [class.input-error]="name?.invalid && name?.touched"/>
+          </div>
+          <div class="validation-messages" *ngIf="name?.invalid && name?.touched">
+            <small class="error-text" *ngIf="name?.errors?.['required']">
+              <i class="bx bx-x"></i> El nombre es requerido
+            </small>
+            <small class="error-text" *ngIf="name?.errors?.['minlength']">
+              <i class="bx bx-x"></i> Mínimo 3 caracteres
+            </small>
+            <small class="error-text" *ngIf="name?.errors?.['maxlength']">
+              <i class="bx bx-x"></i> Máximo 100 caracteres
+            </small>
+          </div>
+        </div>
+
+        <!-- Contraseña de acceso (opcional) -->
+        <div class="form-group">
+          <div class="password-header">
+            <label for="accessPassword" class="form-label">
+              <span class="label-text">Contraseña de Acceso</span>
+              <span class="required" *ngIf="showPasswordField">*</span>
+              <span class="optional" *ngIf="!showPasswordField">(Opcional)</span>
+            </label>
+            <button 
+              type="button" 
+              class="toggle-password-btn"
+              (click)="togglePasswordField()"
+              [class.active]="showPasswordField">
+              <i class="bx" [class.bx-chevron-down]="!showPasswordField" [class.bx-chevron-up]="showPasswordField"></i>
+              {{ showPasswordField ? 'Ocultar' : 'Cambiar contraseña' }}
+            </button>
+          </div>
+
+          <div *ngIf="showPasswordField" class="input-wrapper">
+            <span class="input-icon"><i class="bx bx-lock"></i></span>
+            <input
+              type="password"
+              id="accessPassword"
+              formControlName="accessPassword"
+              placeholder="Nueva contraseña para compartir acceso"
+              class="form-input"
+              [class.input-error]="accessPassword?.invalid && accessPassword?.touched"/>
+          </div>
+
+          <div class="validation-messages" *ngIf="showPasswordField && accessPassword?.invalid && accessPassword?.touched">
+            <small class="error-text" *ngIf="accessPassword?.errors?.['minlength']">
+              <i class="bx bx-x"></i> Mínimo 6 caracteres
+            </small>
+            <small class="error-text" *ngIf="accessPassword?.errors?.['maxlength']">
+              <i class="bx bx-x"></i> Máximo 50 caracteres
+            </small>
+          </div>
+
+          <small class="form-hint" *ngIf="!showPasswordField">
+            <i class="bx bx-info-circle"></i> Haz clic en "Cambiar contraseña" si deseas actualizar la contraseña de acceso a tu tienda.
+          </small>
+          <small class="form-hint" *ngIf="showPasswordField">
+            <i class="bx bx-shield"></i> Esta nueva contraseña permitirá que otros usuarios accedan a tu tienda de forma externa.
+          </small>
+        </div>
+
+        <!-- Success Message -->
+        <div *ngIf="successMessage" class="message success-message">
+          <span class="message-icon"><i class="bx bx-check-circle"></i></span>
+          <span>{{ successMessage }}</span>
+        </div>
+
+        <!-- Error Message -->
+        <div *ngIf="errorMessage" class="message error-message">
+          <span class="message-icon"><i class="bx bx-error"></i></span>
+          <span>{{ errorMessage }}</span>
+        </div>
+
+        <!-- Submit Buttons -->
+        <div class="form-actions">
+          <button type="button" class="cancel-btn" (click)="goBack()" [disabled]="isLoading">
+            Cancelar
+          </button>
+          <button type="submit" class="submit-btn" [disabled]="isLoading || storeForm.invalid">
+            <span *ngIf="!isLoading">Guardar Cambios</span>
+            <span *ngIf="isLoading" class="loading">Guardando...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

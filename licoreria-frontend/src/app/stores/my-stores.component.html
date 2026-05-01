@@ -46,6 +46,10 @@
                 <span class="dropdown-icon"><i class="bx bx-chevron-right"></i></span>
                 <span>Gestionar Inventario</span>
               </button>
+              <button *ngIf="!store.isExternal" class="dropdown-item edit" (click)="editStore(store.id); closeMenu()">
+                <span class="dropdown-icon"><i class="bx bx-pencil"></i></span>
+                <span>Editar Tienda</span>
+              </button>
               <button *ngIf="!store.isExternal" class="dropdown-item delete" (click)="deleteStore(store.id); closeMenu()">
                 <span class="dropdown-icon"><i class="bx bx-x"></i></span>
                 <span>Eliminar Tienda</span>

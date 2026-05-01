@@ -82,6 +82,10 @@ export class MyStoresComponent implements OnInit {
     this.router.navigate(['/tienda', storeId]);
   }
 
+  editStore(storeId: number) {
+    this.router.navigate(['/edit-store', storeId]);
+  }
+
   // Función para eliminar tienda con doble confirmación
   deleteStore(id: number) {
     const store = this.stores.find(s => s.id === id);
